@@ -110,7 +110,7 @@ function TaskDocumentItem({ document, index }: TaskDocumentItemProps) {
             {document.attachments && document.attachments.length > 0 ? (
               <p className='text-muted-foreground text-xs'>
                 {document.attachments.length} tệp
-                {document.attachments.length !== 1 ? '' : ''} đã đính kèm.{' '}
+                {document.attachments.length === 1 ? '' : ''} đã đính kèm.{' '}
                 <span className='font-medium'>
                   Nhấn "Xem tất cả" để xem chi tiết.
                 </span>

@@ -20,7 +20,9 @@ export function DocumentsPrimaryButtons() {
       <Button
         variant='outline'
         className='space-x-1'
-        onClick={() => void handleRefresh()}
+        onClick={() => {
+          handleRefresh()
+        }}
         disabled={isFetching}
       >
         <span>{isFetching ? 'Đang tải lại...' : 'Tải lại'}</span>

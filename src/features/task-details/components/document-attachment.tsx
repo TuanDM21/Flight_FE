@@ -58,7 +58,9 @@ export function DocumentAttachment({
         <DataTableActionBarAction
           size='icon'
           tooltip='Tải xuống tệp'
-          onClick={() => onDownload(attachment)}
+          onClick={() => {
+            onDownload(attachment)
+          }}
           className='h-6 w-6'
         >
           <Download className='h-3 w-3' />

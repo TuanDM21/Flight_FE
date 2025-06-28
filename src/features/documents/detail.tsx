@@ -52,7 +52,7 @@ export default function DocumentDetailPage() {
       if (!downloadUrlQuery) return
 
       await downloadFileFromUrl({
-        url: downloadUrlQuery.data!,
+        url: downloadUrlQuery.data,
         filename: attachment.fileName || 'download',
       })
     },
@@ -228,9 +228,9 @@ export default function DocumentDetailPage() {
                       </div>
                       <div
                         className='flex flex-shrink-0 items-center gap-4'
-                        onMouseEnter={() =>
+                        onMouseEnter={() => {
                           handleAttachmentMouseEnter(attachment)
-                        }
+                        }}
                       >
                         <DataTableActionBarAction
                           size='icon'

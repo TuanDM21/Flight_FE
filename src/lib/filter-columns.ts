@@ -26,13 +26,13 @@ export function filterColumns<T>({
   filters: ExtendedColumnFilter<T>[]
   joinOperator: JoinOperator
 }): ((row: T) => boolean) | undefined {
-  if (!filters.length) return undefined
+  if (filters.length === 0) return undefined
 
   function checkCondition(row: T, filter: ExtendedColumnFilter<T>): boolean {
     const value = row[filter.id]
 
     switch (filter.operator) {
-      case 'iLike':
+      case 'iLike': {
         if (filter.variant === 'text' && typeof filter.value === 'string') {
           if (typeof value === 'string' || typeof value === 'number') {
             return value
@@ -43,8 +43,9 @@ export function filterColumns<T>({
           return false
         }
         return false
+      }
 
-      case 'notILike':
+      case 'notILike': {
         if (filter.variant === 'text' && typeof filter.value === 'string') {
           return (
             typeof value === 'string' &&
@@ -52,8 +53,9 @@ export function filterColumns<T>({
           )
         }
         return false
+      }
 
-      case 'eq':
+      case 'eq': {
         if (filter.variant === 'date' || filter.variant === 'dateRange') {
           if (!value) return false
           // Safe type casting since we're checking type before using
@@ -64,8 +66,9 @@ export function filterColumns<T>({
           return dateValue.getTime() === targetDate.getTime()
         }
         return value === filter.value
+      }
 
-      case 'ne':
+      case 'ne': {
         if (filter.variant === 'date' || filter.variant === 'dateRange') {
           if (!value) return true
           // Safe type casting since we're checking type before using
@@ -76,22 +79,25 @@ export function filterColumns<T>({
           return dateValue.getTime() !== targetDate.getTime()
         }
         return value !== filter.value
+      }
 
-      case 'inArray':
+      case 'inArray': {
         if (Array.isArray(filter.value)) {
           // Ensure we're comparing compatible types
           return filter.value.includes(value as string)
         }
         return false
+      }
 
-      case 'notInArray':
+      case 'notInArray': {
         if (Array.isArray(filter.value)) {
           // Ensure we're comparing compatible types
           return !filter.value.includes(value as string)
         }
         return false
+      }
 
-      case 'lt':
+      case 'lt': {
         if (filter.variant === 'date' && typeof filter.value === 'string') {
           if (!value) return false
           // Safe type casting since we're checking type before using
@@ -101,14 +107,12 @@ export function filterColumns<T>({
           )
         }
         if (filter.variant === 'number' || filter.variant === 'range') {
-          return (
-            typeof value === 'number' &&
-            value < (Number(filter.value) as number)
-          )
+          return typeof value === 'number' && value < Number(filter.value)
         }
         return false
+      }
 
-      case 'lte':
+      case 'lte': {
         if (filter.variant === 'date' && typeof filter.value === 'string') {
           if (!value) return false
           // Safe type casting since we're checking type before using
@@ -118,14 +122,12 @@ export function filterColumns<T>({
           )
         }
         if (filter.variant === 'number' || filter.variant === 'range') {
-          return (
-            typeof value === 'number' &&
-            value <= (Number(filter.value) as number)
-          )
+          return typeof value === 'number' && value <= Number(filter.value)
         }
         return false
+      }
 
-      case 'gt':
+      case 'gt': {
         if (filter.variant === 'date' && typeof filter.value === 'string') {
           if (!value) return false
           // Safe type casting since we're checking type before using
@@ -135,14 +137,12 @@ export function filterColumns<T>({
           )
         }
         if (filter.variant === 'number' || filter.variant === 'range') {
-          return (
-            typeof value === 'number' &&
-            value > (Number(filter.value) as number)
-          )
+          return typeof value === 'number' && value > Number(filter.value)
         }
         return false
+      }
 
-      case 'gte':
+      case 'gte': {
         if (filter.variant === 'date' && typeof filter.value === 'string') {
           if (!value) return false
           // Safe type casting since we're checking type before using
@@ -152,14 +152,12 @@ export function filterColumns<T>({
           )
         }
         if (filter.variant === 'number' || filter.variant === 'range') {
-          return (
-            typeof value === 'number' &&
-            value >= (Number(filter.value) as number)
-          )
+          return typeof value === 'number' && value >= Number(filter.value)
         }
         return false
+      }
 
-      case 'isBetween':
+      case 'isBetween': {
         if (
           (filter.variant === 'date' || filter.variant === 'dateRange') &&
           Array.isArray(filter.value) &&
@@ -191,10 +189,10 @@ export function filterColumns<T>({
           Array.isArray(filter.value) &&
           filter.value.length === 2
         ) {
-          const valNum = typeof value === 'number' ? value : NaN
+          const valNum = typeof value === 'number' ? value : Number.NaN
           const startNum =
-            filter.value[0] !== '' ? Number(filter.value[0]) : null
-          const endNum = filter.value[1] !== '' ? Number(filter.value[1]) : null
+            filter.value[0] === '' ? null : Number(filter.value[0])
+          const endNum = filter.value[1] === '' ? null : Number(filter.value[1])
 
           if (startNum !== null && endNum !== null) {
             return valNum >= startNum && valNum <= endNum
@@ -208,8 +206,9 @@ export function filterColumns<T>({
           return false
         }
         return false
+      }
 
-      case 'isRelativeToToday':
+      case 'isRelativeToToday': {
         if (
           (filter.variant === 'date' || filter.variant === 'dateRange') &&
           typeof filter.value === 'string'
@@ -226,20 +225,24 @@ export function filterColumns<T>({
           let endDate: Date
 
           switch (unit) {
-            case 'days':
+            case 'days': {
               startDate = startOfDay(addDays(today, amount))
               endDate = endOfDay(startDate)
               break
-            case 'weeks':
+            }
+            case 'weeks': {
               startDate = startOfDay(addDays(today, amount * 7))
               endDate = endOfDay(addDays(startDate, 6))
               break
-            case 'months':
+            }
+            case 'months': {
               startDate = startOfDay(addDays(today, amount * 30))
               endDate = endOfDay(addDays(startDate, 29))
               break
-            default:
+            }
+            default: {
               return false
+            }
           }
 
           // Safe type casting since we're checking type before using
@@ -247,15 +250,19 @@ export function filterColumns<T>({
           return dateValue >= startDate && dateValue <= endDate
         }
         return false
+      }
 
-      case 'isEmpty':
+      case 'isEmpty': {
         return isEmpty(value)
+      }
 
-      case 'isNotEmpty':
+      case 'isNotEmpty': {
         return !isEmpty(value)
+      }
 
-      default:
+      default: {
         throw new Error(`Unsupported operator: ${filter.operator}`)
+      }
     }
   }
 

@@ -221,8 +221,12 @@ export function TaskAssignmentsDialog({
       <Dialog open={open} onOpenChange={() => onClose()}>
         <DialogContent
           className='max-h-7xl flex flex-col sm:max-w-7xl'
-          onPointerDownOutside={(e) => e.preventDefault()}
-          onEscapeKeyDown={(event) => event.preventDefault()}
+          onPointerDownOutside={(e) => {
+            e.preventDefault()
+          }}
+          onEscapeKeyDown={(event) => {
+            event.preventDefault()
+          }}
         >
           <DialogHeader>
             <DialogTitle>Phân công cho Task #{taskId}</DialogTitle>

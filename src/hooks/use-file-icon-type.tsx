@@ -20,16 +20,21 @@ export function useFileIconType() {
   const getFileIcon = (fileName: string): ReactNode => {
     const type = getFileType(fileName)
     switch (type) {
-      case 'image':
+      case 'image': {
         return <FileImage className='text-primary h-4 w-4' />
-      case 'video':
+      }
+      case 'video': {
         return <FileVideo className='text-primary h-4 w-4' />
-      case 'audio':
+      }
+      case 'audio': {
         return <FileAudio className='text-primary h-4 w-4' />
-      case 'pdf':
+      }
+      case 'pdf': {
         return <FileText className='text-primary h-4 w-4' />
-      default:
+      }
+      default: {
         return <File className='text-primary h-4 w-4' />
+      }
     }
   }
 

@@ -4,6 +4,12 @@ import EditTaskPage from '@/features/tasks/edit'
 import { getTaskDetailQueryOptions } from '@/features/tasks/hooks/use-task-detail'
 
 export const Route = createFileRoute('/_authenticated/tasks/$task-id/edit')({
+  validateSearch: (search) =>
+    z
+      .object({
+        type: z.enum(['created', 'assigned', 'received']).optional(),
+      })
+      .parse(search),
   loader: async ({
     context: {
       queryClient,
@@ -24,12 +30,6 @@ export const Route = createFileRoute('/_authenticated/tasks/$task-id/edit')({
       })
     }
   },
-  validateSearch: (search) =>
-    z
-      .object({
-        type: z.enum(['created', 'assigned', 'received']).optional(),
-      })
-      .parse(search),
   component: EditTaskPage,
 })
 

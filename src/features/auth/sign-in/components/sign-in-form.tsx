@@ -31,8 +31,8 @@ export function SignInForm({ className, ...props }: SignInFormProps) {
   const form = useForm<LoginCredentials>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: '',
-      password: '',
+      email: 'director@example.com',
+      password: '123456',
       remember: false,
     },
   })

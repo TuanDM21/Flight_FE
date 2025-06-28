@@ -38,7 +38,7 @@ const FILE_UPLOAD_ERRORS = {
 } as const
 
 const useIsomorphicLayoutEffect =
-  typeof window !== 'undefined' ? React.useLayoutEffect : React.useEffect
+  globalThis.window === undefined ? React.useEffect : React.useLayoutEffect
 
 function useAsRef<T>(data: T) {
   const ref = React.useRef<T>(data)
@@ -116,7 +116,7 @@ function createStore(
         }
 
         if (onValueChange) {
-          const fileList = Array.from(files.values()).map(
+          const fileList = [...files.values()].map(
             (fileState) => fileState.file
           )
           onValueChange(fileList)
@@ -186,7 +186,7 @@ function createStore(
         files.delete(action.file)
 
         if (onValueChange) {
-          const fileList = Array.from(files.values()).map(
+          const fileList = [...files.values()].map(
             (fileState) => fileState.file
           )
           onValueChange(fileList)
@@ -210,8 +210,9 @@ function createStore(
         return { ...state, files, invalid: false }
       }
 
-      default:
+      default: {
         return state
+      }
     }
   }
 
@@ -390,7 +391,7 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
       } else if (
         defaultValue &&
         defaultValue.length > 0 &&
-        !store.getState().files.size
+        store.getState().files.size === 0
       ) {
         store.dispatch({ variant: 'SET_FILES', files: defaultValue })
       }
@@ -410,15 +411,15 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
           )
           if (totalSize > propsRef.current.maxTotalSize) {
             const rejectionMessage = `Total files size must be less than ${Math.round(propsRef.current.maxTotalSize / 1024 / 1024)}MB`
-            filesToProcess.forEach((file) => {
+            for (const file of filesToProcess) {
               propsRef.current.onFileReject?.(file, rejectionMessage)
-            })
+            }
             invalid = true
             filesToProcess = []
           }
         }
 
-        let acceptedFiles: File[] = []
+        const acceptedFiles: File[] = []
         const rejectedFiles: { file: File; message: string }[] = []
 
         for (const file of filesToProcess) {
@@ -469,10 +470,10 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
             invalid = true
           }
 
-          if (!rejected) {
-            acceptedFiles.push(file)
-          } else {
+          if (rejected) {
             rejectedFiles.push({ file, message: rejectionMessage })
+          } else {
+            acceptedFiles.push(file)
           }
         }
 
@@ -487,9 +488,9 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
           store.dispatch({ variant: 'ADD_FILES', files: acceptedFiles })
 
           if (isControlled && propsRef.current.onValueChange) {
-            const currentFiles = Array.from(
-              store.getState().files.values()
-            ).map((f) => f.file)
+            const currentFiles = [...store.getState().files.values()].map(
+              (f) => f.file
+            )
             propsRef.current.onValueChange([...currentFiles])
           }
 
@@ -560,7 +561,7 @@ const FileUploadRoot = React.forwardRef<HTMLDivElement, FileUploadRootProps>(
 
     const onInputChange = React.useCallback(
       (event: React.ChangeEvent<HTMLInputElement>) => {
-        const files = Array.from(event.target.files ?? [])
+        const files = [...(event.target.files ?? [])]
         onFilesChange(files)
         event.target.value = ''
       },
@@ -699,7 +700,7 @@ const FileUploadDropzone = React.forwardRef<
       event.preventDefault()
       store.dispatch({ variant: 'SET_DRAG_OVER', dragOver: false })
 
-      const files = Array.from(event.dataTransfer.files)
+      const files = [...event.dataTransfer.files]
       const inputElement = context.inputRef.current
       if (!inputElement) return
 
@@ -727,8 +728,7 @@ const FileUploadDropzone = React.forwardRef<
       if (!items) return
 
       const files: File[] = []
-      for (let i = 0; i < items.length; i++) {
-        const item = items[i]
+      for (const item of items) {
         if (item?.kind === 'file') {
           const file = item.getAsFile()
           if (file) {
@@ -927,7 +927,7 @@ const FileUploadItem = React.forwardRef<HTMLDivElement, FileUploadItemProps>(
     const fileState = useStore((state) => state.files.get(value))
     const fileCount = useStore((state) => state.files.size)
     const fileIndex = useStore((state) => {
-      const files = Array.from(state.files.keys())
+      const files = [...state.files.keys()]
       return files.indexOf(value) + 1
     })
 
@@ -1284,7 +1284,7 @@ const FileUploadItemProgress = React.forwardRef<
       )
     }
 
-    default:
+    default: {
       return (
         <ItemProgressPrimitive
           role='progressbar'
@@ -1309,6 +1309,7 @@ const FileUploadItemProgress = React.forwardRef<
           />
         </ItemProgressPrimitive>
       )
+    }
   }
 })
 FileUploadItemProgress.displayName = ITEM_PROGRESS_NAME

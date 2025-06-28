@@ -203,9 +203,9 @@ export default function EditFlightPage() {
                       <FormItem>
                         <FormLabel>Cổng khởi hành</FormLabel>
                         <Select
-                          onValueChange={(value) =>
-                            field.onChange(parseInt(value))
-                          }
+                          onValueChange={(value) => {
+                            field.onChange(Number.parseInt(value))
+                          }}
                           value={
                             field.value ? field.value.toString() : undefined
                           }
@@ -235,9 +235,9 @@ export default function EditFlightPage() {
                       <FormItem>
                         <FormLabel>Sân bay đi</FormLabel>
                         <Select
-                          onValueChange={(value) =>
-                            field.onChange(parseInt(value))
-                          }
+                          onValueChange={(value) => {
+                            field.onChange(Number.parseInt(value))
+                          }}
                           value={field.value ? field.value.toString() : ''}
                           disabled={airportsLoading}
                         >
@@ -273,9 +273,9 @@ export default function EditFlightPage() {
                       <FormItem>
                         <FormLabel>Sân bay đến</FormLabel>
                         <Select
-                          onValueChange={(value) =>
-                            field.onChange(parseInt(value))
-                          }
+                          onValueChange={(value) => {
+                            field.onChange(Number.parseInt(value))
+                          }}
                           value={field.value ? field.value.toString() : ''}
                           disabled={airportsLoading}
                         >

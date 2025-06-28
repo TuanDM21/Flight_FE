@@ -135,7 +135,9 @@ export function TaskAssignmentField<T extends FieldValues = FieldValues>({
                   type='button'
                   variant='outline'
                   size='sm'
-                  onClick={() => remove(index)}
+                  onClick={() => {
+                    remove(index)
+                  }}
                   className='flex items-center gap-2 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700'
                 >
                   <X className='size-4' />

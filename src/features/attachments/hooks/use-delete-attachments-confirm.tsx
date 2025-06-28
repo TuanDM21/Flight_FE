@@ -35,7 +35,7 @@ export function useDeleteAttachmentsConfirm() {
     if (confirmed) {
       const attachmentIds = attachments
         .map((attachment) => attachment.id)
-        .filter((id): id is number => Boolean(id))
+        .filter(Boolean) as number[]
 
       const deleteAttachmentsPromise = deleteAttachmentsMutation.mutateAsync({
         body: {

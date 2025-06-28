@@ -12,7 +12,7 @@ import tseslint from 'typescript-eslint'
 
 export default tseslint.config(
   gitignore(),
-  { ignores: ['src/routeTree.gen.ts'] },
+  { ignores: ['src/routeTree.gen.ts', 'src/generated/*'] },
   {
     extends: [
       {
@@ -74,6 +74,7 @@ export default tseslint.config(
           ignoreRestSiblings: true,
         },
       ],
+      '@typescript-eslint/no-misused-spread': 'off',
     },
   }
 )

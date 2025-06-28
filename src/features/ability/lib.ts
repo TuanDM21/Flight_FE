@@ -13,7 +13,8 @@ export default function buildAbilityFor(role: AppRoles) {
 
   for (const subject in meta.permissions) {
     const actions = meta.permissions[subject as keyof typeof meta.permissions]
-    actions?.forEach((action) => can(action, subject as AppSubjects))
+    if (actions)
+      for (const action of actions) can(action, subject as AppSubjects)
   }
 
   return build()

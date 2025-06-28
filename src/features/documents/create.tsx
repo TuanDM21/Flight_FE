@@ -55,7 +55,7 @@ export default function CreateDocumentPage() {
                       __uploaded: true,
                     })
                     return file
-                  } catch (error) {
+                  } catch {
                     toast.error(
                       `Tệp đính kèm "${att.fileName}" không phải là tệp hợp lệ. Vui lòng chọn tệp đính kèm khác.`
                     )

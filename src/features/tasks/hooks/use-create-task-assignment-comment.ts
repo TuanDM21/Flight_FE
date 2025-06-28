@@ -32,7 +32,7 @@ export const useCreateTaskAssignmentComment = (assignmentId: number) => {
                 {
                   assignmentId: assignmentId,
                   createdAt: new Date().toISOString(),
-                  id: new Date().getTime(),
+                  id: Date.now(),
                   comment: formValues.comment,
                   user: user,
                 },

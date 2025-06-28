@@ -14,7 +14,7 @@ export const useUploadAttachments = () => {
   const confirmUpload = useConfirmUploadAttachments()
 
   return async (files: File[], options: UploadOptions) => {
-    files.forEach((file) => options.onProgress(file, 10))
+    for (const file of files) options.onProgress(file, 10)
     const uploadRequest = {
       files: files.map((file) => ({
         fileName: file.name,
@@ -29,7 +29,7 @@ export const useUploadAttachments = () => {
     })
 
     const uploadUrls = presignUrlsMutation.data!
-    files.forEach((file) => options.onProgress(file, 20))
+    for (const file of files) options.onProgress(file, 20)
     try {
       const uploadPromises = files.map(async (file) => {
         const fileInfo = uploadUrls.files.find((f) => f.fileName === file.name)
@@ -69,20 +69,20 @@ export const useUploadAttachments = () => {
       )
 
       if (failedUploads.length > 0) {
-        failedUploads.forEach((result) => {
-          const failedIndex = uploadResults.findIndex((r) => r === result)
+        for (const result of failedUploads) {
+          const failedIndex = uploadResults.indexOf(result)
           const file = files[failedIndex]
           if (file) {
             const error = result.reason as Error
             options.onError(file, error)
           }
-        })
+        }
       }
 
       if (successfulUploads.length > 0) {
-        successfulUploads.forEach((result) => {
+        for (const result of successfulUploads) {
           options.onProgress(result.file, 90)
-        })
+        }
 
         const attachmentIds = successfulUploads.map((result) =>
           Number(result.attachmentId)
@@ -95,10 +95,10 @@ export const useUploadAttachments = () => {
           signal: options.abortController?.signal,
         })
 
-        successfulUploads.forEach((result) => {
+        for (const result of successfulUploads) {
           options.onProgress(result.file, 100)
           options.onSuccess(result.file)
-        })
+        }
 
         return {
           success: true,
@@ -110,9 +110,9 @@ export const useUploadAttachments = () => {
     } catch (error) {
       // Handle AbortError specifically
       if (error instanceof Error && error.name === 'AbortError') {
-        files.forEach((file) => {
+        for (const file of files) {
           options.onError(file, error)
-        })
+        }
         return {
           success: false,
           error: error,
@@ -120,9 +120,9 @@ export const useUploadAttachments = () => {
         }
       }
 
-      files.forEach((file) => {
+      for (const file of files) {
         options.onError(file, error as Error)
-      })
+      }
       return {
         success: false,
         error: error as Error,

@@ -20,11 +20,13 @@ import { Route as errors403Import } from './routes/(errors)/403'
 import { Route as errors401Import } from './routes/(errors)/401'
 import { Route as authSignOutImport } from './routes/(auth)/sign-out'
 import { Route as authSignInImport } from './routes/(auth)/sign-in'
+import { Route as AuthenticatedTasksV2RouteImport } from './routes/_authenticated/tasks-v2/route'
 import { Route as AuthenticatedTasksRouteImport } from './routes/_authenticated/tasks/route'
 import { Route as AuthenticatedFlightsRouteImport } from './routes/_authenticated/flights/route'
 import { Route as AuthenticatedDocumentsRouteImport } from './routes/_authenticated/documents/route'
 import { Route as AuthenticatedAttachmentsRouteImport } from './routes/_authenticated/attachments/route'
 import { Route as AuthenticatedTasksIndexImport } from './routes/_authenticated/tasks/index'
+import { Route as AuthenticatedTasksV2IndexImport } from './routes/_authenticated/tasks-v2/index'
 import { Route as AuthenticatedFlightsIndexImport } from './routes/_authenticated/flights/index'
 import { Route as AuthenticatedDocumentsIndexImport } from './routes/_authenticated/documents/index'
 import { Route as AuthenticatedAttachmentsIndexImport } from './routes/_authenticated/attachments/index'
@@ -95,6 +97,12 @@ const authSignInRoute = authSignInImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const AuthenticatedTasksV2RouteRoute = AuthenticatedTasksV2RouteImport.update({
+  id: '/tasks-v2',
+  path: '/tasks-v2',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+
 const AuthenticatedTasksRouteRoute = AuthenticatedTasksRouteImport.update({
   id: '/tasks',
   path: '/tasks',
@@ -125,6 +133,12 @@ const AuthenticatedTasksIndexRoute = AuthenticatedTasksIndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthenticatedTasksRouteRoute,
+} as any)
+
+const AuthenticatedTasksV2IndexRoute = AuthenticatedTasksV2IndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedTasksV2RouteRoute,
 } as any)
 
 const AuthenticatedFlightsIndexRoute = AuthenticatedFlightsIndexImport.update({
@@ -263,6 +277,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTasksRouteImport
       parentRoute: typeof AuthenticatedRouteImport
     }
+    '/_authenticated/tasks-v2': {
+      id: '/_authenticated/tasks-v2'
+      path: '/tasks-v2'
+      fullPath: '/tasks-v2'
+      preLoaderRoute: typeof AuthenticatedTasksV2RouteImport
+      parentRoute: typeof AuthenticatedRouteImport
+    }
     '/(auth)/sign-in': {
       id: '/(auth)/sign-in'
       path: '/sign-in'
@@ -374,6 +395,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/flights/'
       preLoaderRoute: typeof AuthenticatedFlightsIndexImport
       parentRoute: typeof AuthenticatedFlightsRouteImport
+    }
+    '/_authenticated/tasks-v2/': {
+      id: '/_authenticated/tasks-v2/'
+      path: '/'
+      fullPath: '/tasks-v2/'
+      preLoaderRoute: typeof AuthenticatedTasksV2IndexImport
+      parentRoute: typeof AuthenticatedTasksV2RouteImport
     }
     '/_authenticated/tasks/': {
       id: '/_authenticated/tasks/'
@@ -525,11 +553,26 @@ const AuthenticatedTasksRouteRouteWithChildren =
     AuthenticatedTasksRouteRouteChildren,
   )
 
+interface AuthenticatedTasksV2RouteRouteChildren {
+  AuthenticatedTasksV2IndexRoute: typeof AuthenticatedTasksV2IndexRoute
+}
+
+const AuthenticatedTasksV2RouteRouteChildren: AuthenticatedTasksV2RouteRouteChildren =
+  {
+    AuthenticatedTasksV2IndexRoute: AuthenticatedTasksV2IndexRoute,
+  }
+
+const AuthenticatedTasksV2RouteRouteWithChildren =
+  AuthenticatedTasksV2RouteRoute._addFileChildren(
+    AuthenticatedTasksV2RouteRouteChildren,
+  )
+
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAttachmentsRouteRoute: typeof AuthenticatedAttachmentsRouteRouteWithChildren
   AuthenticatedDocumentsRouteRoute: typeof AuthenticatedDocumentsRouteRouteWithChildren
   AuthenticatedFlightsRouteRoute: typeof AuthenticatedFlightsRouteRouteWithChildren
   AuthenticatedTasksRouteRoute: typeof AuthenticatedTasksRouteRouteWithChildren
+  AuthenticatedTasksV2RouteRoute: typeof AuthenticatedTasksV2RouteRouteWithChildren
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
 }
 
@@ -540,6 +583,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedDocumentsRouteRouteWithChildren,
   AuthenticatedFlightsRouteRoute: AuthenticatedFlightsRouteRouteWithChildren,
   AuthenticatedTasksRouteRoute: AuthenticatedTasksRouteRouteWithChildren,
+  AuthenticatedTasksV2RouteRoute: AuthenticatedTasksV2RouteRouteWithChildren,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
 }
 
@@ -552,6 +596,7 @@ export interface FileRoutesByFullPath {
   '/documents': typeof AuthenticatedDocumentsRouteRouteWithChildren
   '/flights': typeof AuthenticatedFlightsRouteRouteWithChildren
   '/tasks': typeof AuthenticatedTasksRouteRouteWithChildren
+  '/tasks-v2': typeof AuthenticatedTasksV2RouteRouteWithChildren
   '/sign-in': typeof authSignInRoute
   '/sign-out': typeof authSignOutRoute
   '/401': typeof errors401Route
@@ -568,6 +613,7 @@ export interface FileRoutesByFullPath {
   '/attachments/': typeof AuthenticatedAttachmentsIndexRoute
   '/documents/': typeof AuthenticatedDocumentsIndexRoute
   '/flights/': typeof AuthenticatedFlightsIndexRoute
+  '/tasks-v2/': typeof AuthenticatedTasksV2IndexRoute
   '/tasks/': typeof AuthenticatedTasksIndexRoute
   '/documents/$document-id/edit': typeof AuthenticatedDocumentsDocumentIdEditRoute
   '/flights/$flight-id/edit': typeof AuthenticatedFlightsFlightIdEditRoute
@@ -593,6 +639,7 @@ export interface FileRoutesByTo {
   '/attachments': typeof AuthenticatedAttachmentsIndexRoute
   '/documents': typeof AuthenticatedDocumentsIndexRoute
   '/flights': typeof AuthenticatedFlightsIndexRoute
+  '/tasks-v2': typeof AuthenticatedTasksV2IndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
   '/documents/$document-id/edit': typeof AuthenticatedDocumentsDocumentIdEditRoute
   '/flights/$flight-id/edit': typeof AuthenticatedFlightsFlightIdEditRoute
@@ -609,6 +656,7 @@ export interface FileRoutesById {
   '/_authenticated/documents': typeof AuthenticatedDocumentsRouteRouteWithChildren
   '/_authenticated/flights': typeof AuthenticatedFlightsRouteRouteWithChildren
   '/_authenticated/tasks': typeof AuthenticatedTasksRouteRouteWithChildren
+  '/_authenticated/tasks-v2': typeof AuthenticatedTasksV2RouteRouteWithChildren
   '/(auth)/sign-in': typeof authSignInRoute
   '/(auth)/sign-out': typeof authSignOutRoute
   '/(errors)/401': typeof errors401Route
@@ -625,6 +673,7 @@ export interface FileRoutesById {
   '/_authenticated/attachments/': typeof AuthenticatedAttachmentsIndexRoute
   '/_authenticated/documents/': typeof AuthenticatedDocumentsIndexRoute
   '/_authenticated/flights/': typeof AuthenticatedFlightsIndexRoute
+  '/_authenticated/tasks-v2/': typeof AuthenticatedTasksV2IndexRoute
   '/_authenticated/tasks/': typeof AuthenticatedTasksIndexRoute
   '/_authenticated/documents/$document-id/edit': typeof AuthenticatedDocumentsDocumentIdEditRoute
   '/_authenticated/flights/$flight-id/edit': typeof AuthenticatedFlightsFlightIdEditRoute
@@ -642,6 +691,7 @@ export interface FileRouteTypes {
     | '/documents'
     | '/flights'
     | '/tasks'
+    | '/tasks-v2'
     | '/sign-in'
     | '/sign-out'
     | '/401'
@@ -658,6 +708,7 @@ export interface FileRouteTypes {
     | '/attachments/'
     | '/documents/'
     | '/flights/'
+    | '/tasks-v2/'
     | '/tasks/'
     | '/documents/$document-id/edit'
     | '/flights/$flight-id/edit'
@@ -682,6 +733,7 @@ export interface FileRouteTypes {
     | '/attachments'
     | '/documents'
     | '/flights'
+    | '/tasks-v2'
     | '/tasks'
     | '/documents/$document-id/edit'
     | '/flights/$flight-id/edit'
@@ -696,6 +748,7 @@ export interface FileRouteTypes {
     | '/_authenticated/documents'
     | '/_authenticated/flights'
     | '/_authenticated/tasks'
+    | '/_authenticated/tasks-v2'
     | '/(auth)/sign-in'
     | '/(auth)/sign-out'
     | '/(errors)/401'
@@ -712,6 +765,7 @@ export interface FileRouteTypes {
     | '/_authenticated/attachments/'
     | '/_authenticated/documents/'
     | '/_authenticated/flights/'
+    | '/_authenticated/tasks-v2/'
     | '/_authenticated/tasks/'
     | '/_authenticated/documents/$document-id/edit'
     | '/_authenticated/flights/$flight-id/edit'
@@ -771,6 +825,7 @@ export const routeTree = rootRoute
         "/_authenticated/documents",
         "/_authenticated/flights",
         "/_authenticated/tasks",
+        "/_authenticated/tasks-v2",
         "/_authenticated/"
       ]
     },
@@ -809,6 +864,13 @@ export const routeTree = rootRoute
         "/_authenticated/tasks/$task-id",
         "/_authenticated/tasks/create",
         "/_authenticated/tasks/"
+      ]
+    },
+    "/_authenticated/tasks-v2": {
+      "filePath": "_authenticated/tasks-v2/route.tsx",
+      "parent": "/_authenticated",
+      "children": [
+        "/_authenticated/tasks-v2/"
       ]
     },
     "/(auth)/sign-in": {
@@ -871,6 +933,10 @@ export const routeTree = rootRoute
     "/_authenticated/flights/": {
       "filePath": "_authenticated/flights/index.tsx",
       "parent": "/_authenticated/flights"
+    },
+    "/_authenticated/tasks-v2/": {
+      "filePath": "_authenticated/tasks-v2/index.tsx",
+      "parent": "/_authenticated/tasks-v2"
     },
     "/_authenticated/tasks/": {
       "filePath": "_authenticated/tasks/index.tsx",

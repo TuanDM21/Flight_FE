@@ -104,7 +104,9 @@ export function DocumentAttachmentField({
                         type='button'
                         size='icon'
                         tooltip='Xem tệp'
-                        onClick={() => onOpenPreview(file)}
+                        onClick={() => {
+                          onOpenPreview(file)
+                        }}
                       >
                         <Eye />
                       </DataTableActionBarAction>

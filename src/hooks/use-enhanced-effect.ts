@@ -10,6 +10,6 @@ import * as React from 'react'
  * and confirm it doesn't apply to your use-case.
  */
 const useEnhancedEffect =
-  typeof window !== 'undefined' ? React.useLayoutEffect : React.useEffect
+  globalThis.window === undefined ? React.useEffect : React.useLayoutEffect
 
 export default useEnhancedEffect
