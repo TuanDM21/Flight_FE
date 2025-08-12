@@ -233,8 +233,7 @@ export interface AlertDialogPayload extends AlertOptions {
   msg: React.ReactNode
 }
 
-export interface AlertDialogProps
-  extends DialogProps<AlertDialogPayload, void> {}
+export interface AlertDialogProps extends DialogProps<AlertDialogPayload> {}
 
 export function AlertDialog({ open, payload, onClose }: AlertDialogProps) {
   const localeText = {
@@ -351,7 +350,7 @@ export function PromptDialog({ open, payload, onClose }: PromptDialogProps) {
       const formData = new FormData(event.currentTarget)
       const value = formData.get('input') ?? ''
       if (typeof value !== 'string') {
-        throw new Error('Value must come from a text input')
+        throw new TypeError('Value must come from a text input')
       }
       await onClose(value)
     } finally {
@@ -379,7 +378,9 @@ export function PromptDialog({ open, payload, onClose }: PromptDialogProps) {
                 id='input'
                 name='input'
                 value={input}
-                onChange={(event) => setInput(event.target.value)}
+                onChange={(event) => {
+                  setInput(event.target.value)
+                }}
                 className='col-span-3'
                 autoFocus
                 required

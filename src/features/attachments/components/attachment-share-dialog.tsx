@@ -89,7 +89,7 @@ export function AttachmentShareDialog({
   payload,
   open,
   onClose,
-}: DialogProps<AttachmentShareDialogPayload, void>) {
+}: DialogProps<AttachmentShareDialogPayload>) {
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
       <DialogContent className='flex h-[80vh] max-h-[800px] flex-col sm:max-w-2xl'>
@@ -229,8 +229,12 @@ function AttachmentShareDialogContent({
                 autoFocus
                 placeholder='Thêm người để chia sẻ...'
                 className='h-auto min-w-20 flex-1'
-                onFocus={() => setIsOpen(true)}
-                onBlur={() => setIsOpen(false)}
+                onFocus={() => {
+                  setIsOpen(true)
+                }}
+                onBlur={() => {
+                  setIsOpen(false)
+                }}
               />
               <ComboboxTrigger className='absolute top-3 right-2'>
                 <ChevronDown className='h-4 w-4' />
@@ -246,8 +250,12 @@ function AttachmentShareDialogContent({
             </div>
             <ComboboxContent
               portal={false}
-              onPointerDownOutside={(e) => e.preventDefault()}
-              onEscapeKeyDown={(event) => event.preventDefault()}
+              onPointerDownOutside={(e) => {
+                e.preventDefault()
+              }}
+              onEscapeKeyDown={(event) => {
+                event.preventDefault()
+              }}
               ref={setContent}
               className='bg-popover text-popover-foreground max-h-[300px] overflow-y-auto border shadow-md'
             >
@@ -296,7 +304,12 @@ function AttachmentShareDialogContent({
         </div>
       </div>
       <div className='flex items-center justify-end space-x-2 border-t pt-4'>
-        <Button variant='outline' onClick={() => onClose()}>
+        <Button
+          variant='outline'
+          onClick={() => {
+            onClose()
+          }}
+        >
           Đóng
         </Button>
         <Button

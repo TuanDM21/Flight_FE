@@ -19,7 +19,7 @@ const attachmentSchema = z.object({
 
 // Base files schema với các validation chung
 const createBaseFilesSchema = () => {
-  let schema = z.array(z.custom<File>())
+  const schema = z.array(z.custom<File>())
 
   return schema
     .max(MAX_FILES_COUNT, `Vui lòng chọn tối đa ${MAX_FILES_COUNT} tệp`)

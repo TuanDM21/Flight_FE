@@ -33,11 +33,11 @@ export function downloadFileFromUrl({
       a.href = url
       if (filename) a.download = filename
 
-      document.body.appendChild(a)
+      document.body.append(a)
 
       a.click()
 
-      document.body.removeChild(a)
+      a.remove()
       resolve()
     } catch (error) {
       reject(error)

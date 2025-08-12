@@ -47,7 +47,7 @@ function NewDocumentFormCard({ index, onRemove }: DocumentCardProps) {
                     __uploaded: true,
                   })
                   return file
-                } catch (error) {
+                } catch {
                   toast.error(
                     `Tệp đính kèm "${att.fileName}" không phải là tệp hợp lệ. Vui lòng chọn tệp đính kèm khác.`
                   )
@@ -162,7 +162,9 @@ function NewDocumentFormCard({ index, onRemove }: DocumentCardProps) {
             type='button'
             variant='outline'
             size='sm'
-            onClick={() => onRemove(index)}
+            onClick={() => {
+              onRemove(index)
+            }}
             className='flex items-center gap-2 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700'
           >
             <X className='size-4' />

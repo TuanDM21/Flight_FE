@@ -38,6 +38,11 @@ export const sidebarData: SidebarData = {
           icon: IconChecklist,
         },
         {
+          title: 'Công việc V2',
+          url: '/tasks-v2',
+          icon: IconChecklist,
+        },
+        {
           title: 'Tài liệu',
           url: '/documents',
           icon: IconFileTypeDoc,

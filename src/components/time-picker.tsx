@@ -37,9 +37,9 @@ export function TimePicker({
     newTime.setHours(currentTime.getHours(), currentTime.getMinutes(), 0, 0)
 
     if (type === 'hour') {
-      newTime.setHours(parseInt(value))
+      newTime.setHours(Number.parseInt(value))
     } else if (type === 'minute') {
-      newTime.setMinutes(parseInt(value))
+      newTime.setMinutes(Number.parseInt(value))
     }
     setTime(newTime)
     onChange?.(newTime)
@@ -76,7 +76,9 @@ export function TimePicker({
                     time && time.getHours() === hour ? 'default' : 'ghost'
                   }
                   className='mb-1 h-8 w-full justify-center text-sm'
-                  onClick={() => handleTimeChange('hour', hour.toString())}
+                  onClick={() => {
+                    handleTimeChange('hour', hour.toString())
+                  }}
                 >
                   {hour.toString().padStart(2, '0')}
                 </Button>
@@ -93,7 +95,9 @@ export function TimePicker({
                     time && time.getMinutes() === minute ? 'default' : 'ghost'
                   }
                   className='mb-1 h-8 w-full justify-center text-sm'
-                  onClick={() => handleTimeChange('minute', minute.toString())}
+                  onClick={() => {
+                    handleTimeChange('minute', minute.toString())
+                  }}
                 >
                   {minute.toString().padStart(2, '0')}
                 </Button>

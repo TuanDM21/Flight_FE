@@ -204,7 +204,9 @@ export function useAssignmentTableColumns({
                     <FormControl>
                       <Select
                         value={field.value ? String(field.value) : ''}
-                        onValueChange={(value) => field.onChange(Number(value))}
+                        onValueChange={(value) => {
+                          field.onChange(Number(value))
+                        }}
                         disabled={!currentRecipientType}
                       >
                         <FormFieldTooltipError
@@ -345,11 +347,11 @@ export function useAssignmentTableColumns({
                             selected={
                               field.value ? new Date(field.value) : undefined
                             }
-                            onSelect={(date) =>
+                            onSelect={(date) => {
                               field.onChange(
                                 date ? date.toISOString() : undefined
                               )
-                            }
+                            }}
                             initialFocus
                             disabled={(date) => date < new Date()}
                             className='rounded-md border'
@@ -457,12 +459,12 @@ export function useAssignmentTableColumns({
                               key={value}
                               value={value}
                               disabled={value === String(assignment.status)}
-                              onClick={() =>
+                              onClick={() => {
                                 handleUpdateAssignmentStatus(
                                   assignment,
                                   correctValue
                                 )
-                              }
+                              }}
                             >
                               {label}
                             </DropdownMenuRadioItem>
@@ -474,7 +476,9 @@ export function useAssignmentTableColumns({
                 </DropdownMenuSub>
               )}
               <DropdownMenuItem
-                onClick={() => handleOpenCommentsSheet(assignment)}
+                onClick={() => {
+                  handleOpenCommentsSheet(assignment)
+                }}
               >
                 Xem bình luận
                 <DropdownMenuShortcut>
@@ -484,14 +488,20 @@ export function useAssignmentTableColumns({
               {isTaskOwner && (
                 <>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => startEditing(assignment)}>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      startEditing(assignment)
+                    }}
+                  >
                     Chỉnh sửa
                     <DropdownMenuShortcut>
                       <IconEdit />
                     </DropdownMenuShortcut>
                   </DropdownMenuItem>
                   <DropdownMenuItem
-                    onClick={() => handleDeleteAssignment(assignment)}
+                    onClick={() => {
+                      handleDeleteAssignment(assignment)
+                    }}
                   >
                     Xóa
                     <DropdownMenuShortcut>

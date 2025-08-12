@@ -122,10 +122,10 @@ function DialogsProvider(props: DialogProviderProps) {
 
   const closeAllDialogs = useEventCallback(function closeAllDialogs() {
     const currentStack = [...stack]
-    currentStack.forEach((entry) => {
+    for (const entry of currentStack) {
       entry.resolve(undefined)
       closeDialogUi(entry.promise)
-    })
+    }
   })
 
   const contextValue = React.useMemo(

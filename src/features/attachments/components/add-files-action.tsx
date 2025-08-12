@@ -138,7 +138,7 @@ export function AddFilesAction() {
     const fileName =
       file.name.length > 20 ? `${file.name.slice(0, 20)}...` : file.name
     toast.error(`Tệp bị từ chối: ${fileName}`, {
-      description: `${message}`,
+      description: message,
     })
   }, [])
 

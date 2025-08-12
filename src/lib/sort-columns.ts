@@ -37,7 +37,7 @@ export function sortColumns<T>(
   data: T[],
   sortConfig: ExtendedColumnSort<T>[]
 ): T[] {
-  if (!sortConfig.length || !data.length) {
+  if (sortConfig.length === 0 || data.length === 0) {
     return [...data]
   }
 

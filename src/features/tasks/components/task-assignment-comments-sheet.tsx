@@ -53,7 +53,9 @@ export const TaskAssignmentCommentsSheet: React.FC<
         }
       }, 200)
 
-      return () => clearTimeout(timer)
+      return () => {
+        clearTimeout(timer)
+      }
     }
   }, [hasComments, isCommentsLoading])
 
@@ -79,7 +81,7 @@ export const TaskAssignmentCommentsSheet: React.FC<
           },
         },
       })
-    } catch (error) {
+    } catch {
       setCommentMessage(messageToSend)
     }
   }
@@ -87,12 +89,12 @@ export const TaskAssignmentCommentsSheet: React.FC<
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
-      handleReply()
+      void handleReply()
     }
   }
 
   return (
-    <Sheet open={open} onOpenChange={() => onClose()}>
+    <Sheet open={open} onOpenChange={() => void onClose()}>
       <SheetContent className='flex h-full w-full flex-col sm:max-w-2xl'>
         <SheetHeader className='flex-shrink-0 border-b'>
           <SheetTitle>Bình luận cho Phân công #{assignmentId}</SheetTitle>
@@ -166,12 +168,14 @@ export const TaskAssignmentCommentsSheet: React.FC<
               <Textarea
                 className='max-h-[200px] min-h-[80px] w-full resize-none rounded border p-2 pr-20'
                 value={commentMessage}
-                onChange={(e) => setCommentMessage(e.target.value)}
+                onChange={(e) => {
+                  setCommentMessage(e.target.value)
+                }}
                 onKeyDown={handleKeyDown}
               />
               <Button
                 className='absolute right-2 bottom-2 h-8 rounded bg-blue-500 px-3 text-sm text-white hover:bg-blue-600'
-                onClick={handleReply}
+                onClick={() => void handleReply()}
                 disabled={
                   !commentMessage.trim() ||
                   createTaskAssignmentCommentMutation.isPending

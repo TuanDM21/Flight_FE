@@ -88,7 +88,9 @@ export const TransferList = memo(function ({
             placeholder='Tìm kiếm'
             className='rounded-tr-none rounded-br-none rounded-bl-none focus-visible:border-blue-500 focus-visible:ring-0'
             value={leftSearch}
-            onChange={(e) => setLeftSearch(e.target.value)}
+            onChange={(e) => {
+              setLeftSearch(e.target.value)
+            }}
           />
           <Button
             className='rounded-tl-none rounded-br-none rounded-bl-none border-l-0'
@@ -112,9 +114,9 @@ export const TransferList = memo(function ({
                 <button
                   type={'button'}
                   className='flex w-full items-center gap-1.5 p-1.5'
-                  onClick={() =>
+                  onClick={() => {
                     toggleSelection(leftList, setLeftList, item.key)
-                  }
+                  }}
                 >
                   {item.selected ? (
                     <SquareCheckIcon className='text-muted-foreground/50 h-5 w-5' />
@@ -142,7 +144,9 @@ export const TransferList = memo(function ({
             placeholder='Tìm kiếm'
             className='rounded-tl-none rounded-br-none rounded-bl-none focus-visible:border-blue-500 focus-visible:ring-0'
             value={rightSearch}
-            onChange={(e) => setRightSearch(e.target.value)}
+            onChange={(e) => {
+              setRightSearch(e.target.value)
+            }}
           />
         </div>
         <ul className='h-[200px] overflow-y-scroll rounded-br-sm rounded-bl-sm border-r border-b border-l p-1.5'>
@@ -158,9 +162,9 @@ export const TransferList = memo(function ({
                 <button
                   type='button'
                   className='flex w-full items-center gap-1.5 p-1.5'
-                  onClick={() =>
+                  onClick={() => {
                     toggleSelection(rightList, setRightList, item.key)
-                  }
+                  }}
                 >
                   {item.selected ? (
                     <SquareCheckIcon className='text-muted-foreground/50 h-4 w-4' />

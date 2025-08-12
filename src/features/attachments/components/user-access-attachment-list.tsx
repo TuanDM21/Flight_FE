@@ -85,7 +85,7 @@ export function UserAccessAttachmentList({
           new Set(
             sharedUserList
               .map((user) => user.id)
-              .filter((id) => id !== undefined) as number[]
+              .filter((id) => id !== undefined)
           )
         )
       } else {

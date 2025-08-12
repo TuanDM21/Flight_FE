@@ -624,6 +624,46 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/tasks/{parentId}/subtasks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Tạo subtask
+         * @description Tạo subtask con cho một task cha
+         */
+        post: operations["createSubtask"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/tasks/test": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Test request body mapping
+         * @description Test endpoint để debug JSON mapping
+         */
+        post: operations["testCreateTask"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/task-documents/attach": {
         parameters: {
             query?: never;
@@ -826,26 +866,6 @@ export interface paths {
          * @description Tạo mới một document
          */
         post: operations["createDocument"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/documents/{documentId}/attachments/assign": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Gán nhiều file đính kèm vào document
-         * @description Gán các attachment đã upload vào document theo documentId
-         */
-        post: operations["assignAttachmentsToDocument"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1088,26 +1108,6 @@ export interface paths {
         patch: operations["updateActualTimeAndNotify"];
         trace?: never;
     };
-    "/api/documents/{documentId}/attachments/remove": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /**
-         * Gỡ nhiều file đính kèm khỏi document
-         * @description Gỡ các attachment khỏi document theo documentId
-         */
-        patch: operations["removeAttachmentsFromDocument"];
-        trace?: never;
-    };
     "/api/users/search": {
         parameters: {
             query?: never;
@@ -1228,6 +1228,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/user-shifts/user/{userId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get user shifts by user ID
+         * @description Get all shifts for a specific user
+         */
+        get: operations["getUserShiftsByUserId"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/user-shifts/on-duty": {
         parameters: {
             query?: never;
@@ -1240,6 +1260,26 @@ export interface paths {
          * @description Get list of user IDs who are on duty at specific date and time
          */
         get: operations["getUsersOnDuty"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/user-shifts/my-shifts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get current user's shifts
+         * @description Get shifts for the currently authenticated user
+         */
+        get: operations["getMyShifts"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1484,6 +1524,166 @@ export interface paths {
          * @description Retrieve a list of all units or units by teamId
          */
         get: operations["getUnits"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/units/assignable": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get assignable units
+         * @description Lấy danh sách unit mà user hiện tại có thể giao việc cho theo phân quyền
+         */
+        get: operations["getAssignableUnits"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/teams/assignable": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get assignable teams
+         * @description Lấy danh sách team mà user hiện tại có thể giao việc cho theo phân quyền
+         */
+        get: operations["getAssignableTeams"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/tasks/{id}/subtasks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Lấy danh sách subtask
+         * @description Lấy tất cả subtask con của một task
+         */
+        get: operations["getSubtasks"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/tasks/{id}/attachments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Lấy danh sách file đính kèm của task
+         * @description Lấy tất cả file đính kèm trực tiếp của task
+         */
+        get: operations["getTaskAttachments"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/tasks/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Tìm kiếm task theo title
+         * @description Tìm kiếm task theo title (case-insensitive)
+         */
+        get: operations["searchTasksByTitle"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/tasks/search/all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Tìm kiếm task theo title hoặc content
+         * @description Tìm kiếm task trong title hoặc content
+         */
+        get: operations["searchAllTasks"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/tasks/root": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Lấy danh sách task gốc
+         * @description Lấy tất cả task không có parent (task gốc)
+         */
+        get: operations["getRootTasks"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/tasks/priority/{priority}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Lọc task theo priority
+         * @description Lấy danh sách task theo mức độ ưu tiên
+         */
+        get: operations["getTasksByPriority"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1824,6 +2024,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/attachments/my-available": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Lấy danh sách file của tôi chưa gán vào task
+         * @description Lấy danh sách file của user hiện tại chưa được gán vào task nào
+         */
+        get: operations["getMyAvailableAttachments"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/attachments/download-url/{attachmentId}": {
         parameters: {
             query?: never;
@@ -1836,6 +2056,26 @@ export interface paths {
          * @description Tạo pre-signed URL để download file từ Azure Blob Storage
          */
         get: operations["generateDownloadUrl"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/attachments/available": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Lấy danh sách file chưa gán vào task
+         * @description Lấy danh sách tất cả file chưa được gán vào task nào (chỉ admin)
+         */
+        get: operations["getAvailableAttachments"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2342,19 +2582,16 @@ export interface components {
              * @description Unit ID of the user
              */
             unitId: number;
-            canCreateActivity?: boolean;
             permissions?: string[];
         };
         /** @description Dữ liệu trả về (object, list hoặc null). Kiểu thực tế phụ thuộc vào API cụ thể. */
         UserShiftDTO: {
             /** Format: int32 */
             id?: number;
-            /** Format: int32 */
-            userId?: number;
-            userName?: string;
             shiftCode?: string;
             startTime?: string;
             endTime?: string;
+            location?: string;
             user?: components["schemas"]["UserDTO"];
             /** Format: date */
             shiftDate?: string;
@@ -2407,9 +2644,13 @@ export interface components {
         UpdateTaskDTO: {
             /** Format: int32 */
             id?: number;
+            title?: string;
             content?: string;
             instructions?: string;
             notes?: string;
+            /** @enum {string} */
+            priority?: "LOW" | "NORMAL" | "HIGH" | "URGENT";
+            attachmentIds?: number[];
         };
         /** @description API response for a single task, data is TaskDTO */
         ApiTaskResponse: {
@@ -2435,6 +2676,7 @@ export interface components {
         TaskDTO: {
             /** Format: int32 */
             id?: number;
+            title?: string;
             content?: string;
             instructions?: string;
             notes?: string;
@@ -2445,7 +2687,9 @@ export interface components {
             /** Format: int32 */
             createdBy?: number;
             /** @enum {string} */
-            status?: "NEW" | "ASSIGNED" | "IN_PROGRESS" | "UNDER_REVIEW" | "PARTIALLY_COMPLETED" | "COMPLETED" | "LATE_COMPLETED" | "CANCELLED";
+            status?: "OPEN" | "IN_PROGRESS" | "COMPLETED";
+            /** @enum {string} */
+            priority?: "LOW" | "NORMAL" | "HIGH" | "URGENT";
         };
         Shift: {
             /** Format: int32 */
@@ -2797,7 +3041,7 @@ export interface components {
             /** Format: date-time */
             dueAt?: string;
             /** @enum {string} */
-            status?: "ASSIGNED" | "IN_PROGRESS" | "SUBMITTED" | "REVIEWING" | "REJECTED" | "COMPLETED" | "LATE_COMPLETED" | "REOPENED" | "CANCELLED";
+            status?: "WORKING" | "DONE" | "CANCELLED";
             note?: string;
         };
         /** @description API response for a single assignment */
@@ -2834,7 +3078,7 @@ export interface components {
             /** Format: date-time */
             completedAt?: string;
             /** @enum {string} */
-            status?: "ASSIGNED" | "IN_PROGRESS" | "SUBMITTED" | "REVIEWING" | "REJECTED" | "COMPLETED" | "LATE_COMPLETED" | "REOPENED" | "CANCELLED";
+            status?: "WORKING" | "DONE" | "CANCELLED";
             note?: string;
             assignedByUser?: components["schemas"]["UserDTO"];
             completedByUser?: components["schemas"]["UserDTO"];
@@ -3024,19 +3268,25 @@ export interface components {
             dueAt?: string;
             note?: string;
         };
-        CreateDocumentInTaskRequest: {
-            documentType?: string;
-            content?: string;
-            notes?: string;
-            attachmentIds?: number[];
-        };
         CreateTaskRequest: {
+            title?: string;
             content?: string;
             instructions?: string;
             notes?: string;
+            /** @enum {string} */
+            priority?: "LOW" | "NORMAL" | "HIGH" | "URGENT";
             assignments?: components["schemas"]["AssignmentRequest"][];
-            documentIds?: number[];
-            newDocuments?: components["schemas"]["CreateDocumentInTaskRequest"][];
+            attachmentIds?: number[];
+        };
+        CreateSubtaskRequest: {
+            title?: string;
+            content?: string;
+            instructions?: string;
+            notes?: string;
+            /** @enum {string} */
+            priority?: "LOW" | "NORMAL" | "HIGH" | "URGENT";
+            assignments?: components["schemas"]["AssignmentRequest"][];
+            attachmentIds?: number[];
         };
         /** @description API response for task document action */
         ApiTaskDocumentActionResponse: {
@@ -3103,11 +3353,6 @@ export interface components {
             notes?: string;
             attachmentIds?: number[];
         };
-        /** @description Request để gán các attachment vào document */
-        AttachmentAssignRequest: {
-            /** @description Danh sách id của attachment sẽ gán vào document */
-            attachmentIds: number[];
-        };
         RegisterRequest: {
             name: string;
             email: string;
@@ -3118,38 +3363,6 @@ export interface components {
             teamId?: number;
             /** Format: int32 */
             unitId?: number;
-        };
-        /**
-         * @description Response cho các trường hợp lỗi
-         * @example {
-         *       "message": "Không tìm thấy tài nguyên",
-         *       "statusCode": 404,
-         *       "errorDetails": null,
-         *       "success": false
-         *     }
-         */
-        ApiErrorResponse: {
-            /**
-             * @description Thông báo lỗi
-             * @example Không tìm thấy tài nguyên
-             */
-            message?: string;
-            /**
-             * Format: int32
-             * @description Mã trạng thái HTTP
-             * @example 404
-             */
-            statusCode?: number;
-            /**
-             * @description Chi tiết lỗi (nếu có)
-             * @example null
-             */
-            errorDetails?: Record<string, never> | null;
-            /**
-             * @description Trạng thái thành công hay thất bại
-             * @example false
-             */
-            success?: boolean;
         };
         /** @description API response for register, data is RegisterResponse */
         ApiRegisterResponse: {
@@ -3188,6 +3401,38 @@ export interface components {
             unitName?: string;
             /** Format: int32 */
             teamId?: number;
+        };
+        /**
+         * @description Response cho các trường hợp lỗi
+         * @example {
+         *       "message": "Không tìm thấy tài nguyên",
+         *       "statusCode": 404,
+         *       "errorDetails": null,
+         *       "success": false
+         *     }
+         */
+        ApiErrorResponse: {
+            /**
+             * @description Thông báo lỗi
+             * @example Không tìm thấy tài nguyên
+             */
+            message?: string;
+            /**
+             * Format: int32
+             * @description Mã trạng thái HTTP
+             * @example 404
+             */
+            statusCode?: number;
+            /**
+             * @description Chi tiết lỗi (nếu có)
+             * @example null
+             */
+            errorDetails?: Record<string, never> | null;
+            /**
+             * @description Trạng thái thành công hay thất bại
+             * @example false
+             */
+            success?: boolean;
         };
         LoginRequest: {
             email: string;
@@ -3937,22 +4182,11 @@ export interface components {
              */
             success?: boolean;
         };
-        DocumentDetailDTO: {
-            /** Format: int32 */
-            id?: number;
-            documentType?: string;
-            content?: string;
-            notes?: string;
-            /** Format: date-time */
-            createdAt?: string;
-            /** Format: date-time */
-            updatedAt?: string;
-            attachments?: components["schemas"]["AttachmentDTO"][];
-        };
         /** @description Dữ liệu trả về (object, list hoặc null). Kiểu thực tế phụ thuộc vào API cụ thể. */
         TaskDetailDTO: {
             /** Format: int32 */
             id?: number;
+            title?: string;
             content?: string;
             instructions?: string;
             notes?: string;
@@ -3962,9 +4196,14 @@ export interface components {
             updatedAt?: string;
             createdByUser?: components["schemas"]["UserDTO"];
             assignments?: components["schemas"]["AssignmentDTO"][];
-            documents?: components["schemas"]["DocumentDetailDTO"][];
             /** @enum {string} */
-            status?: "NEW" | "ASSIGNED" | "IN_PROGRESS" | "UNDER_REVIEW" | "PARTIALLY_COMPLETED" | "COMPLETED" | "LATE_COMPLETED" | "CANCELLED";
+            status?: "OPEN" | "IN_PROGRESS" | "COMPLETED";
+            /** @enum {string} */
+            priority?: "LOW" | "NORMAL" | "HIGH" | "URGENT";
+            /** Format: int32 */
+            parentId?: number;
+            subtasks?: components["schemas"]["TaskDetailDTO"][];
+            attachments?: components["schemas"]["AttachmentDTO"][];
         };
         /** @description API response for a single task detail, data is TaskDetailDTO */
         ApiTaskDetailResponse: {
@@ -6198,6 +6437,65 @@ export interface operations {
             };
         };
     };
+    createSubtask: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                parentId: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateSubtaskRequest"];
+            };
+        };
+        responses: {
+            /** @description Tạo subtask thành công */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiTaskResponse"];
+                };
+            };
+            /** @description Không tìm thấy task cha */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiTaskResponse"];
+                };
+            };
+        };
+    };
+    testCreateTask: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateTaskRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiTaskResponse"];
+                };
+            };
+        };
+    };
     attachDocuments: {
         parameters: {
             query: {
@@ -6571,32 +6869,6 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["ApiDocumentResponse"];
-                };
-            };
-        };
-    };
-    assignAttachmentsToDocument: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                documentId: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["AttachmentAssignRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ApiResponseCustom"];
                 };
             };
         };
@@ -7053,32 +7325,6 @@ export interface operations {
             };
         };
     };
-    removeAttachmentsFromDocument: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                documentId: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["AttachmentAssignRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ApiResponseCustom"];
-                };
-            };
-        };
-    };
     searchUsersByKeyword: {
         parameters: {
             query: {
@@ -7214,6 +7460,37 @@ export interface operations {
             };
         };
     };
+    getUserShiftsByUserId: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                userId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successfully retrieved user's shifts */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiAllUserShiftsResponse"];
+                };
+            };
+            /** @description User not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiAllUserShiftsResponse"];
+                };
+            };
+        };
+    };
     getUsersOnDuty: {
         parameters: {
             query: {
@@ -7233,6 +7510,35 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["ApiUsersOnDutyResponse"];
+                };
+            };
+        };
+    };
+    getMyShifts: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successfully retrieved user's shifts */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiAllUserShiftsResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiAllUserShiftsResponse"];
                 };
             };
         };
@@ -7532,6 +7838,212 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["ApiAllUnitsResponse"];
+                };
+            };
+        };
+    };
+    getAssignableUnits: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiAllUnitsResponse"];
+                };
+            };
+        };
+    };
+    getAssignableTeams: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiAllTeamsResponse"];
+                };
+            };
+        };
+    };
+    getSubtasks: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Thành công */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiAllTasksResponse"];
+                };
+            };
+        };
+    };
+    getTaskAttachments: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Thành công */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Không tìm thấy task */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    searchTasksByTitle: {
+        parameters: {
+            query: {
+                title: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Thành công */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiAllTasksResponse"];
+                };
+            };
+            /** @description Thiếu từ khóa tìm kiếm */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiAllTasksResponse"];
+                };
+            };
+        };
+    };
+    searchAllTasks: {
+        parameters: {
+            query: {
+                keyword: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Thành công */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiAllTasksResponse"];
+                };
+            };
+            /** @description Thiếu từ khóa tìm kiếm */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiAllTasksResponse"];
+                };
+            };
+        };
+    };
+    getRootTasks: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Thành công */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiAllTasksResponse"];
+                };
+            };
+        };
+    };
+    getTasksByPriority: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                priority: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Thành công */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiAllTasksResponse"];
+                };
+            };
+            /** @description Priority không hợp lệ */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiAllTasksResponse"];
                 };
             };
         };
@@ -7952,6 +8464,26 @@ export interface operations {
             };
         };
     };
+    getMyAvailableAttachments: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lấy danh sách file thành công */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiAttachmentListResponse"];
+                };
+            };
+        };
+    };
     generateDownloadUrl: {
         parameters: {
             query?: never;
@@ -7988,6 +8520,35 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["ApiDownloadUrlResponse"];
+                };
+            };
+        };
+    };
+    getAvailableAttachments: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Lấy danh sách file thành công */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiAttachmentListResponse"];
+                };
+            };
+            /** @description Không có quyền truy cập */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiAttachmentListResponse"];
                 };
             };
         };

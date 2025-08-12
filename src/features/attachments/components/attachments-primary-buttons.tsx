@@ -16,7 +16,9 @@ export function AttachmentsPrimaryButtons() {
       <Button
         variant='outline'
         className='space-x-1'
-        onClick={() => void handleRefresh()}
+        onClick={() => {
+          handleRefresh()
+        }}
         disabled={isFetching}
       >
         <span>{isFetching ? 'Đang làm mới...' : 'Làm mới'}</span>

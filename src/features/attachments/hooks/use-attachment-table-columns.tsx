@@ -35,7 +35,7 @@ export const useAttachmentTableColumns = (
   const dialogs = useDialogs()
 
   const handleViewDetails = (attachment: AttachmentItem) => {
-    dialogs.sheet(AttachmentDetailSheet, {
+    void dialogs.sheet(AttachmentDetailSheet, {
       attachment,
     })
   }
@@ -51,14 +51,18 @@ export const useAttachmentTableColumns = (
             table.getIsAllPageRowsSelected() ||
             (table.getIsSomePageRowsSelected() && 'indeterminate')
           }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          onCheckedChange={(value) => {
+            table.toggleAllPageRowsSelected(!!value)
+          }}
           aria-label='Chọn tất cả'
         />
       ),
       cell: ({ row }) => (
         <Checkbox
           checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          onCheckedChange={(value) => {
+            row.toggleSelected(!!value)
+          }}
           aria-label='Chọn hàng'
         />
       ),
@@ -87,7 +91,9 @@ export const useAttachmentTableColumns = (
             variant='link'
             size='sm'
             className='h-auto p-0'
-            onClick={() => handleViewDetails(cell.row.original)}
+            onClick={() => {
+              handleViewDetails(cell.row.original)
+            }}
           >
             #{attachmentId ?? 'N/A'}
           </Button>
@@ -126,7 +132,7 @@ export const useAttachmentTableColumns = (
         <DataTableColumnHeader column={column} title='Kích thước' />
       ),
       cell: ({ row }) => {
-        const size = (row.getValue('fileSize') as number) || 0
+        const size = row.getValue<number>('fileSize') || 0
         return (
           <span className='text-muted-foreground text-sm'>
             {formatFileSize(size)}
@@ -149,7 +155,7 @@ export const useAttachmentTableColumns = (
         <DataTableColumnHeader column={column} title='Ngày tải lên' />
       ),
       cell: ({ row }) => {
-        const dateValue = row.getValue('createdAt') as string
+        const dateValue = row.getValue<string>('createdAt')
         if (!dateValue) return <span className='text-muted-foreground'>-</span>
 
         const date = new Date(dateValue)
@@ -178,7 +184,7 @@ export const useAttachmentTableColumns = (
       <DataTableColumnHeader column={column} title='Loại tệp' />
     ),
     cell: ({ row }) => {
-      const fileName = row.getValue('fileName') as string
+      const fileName = row.getValue<string>('fileName')
       return <FileExtensionCell fileName={fileName} />
     },
     size: 80,

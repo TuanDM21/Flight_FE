@@ -46,21 +46,21 @@ export const useGrantAttachmentAccess = () => {
       // Optimistically update the cache with new shared users
       if (previousSharedUsers && allUsers?.data && currentUser) {
         const usersToShare = allUsers.data.filter((user) =>
-          userIds.includes(user.id!)
+          userIds.includes(user.id)
         )
 
         const newSharedUsers: SharedAttachmentUserItem[] = usersToShare.map(
           (user) => ({
-            id: Date.now() + user.id!, // Temporary ID for optimistic update
+            id: Date.now() + user.id, // Temporary ID for optimistic update
             attachmentId,
             fileName: undefined, // Will be filled by server
             filePath: undefined, // Will be filled by server
             fileSize: undefined, // Will be filled by server
             sharedBy: {
-              id: currentUser.id!,
-              name: currentUser.name!,
-              email: currentUser.email!,
-              roleName: currentUser.roleName!,
+              id: currentUser.id,
+              name: currentUser.name,
+              email: currentUser.email,
+              roleName: currentUser.roleName,
               teamName: currentUser.teamName || '',
               unitName: currentUser.unitName || '',
               roleId: currentUser.roleId || 0,
@@ -70,10 +70,10 @@ export const useGrantAttachmentAccess = () => {
               permissions: currentUser.permissions,
             },
             sharedWith: {
-              id: user.id!,
-              name: user.name!,
-              email: user.email!,
-              roleName: user.roleName!,
+              id: user.id,
+              name: user.name,
+              email: user.email,
+              roleName: user.roleName,
               teamName: user.teamName || '',
               unitName: user.unitName || '',
               roleId: user.roleId || 0,

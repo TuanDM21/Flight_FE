@@ -58,6 +58,9 @@ function FileExtensionCell({ fileName }: { fileName: string | undefined }) {
     </span>
   )
 }
+const getInitialCharacter = (name: string) => {
+  return name ? name.charAt(0).toUpperCase() : 'U'
+}
 
 function SharedByCell({
   sharedBy,
@@ -66,10 +69,6 @@ function SharedByCell({
 }) {
   if (!sharedBy) {
     return <span className='text-muted-foreground'>Không xác định</span>
-  }
-
-  const getInitialCharacter = (name: string) => {
-    return name ? name.charAt(0).toUpperCase() : 'U'
   }
 
   return (
@@ -125,16 +124,18 @@ export const useSharedWithMeAttachmentTableColumns =
               table.getIsAllPageRowsSelected() ||
               (table.getIsSomePageRowsSelected() && 'indeterminate')
             }
-            onCheckedChange={(value) =>
+            onCheckedChange={(value) => {
               table.toggleAllPageRowsSelected(!!value)
-            }
+            }}
             aria-label='Chọn tất cả'
           />
         ),
         cell: ({ row }) => (
           <Checkbox
             checked={row.getIsSelected()}
-            onCheckedChange={(value) => row.toggleSelected(!!value)}
+            onCheckedChange={(value) => {
+              row.toggleSelected(!!value)
+            }}
             aria-label='Chọn hàng'
           />
         ),
@@ -190,7 +191,7 @@ export const useSharedWithMeAttachmentTableColumns =
           <DataTableColumnHeader column={column} title='Kích thước' />
         ),
         cell: ({ row }) => {
-          const size = (row.getValue('fileSize') as number) || 0
+          const size = row.getValue<number>('fileSize') || 0
           return (
             <span className='text-muted-foreground text-sm'>
               {formatFileSize(size)}
@@ -212,7 +213,7 @@ export const useSharedWithMeAttachmentTableColumns =
           <DataTableColumnHeader column={column} title='Ngày chia sẻ' />
         ),
         cell: ({ row }) => {
-          const dateValue = row.getValue('sharedAt') as string
+          const dateValue = row.getValue<string>('sharedAt')
           if (!dateValue)
             return <span className='text-muted-foreground'>-</span>
 
@@ -243,7 +244,7 @@ export const useSharedWithMeAttachmentTableColumns =
           <DataTableColumnHeader column={column} title='Loại tệp' />
         ),
         cell: ({ row }) => {
-          const fileName = row.getValue('fileName') as string
+          const fileName = row.getValue<string>('fileName')
           return <FileExtensionCell fileName={fileName} />
         },
         size: 80,
