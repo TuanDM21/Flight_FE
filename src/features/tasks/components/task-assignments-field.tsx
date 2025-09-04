@@ -1,17 +1,15 @@
 import { format } from 'date-fns'
 import {
-  useFieldArray,
-  useWatch,
-  UseFormReturn,
+  ArrayPath,
   FieldValues,
   Path,
-  ArrayPath,
+  useFieldArray,
+  UseFormReturn,
+  useWatch,
 } from 'react-hook-form'
 import { dateFormatPatterns } from '@/config/date'
-import { CalendarIcon, PlusCircle, UserIcon, X } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { PlusCircle, UserPlus2, UserX } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Calendar } from '@/components/ui/calendar'
 import { Card, CardContent } from '@/components/ui/card'
 import {
   FormControl,
@@ -21,11 +19,6 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
-import {
   Select,
   SelectContent,
   SelectItem,
@@ -33,17 +26,18 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
+import { DateTimePicker } from '@/components/datetime-picker'
 import { useRecipientOptions } from '../hooks/use-recipient-options'
 
-type TaskAssignmentFieldProps<T extends FieldValues = FieldValues> = {
+type TaskAssignmentsFieldProps<T extends FieldValues = FieldValues> = {
   form: UseFormReturn<T>
   name: ArrayPath<T>
 }
 
-export function TaskAssignmentField<T extends FieldValues = FieldValues>({
+export function TaskAssignmentsField<T extends FieldValues = FieldValues>({
   form,
   name,
-}: TaskAssignmentFieldProps<T>) {
+}: TaskAssignmentsFieldProps<T>) {
   const { getRecipientOptions, deriveRecipientOptions } = useRecipientOptions()
 
   const { fields, append, remove } = useFieldArray({
@@ -66,49 +60,22 @@ export function TaskAssignmentField<T extends FieldValues = FieldValues>({
   }
 
   return (
-    <div className='space-y-6'>
-      {/* Content Section */}
-      <div className='space-y-6'>
-        <div className='flex items-center justify-between border-b border-gray-200 pb-4'>
-          <div>
-            <h3 className='text-xl font-semibold text-gray-800'>
-              Danh sách phân công
-            </h3>
-            <p className='text-sm text-gray-600'>
-              Quản lý các phân công cho nhiệm vụ này
-            </p>
-          </div>
-          {fields.length > 0 && fields.length < 5 && (
-            <Button
-              type='button'
-              variant='default'
-              size='sm'
-              onClick={handleAddAssignment}
-              className='flex items-center gap-2'
-            >
-              <PlusCircle className='size-4' />
-              Thêm phân công
-            </Button>
-          )}
-        </div>
+    <div className='space-y-4'>
+      <FormLabel>Mức độ ưu tiên</FormLabel>
 
+      <div className='space-y-6'>
         {fields.length === 0 && (
-          <Card className='border-2 border-dashed border-gray-300'>
+          <Card className='border-2 border-dashed'>
             <CardContent className='flex flex-col items-center justify-center py-12'>
-              <div className='flex size-16 items-center justify-center rounded-full bg-gray-100'>
-                <UserIcon className='size-8 text-gray-400' />
-              </div>
-              <p className='text-muted-foreground mt-2 text-sm'>
-                Chưa có phân công nào
-              </p>
               <Button
-                type='button'
-                variant='secondary'
+                variant='outline'
+                className='h-12 rounded-full px-2.5'
                 onClick={handleAddAssignment}
-                className='mt-6'
               >
-                <PlusCircle className='mr-2 size-4' />
-                Thêm phân công đầu tiên
+                <span className='bg-primary text-primary-foreground flex size-7 items-center justify-center rounded-full'>
+                  <UserPlus2 />
+                </span>
+                Thêm phân công
               </Button>
             </CardContent>
           </Card>
@@ -127,7 +94,7 @@ export function TaskAssignmentField<T extends FieldValues = FieldValues>({
                       Phân công {index + 1}
                     </h4>
                     <p className='text-sm text-gray-500'>
-                      Chỉ định người thực hiện và thời hạn hoàn thành
+                      Chỉ định đối tượng thực hiện và thời hạn hoàn thành
                     </p>
                   </div>
                 </div>
@@ -135,10 +102,12 @@ export function TaskAssignmentField<T extends FieldValues = FieldValues>({
                   type='button'
                   variant='outline'
                   size='sm'
-                  onClick={() => remove(index)}
+                  onClick={() => {
+                    remove(index)
+                  }}
                   className='flex items-center gap-2 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700'
                 >
-                  <X className='size-4' />
+                  <UserX className='size-4' />
                   Xóa phân công
                 </Button>
               </div>
@@ -148,9 +117,9 @@ export function TaskAssignmentField<T extends FieldValues = FieldValues>({
                     control={form.control}
                     name={`${name}.${index}.recipientType` as Path<T>}
                     render={({ field }) => (
-                      <FormItem>
+                      <FormItem className='w-full'>
                         <FormLabel className='text-sm font-medium text-gray-700'>
-                          Loại người nhận *
+                          Loại đối tượng nhận
                         </FormLabel>
                         <Select
                           onValueChange={(value) => {
@@ -168,8 +137,8 @@ export function TaskAssignmentField<T extends FieldValues = FieldValues>({
                           value={field.value}
                         >
                           <FormControl>
-                            <SelectTrigger className='border-gray-300'>
-                              <SelectValue placeholder='Chọn loại người nhận' />
+                            <SelectTrigger className='w-full'>
+                              <SelectValue placeholder='Chọn loại đối tượng nhận' />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -195,9 +164,9 @@ export function TaskAssignmentField<T extends FieldValues = FieldValues>({
                       })
 
                       return (
-                        <FormItem>
+                        <FormItem className='w-full'>
                           <FormLabel className='text-sm font-medium text-gray-700'>
-                            Người nhận *
+                            Đối tượng nhận
                           </FormLabel>
                           <Select
                             onValueChange={(value) => {
@@ -207,8 +176,8 @@ export function TaskAssignmentField<T extends FieldValues = FieldValues>({
                             disabled={!currentRecipientType}
                           >
                             <FormControl>
-                              <SelectTrigger className='border-gray-300'>
-                                <SelectValue placeholder='Chọn người nhận' />
+                              <SelectTrigger className='w-full border-gray-300'>
+                                <SelectValue placeholder='Chọn đối tượng nhận' />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
@@ -219,7 +188,7 @@ export function TaskAssignmentField<T extends FieldValues = FieldValues>({
                                 if (options.length === 0) {
                                   return (
                                     <div className='px-2 py-1.5 text-sm text-gray-500'>
-                                      Không có người nhận nào
+                                      Vui lòng chọn loại người nhận
                                     </div>
                                   )
                                 }
@@ -244,48 +213,17 @@ export function TaskAssignmentField<T extends FieldValues = FieldValues>({
                     control={form.control}
                     name={`${name}.${index}.dueAt` as Path<T>}
                     render={({ field }) => (
-                      <FormItem>
+                      <FormItem className='w-full'>
                         <FormLabel className='text-sm font-medium text-gray-700'>
-                          Ngày hạn *
+                          Thời hạn hoàn thành
                         </FormLabel>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button
-                                variant='outline'
-                                className={cn(
-                                  'w-full border-gray-300 pl-3 text-left font-normal',
-                                  !field.value && 'text-gray-500'
-                                )}
-                              >
-                                {field.value ? (
-                                  format(
-                                    new Date(field.value),
-                                    dateFormatPatterns.fullDate
-                                  )
-                                ) : (
-                                  <span>Chọn ngày hạn</span>
-                                )}
-                                <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
-                          <PopoverContent className='w-auto p-0' align='start'>
-                            <Calendar
-                              mode='single'
-                              selected={
-                                field.value ? new Date(field.value) : undefined
-                              }
-                              onSelect={(date) => {
-                                field.onChange(
-                                  date ? date.toISOString() : undefined
-                                )
-                              }}
-                              disabled={(date) => date < new Date()}
-                              className='rounded-md border'
-                            />
-                          </PopoverContent>
-                        </Popover>
+                        <FormControl>
+                          <DateTimePicker
+                            value={field.value}
+                            onChange={field.onChange}
+                            placeholder='Chọn thời hạn hoàn thành'
+                          />
+                        </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -296,13 +234,13 @@ export function TaskAssignmentField<T extends FieldValues = FieldValues>({
                   control={form.control}
                   name={`${name}.${index}.note` as Path<T>}
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className='w-full'>
                       <FormLabel className='text-sm font-medium text-gray-700'>
-                        Ghi chú
+                        Ghi chú phân công
                       </FormLabel>
                       <FormControl>
                         <Textarea
-                          placeholder='Thêm ghi chú, hướng dẫn hoặc yêu cầu đặc biệt cho phân công này...'
+                          placeholder='Nhập ghi chú phân công'
                           className='min-h-24 border-gray-300'
                           {...field}
                         />
@@ -317,7 +255,6 @@ export function TaskAssignmentField<T extends FieldValues = FieldValues>({
                   assignmentValues?.[index]?.recipientType && (
                     <div className='rounded-lg border border-purple-200 bg-purple-50 p-3'>
                       <div className='flex items-center gap-2'>
-                        <div className='size-2 rounded-full'></div>
                         <span className='text-sm font-medium'>
                           Tóm tắt phân công
                         </span>
@@ -341,7 +278,7 @@ export function TaskAssignmentField<T extends FieldValues = FieldValues>({
                             )?.label || ''
 
                           const dueDateText = dueDate
-                            ? ` - Hạn: ${format(new Date(dueDate), dateFormatPatterns.fullDate)}`
+                            ? ` - Thời hạn hoàn thành: ${format(new Date(dueDate), dateFormatPatterns.fullDate)}`
                             : ''
 
                           return `${recipientTypeName}: ${recipientLabel}${dueDateText}`

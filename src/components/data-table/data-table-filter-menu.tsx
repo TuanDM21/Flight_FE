@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import { format } from 'date-fns'
 import type { Column, Table } from '@tanstack/react-table'
 import type { ExtendedColumnFilter, FilterOperator } from '@/types/data-table'
 import {
@@ -188,7 +189,9 @@ export function DataTableFilterMenu<TData>({
         filters.length > 0
       ) {
         event.preventDefault()
-        onFilterRemove(filters.at(-1)?.filterId ?? '')
+        onFilterRemove(
+          filters.length > 0 ? filters[filters.length - 1].filterId : ''
+        )
       }
     },
     [filters, onFilterRemove]
@@ -555,7 +558,7 @@ function FilterValueSelector<TData>({
           mode='single'
           selected={value ? new Date(value) : undefined}
           onSelect={(date) => {
-            onSelect(date?.getTime().toString() ?? '')
+            onSelect(date ? format(date, 'yyyy-MM-dd') : '')
           }}
         />
       )
@@ -844,8 +847,8 @@ function onFilterInputRender<TData>({
                   onFilterUpdate(filter.filterId, {
                     value: date
                       ? [
-                          (date.from?.getTime() ?? '').toString(),
-                          (date.to?.getTime() ?? '').toString(),
+                          date.from ? format(date.from, 'yyyy-MM-dd') : '',
+                          date.to ? format(date.to, 'yyyy-MM-dd') : '',
                         ]
                       : [],
                   })
@@ -860,7 +863,7 @@ function onFilterInputRender<TData>({
                 }
                 onSelect={(date) => {
                   onFilterUpdate(filter.filterId, {
-                    value: (date?.getTime() ?? '').toString(),
+                    value: date ? format(date, 'yyyy-MM-dd') : '',
                   })
                 }}
               />

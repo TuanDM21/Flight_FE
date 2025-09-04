@@ -9,17 +9,17 @@ import {
   DataTableActionBarAction,
   DataTableActionBarSelection,
 } from '@/components/data-table/data-table-action-bar'
-import { Task } from '@/features/tasks/types'
+import { HierarchicalTask } from '@/features/tasks/types'
 import { useDeleteTasksConfirm } from '../hooks/use-delete-tasks-confirm'
 
 interface TasksTableActionBarProps {
-  table: Table<Task>
+  table: Table<HierarchicalTask>
 }
 
 export function TasksTableActionBar({ table }: TasksTableActionBarProps) {
   const rows = table.getFilteredSelectedRowModel().rows
   const searchParams = TasksRoute.useSearch()
-  const currentType = searchParams.type || 'assigned'
+  const currentType = searchParams.type
   const { onDeleteTasks } = useDeleteTasksConfirm(currentType)
 
   const handleDeleteSelected = () => {
@@ -28,7 +28,10 @@ export function TasksTableActionBar({ table }: TasksTableActionBarProps) {
   }
 
   return (
-    <DataTableActionBar table={table} visible={rows.length > 0}>
+    <DataTableActionBar
+      table={table}
+      visible={rows.length > 0 && currentType !== 'received'}
+    >
       <DataTableActionBarSelection table={table} />
       <Separator
         orientation='vertical'

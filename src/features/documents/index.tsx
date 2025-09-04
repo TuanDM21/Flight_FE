@@ -31,7 +31,7 @@ export function DocumentsPage() {
   })
 
   return (
-    <div className='flex h-full flex-col px-4 py-2'>
+    <div className='flex h-full flex-col py-2'>
       <div className='mb-2 flex flex-wrap items-center justify-between space-y-2 gap-x-4'>
         <div>
           <h2 className='text-2xl font-bold tracking-tight'>
@@ -40,7 +40,7 @@ export function DocumentsPage() {
         </div>
         <DocumentsPrimaryButtons />
       </div>
-      <div className='-mx-4 flex-1 overflow-hidden px-4 py-1'>
+      <div className='-mx-4 flex-1 overflow-hidden py-1'>
         <React.Suspense fallback={<div>Đang tải...</div>}>
           <DataTable table={table} className='h-full'>
             <DocumentsTableActionBar table={table} />

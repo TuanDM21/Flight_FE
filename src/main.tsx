@@ -4,11 +4,11 @@ import {
   QueryCache,
   QueryClient,
   QueryClientProvider,
-  QueryKey,
 } from '@tanstack/react-query'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { NuqsAdapter } from 'nuqs/adapters/react'
 import { toast } from 'sonner'
+import { Toaster } from './components/ui/sonner'
 import { AuthProvider, useAuth } from './context/auth-context'
 import { FontProvider } from './context/font-context'
 import { ThemeProvider } from './context/theme-context'
@@ -20,14 +20,6 @@ import { FetchError } from './models/fetch-error'
 import { routeTree } from './routeTree.gen'
 
 loadEnvVariables()
-
-declare module '@tanstack/react-query' {
-  interface Register {
-    mutationMeta: {
-      invalidatesQuery?: QueryKey
-    }
-  }
-}
 
 const queryClient = new QueryClient({
   mutationCache: new MutationCache({
@@ -72,12 +64,6 @@ const router = createRouter({
   defaultPreloadStaleTime: 0,
 })
 
-declare module '@tanstack/react-router' {
-  interface Register {
-    router: typeof router
-  }
-}
-
 export function App() {
   const auth = useAuth()
   const ability = useAbility()
@@ -96,12 +82,14 @@ if (!rootElement.innerHTML) {
             <FontProvider>
               <AbilityProvider>
                 <App />
+                <Toaster richColors className='pointer-events-auto' />
               </AbilityProvider>
             </FontProvider>
           </ThemeProvider>
         </AuthProvider>
       </QueryClientProvider>
     </NuqsAdapter>
+
     // </StrictMode>
   )
 }

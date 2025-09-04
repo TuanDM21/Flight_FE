@@ -36,33 +36,26 @@ export function DataTableToolbar<TData>({
     <div
       role='toolbar'
       aria-orientation='horizontal'
-      className={cn(
-        'flex w-full items-start justify-between gap-2 p-1',
-        className
-      )}
+      className={cn('flex w-full flex-wrap items-center gap-2', className)}
       {...props}
     >
-      <div className='flex flex-1 flex-wrap items-center gap-2'>
-        {columns.map((column) => (
-          <DataTableToolbarFilter key={column.id} column={column} />
-        ))}
-        {isFiltered && (
-          <Button
-            aria-label='Reset filters'
-            variant='outline'
-            size='sm'
-            className='border-dashed'
-            onClick={onReset}
-          >
-            <X />
-            Reset
-          </Button>
-        )}
-      </div>
-      <div className='flex items-center gap-2'>
-        {children}
-        <DataTableViewOptions table={table} />
-      </div>
+      {children}
+      {columns.map((column) => (
+        <DataTableToolbarFilter key={column.id} column={column} />
+      ))}
+      {isFiltered && (
+        <Button
+          aria-label='Reset filters'
+          variant='outline'
+          size='sm'
+          className='border-dashed'
+          onClick={onReset}
+        >
+          <X />
+          Xoá bộ lọc
+        </Button>
+      )}
+      <DataTableViewOptions table={table} />
     </div>
   )
 }
@@ -88,7 +81,7 @@ function DataTableToolbarFilter<TData>({
               onChange={(event) => {
                 column.setFilterValue(event.target.value)
               }}
-              className='h-8 w-40 lg:w-56'
+              className='w-40 lg:w-56'
             />
           )
         }
@@ -104,7 +97,7 @@ function DataTableToolbarFilter<TData>({
                 onChange={(event) => {
                   column.setFilterValue(event.target.value)
                 }}
-                className={cn('h-8 w-[120px]', columnMeta.unit && 'pr-8')}
+                className={cn('w-[120px]', columnMeta.unit && 'pr-8')}
               />
               {columnMeta.unit && (
                 <span className='bg-accent text-muted-foreground absolute top-0 right-0 bottom-0 flex items-center rounded-r-md px-2 text-sm'>

@@ -2,54 +2,50 @@ import { useQueryClient } from '@tanstack/react-query'
 import $queryClient from '@/api'
 import { BaseApiResponse } from '@/types/response'
 import { taskKeysFactory } from '@/api/query-key-factory'
-import { Task, TaskFilterTypes } from '@/features/tasks/types'
+import { TaskFilterTypes, TaskResponse } from '@/features/tasks/types'
 
 interface OptimisticUpdateContext {
   taskId: number
-  previousTaskDetail?: BaseApiResponse<Task>
-  previousTasksList?: BaseApiResponse<Task[]>
+  previousTasksList?: BaseApiResponse<TaskResponse>
 }
 
 export const useUpdateTask = (filterType: TaskFilterTypes) => {
   const queryClient = useQueryClient()
 
   return $queryClient.useMutation('put', '/api/tasks/{id}', {
-    onMutate: async (variables): Promise<OptimisticUpdateContext> => {
+    onMutate: async (variables) => {
       // Get the task ID from the variables
-      const taskId = variables?.params?.path?.id
+      const taskId = variables.params.path.id
 
       // Cancel any outgoing refetches to avoid overwriting our optimistic update
-      await queryClient.cancelQueries({
-        queryKey: taskKeysFactory.detail(Number(taskId)),
-      })
       await queryClient.cancelQueries({
         queryKey: taskKeysFactory.listAssignees(filterType),
       })
 
       // Snapshot the previous values
-      const previousTaskDetail = queryClient.getQueryData<
-        BaseApiResponse<Task>
-      >(taskKeysFactory.detail(Number(taskId)))
       const previousTasksList = queryClient.getQueryData<
-        BaseApiResponse<Task[]>
+        BaseApiResponse<TaskResponse>
       >(taskKeysFactory.listAssignees(filterType))
 
       // Extract the updated data
-      const { content, instructions, notes } = variables?.body || {}
+      const { content, instructions, notes, title, priority } =
+        variables?.body || {}
 
       // Optimistically update the task detail
-      queryClient.setQueryData(
+      queryClient.setQueryData<BaseApiResponse<TaskResponse>>(
         taskKeysFactory.detail(Number(taskId)),
-        (old: BaseApiResponse<Task> | undefined) => {
+        (old) => {
           if (!old?.data) return old
 
           return {
             ...old,
             data: {
               ...old.data,
-              content,
-              instructions,
-              notes,
+              ...(priority !== undefined && { priority }),
+              ...(content !== undefined && { content }),
+              ...(instructions !== undefined && { instructions }),
+              ...(notes !== undefined && { notes }),
+              ...(title !== undefined && { title }),
               updatedAt: new Date().toISOString(),
             },
           }
@@ -57,32 +53,36 @@ export const useUpdateTask = (filterType: TaskFilterTypes) => {
       )
 
       // Optimistically update the tasks list
-      queryClient.setQueryData(
+      queryClient.setQueryData<BaseApiResponse<TaskResponse>>(
         taskKeysFactory.listAssignees(filterType),
-        (old: BaseApiResponse<Task[]> | undefined) => {
-          if (!old?.data) return old
+        (oldResponse) => {
+          if (!oldResponse?.data) return oldResponse
 
           return {
-            ...old,
-            data: old.data.map((task: Task) =>
-              task.id === Number(taskId)
-                ? {
-                    ...task,
-                    content,
-                    instructions,
-                    notes,
+            ...oldResponse,
+            data: {
+              ...oldResponse.data,
+              tasks: (oldResponse.data?.tasks || []).map((oldData) => {
+                if (oldData.id === Number(taskId)) {
+                  return {
+                    ...oldData,
+                    ...(priority !== undefined && { priority }),
+                    ...(content !== undefined && { content }),
+                    ...(instructions !== undefined && { instructions }),
+                    ...(notes !== undefined && { notes }),
+                    ...(title !== undefined && { title }),
                     updatedAt: new Date().toISOString(),
                   }
-                : task
-            ),
+                }
+                return oldData
+              }),
+            },
           }
         }
       )
 
-      // Return the previous values so we can revert if something goes wrong
       return {
         taskId: Number(taskId),
-        previousTaskDetail,
         previousTasksList,
       }
     },
@@ -96,27 +96,11 @@ export const useUpdateTask = (filterType: TaskFilterTypes) => {
           typedContext.previousTasksList
         )
       }
-
-      if (typedContext.previousTaskDetail) {
-        queryClient.setQueryData(
-          taskKeysFactory.detail(typedContext.taskId),
-          typedContext.previousTaskDetail
-        )
-      }
     },
-    onSettled: (_data, _error, variables, context) => {
-      const typedContext = context as OptimisticUpdateContext | undefined
-      const taskId = variables?.params?.path?.id ?? typedContext?.taskId
-
-      if (!taskId) return
-
+    onSettled: async (_data, _error, _variables, _context) => {
       // Always refetch after error or success
-      queryClient.invalidateQueries({
+      await queryClient.invalidateQueries({
         queryKey: taskKeysFactory.listAssignees(filterType),
-      })
-
-      queryClient.invalidateQueries({
-        queryKey: taskKeysFactory.detail(Number(taskId)),
       })
     },
   })

@@ -3,7 +3,7 @@ import { Badge } from '@/components/ui/badge'
 import { TaskStatus } from '@/features/tasks/types'
 import {
   taskStatusIcons,
-  taskStatusLabels,
+  taskStatusFilterLabels,
   taskStatusStyles,
 } from '@/features/tasks/utils/tasks'
 
@@ -20,17 +20,17 @@ export function TaskStatusBadge({
   className,
   size = 'md',
 }: TaskStatusBadgeProps) {
-  const label = taskStatusLabels[status]
+  const label = taskStatusFilterLabels[status]
   const Icon = taskStatusIcons[status]
   const statusStyle = taskStatusStyles[status]
 
   return (
     <Badge
       className={cn(
-        'border font-medium',
+        'border',
         statusStyle,
-        size === 'sm' && 'h-5 px-1.5 py-0.5 text-[10px]',
-        size === 'md' && 'h-6 px-2 py-0.5 text-xs',
+        size === 'sm' && 'h-5 px-1.5 py-0.5',
+        size === 'md' && 'h-6 px-2 py-0.5',
         className
       )}
     >

@@ -5,15 +5,13 @@ import { TaskFilterTypes } from '@/features/tasks/types'
 export function TasksTypeFilter() {
   const searchParams = TasksRoute.useSearch()
   const navigate = TasksRoute.useNavigate()
-  const currentType = searchParams.type || 'assigned'
+  const filterType = searchParams.type
 
   const onTypeChange = (type: TaskFilterTypes) => {
-    if (!type) return
-
-    if (type === currentType) return
+    if (type === filterType) return
 
     navigate({
-      search: (prev) => ({
+      search: (prev: any) => ({
         ...prev,
         type: type,
       }),
@@ -21,7 +19,7 @@ export function TasksTypeFilter() {
   }
 
   return (
-    <div className='flex w-fit items-center gap-2 rounded-lg border pl-4'>
+    <div className='flex w-fit items-center gap-2 rounded-lg border pl-2'>
       <div className='flex items-center gap-2'>
         <label className='text-muted-foreground text-xs font-medium'>
           Lọc theo
@@ -30,7 +28,7 @@ export function TasksTypeFilter() {
       </div>
       <ToggleGroup
         type='single'
-        value={currentType}
+        value={filterType}
         onValueChange={onTypeChange}
         className='h-9 justify-start'
       >

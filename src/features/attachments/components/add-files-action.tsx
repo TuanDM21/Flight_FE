@@ -138,7 +138,7 @@ export function AddFilesAction() {
     const fileName =
       file.name.length > 20 ? `${file.name.slice(0, 20)}...` : file.name
     toast.error(`Tệp bị từ chối: ${fileName}`, {
-      description: `${message}`,
+      description: message,
     })
   }, [])
 
@@ -146,14 +146,14 @@ export function AddFilesAction() {
     <>
       <FileUpload
         onFileValidate={onFileValidate}
-        onFileAccept={onFileAccept}
+        onFileAccept={void onFileAccept}
         onFileReject={onFileReject}
         accept={ACCEPTED_FILE_TYPES.join(',')}
         className='w-full max-w-md'
         multiple
       >
         <FileUploadTrigger asChild>
-          <Button>
+          <Button className='space-x-2'>
             <FileUp className='mr-2 h-4 w-4' />
             Tải lên tệp
           </Button>

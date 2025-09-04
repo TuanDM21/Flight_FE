@@ -5,7 +5,6 @@ import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import { envVariables } from '@/lib/env'
 import { AuthContext } from '@/context/auth-context'
 import { DialogsProvider } from '@/context/dialogs-context'
-import { Toaster } from '@/components/ui/sonner'
 import { NavigationProgress } from '@/components/navigation-progress'
 import { AppAbility } from '@/features/ability/types'
 import GeneralError from '@/features/errors/general-error'
@@ -23,7 +22,6 @@ export const Route = createRootRouteWithContext<AppRouterContext>()({
       <DialogsProvider>
         <NavigationProgress />
         <Outlet />
-        <Toaster richColors />
         {envVariables.mode === 'development' && (
           <>
             <ReactQueryDevtools buttonPosition='bottom-left' />

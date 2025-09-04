@@ -8,223 +8,349 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-// Import Routes
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
+import { Route as errors503RouteImport } from './routes/(errors)/503'
+import { Route as errors500RouteImport } from './routes/(errors)/500'
+import { Route as errors404RouteImport } from './routes/(errors)/404'
+import { Route as errors403RouteImport } from './routes/(errors)/403'
+import { Route as errors401RouteImport } from './routes/(errors)/401'
+import { Route as authSignOutRouteImport } from './routes/(auth)/sign-out'
+import { Route as authSignInRouteImport } from './routes/(auth)/sign-in'
+import { Route as AuthenticatedTasksRouteRouteImport } from './routes/_authenticated/tasks/route'
+import { Route as AuthenticatedFlightsRouteRouteImport } from './routes/_authenticated/flights/route'
+import { Route as AuthenticatedDocumentsRouteRouteImport } from './routes/_authenticated/documents/route'
+import { Route as AuthenticatedAttachmentsRouteRouteImport } from './routes/_authenticated/attachments/route'
+import { Route as AuthenticatedTasksIndexRouteImport } from './routes/_authenticated/tasks/index'
+import { Route as AuthenticatedFlightsIndexRouteImport } from './routes/_authenticated/flights/index'
+import { Route as AuthenticatedDocumentsIndexRouteImport } from './routes/_authenticated/documents/index'
+import { Route as AuthenticatedAttachmentsIndexRouteImport } from './routes/_authenticated/attachments/index'
+import { Route as AuthenticatedFlightsCreateRouteImport } from './routes/_authenticated/flights/create'
+import { Route as AuthenticatedDocumentsCreateRouteImport } from './routes/_authenticated/documents/create'
+import { Route as AuthenticatedAttachmentsSharedWithMeRouteImport } from './routes/_authenticated/attachments/shared-with-me'
+import { Route as AuthenticatedTasksTaskIdIndexRouteImport } from './routes/_authenticated/tasks/$task-id/index'
+import { Route as AuthenticatedFlightsFlightIdIndexRouteImport } from './routes/_authenticated/flights/$flight-id/index'
+import { Route as AuthenticatedDocumentsDocumentIdIndexRouteImport } from './routes/_authenticated/documents/$document-id/index'
+import { Route as AuthenticatedTasksTaskIdEditRouteImport } from './routes/_authenticated/tasks/$task-id/edit'
+import { Route as AuthenticatedFlightsFlightIdEditRouteImport } from './routes/_authenticated/flights/$flight-id/edit'
+import { Route as AuthenticatedDocumentsDocumentIdEditRouteImport } from './routes/_authenticated/documents/$document-id/edit'
 
-import { Route as rootRoute } from './routes/__root'
-import { Route as AuthenticatedRouteImport } from './routes/_authenticated/route'
-import { Route as AuthenticatedIndexImport } from './routes/_authenticated/index'
-import { Route as errors503Import } from './routes/(errors)/503'
-import { Route as errors500Import } from './routes/(errors)/500'
-import { Route as errors404Import } from './routes/(errors)/404'
-import { Route as errors403Import } from './routes/(errors)/403'
-import { Route as errors401Import } from './routes/(errors)/401'
-import { Route as authSignOutImport } from './routes/(auth)/sign-out'
-import { Route as authSignInImport } from './routes/(auth)/sign-in'
-import { Route as AuthenticatedTasksRouteImport } from './routes/_authenticated/tasks/route'
-import { Route as AuthenticatedFlightsRouteImport } from './routes/_authenticated/flights/route'
-import { Route as AuthenticatedDocumentsRouteImport } from './routes/_authenticated/documents/route'
-import { Route as AuthenticatedAttachmentsRouteImport } from './routes/_authenticated/attachments/route'
-import { Route as AuthenticatedTasksIndexImport } from './routes/_authenticated/tasks/index'
-import { Route as AuthenticatedFlightsIndexImport } from './routes/_authenticated/flights/index'
-import { Route as AuthenticatedDocumentsIndexImport } from './routes/_authenticated/documents/index'
-import { Route as AuthenticatedAttachmentsIndexImport } from './routes/_authenticated/attachments/index'
-import { Route as AuthenticatedTasksCreateImport } from './routes/_authenticated/tasks/create'
-import { Route as AuthenticatedFlightsCreateImport } from './routes/_authenticated/flights/create'
-import { Route as AuthenticatedDocumentsCreateImport } from './routes/_authenticated/documents/create'
-import { Route as AuthenticatedAttachmentsSharedWithMeImport } from './routes/_authenticated/attachments/shared-with-me'
-import { Route as AuthenticatedTasksTaskIdRouteImport } from './routes/_authenticated/tasks/$task-id/route'
-import { Route as AuthenticatedTasksTaskIdIndexImport } from './routes/_authenticated/tasks/$task-id/index'
-import { Route as AuthenticatedFlightsFlightIdIndexImport } from './routes/_authenticated/flights/$flight-id/index'
-import { Route as AuthenticatedDocumentsDocumentIdIndexImport } from './routes/_authenticated/documents/$document-id/index'
-import { Route as AuthenticatedTasksTaskIdEditImport } from './routes/_authenticated/tasks/$task-id/edit'
-import { Route as AuthenticatedFlightsFlightIdEditImport } from './routes/_authenticated/flights/$flight-id/edit'
-import { Route as AuthenticatedDocumentsDocumentIdEditImport } from './routes/_authenticated/documents/$document-id/edit'
-
-// Create/Update Routes
-
-const AuthenticatedRouteRoute = AuthenticatedRouteImport.update({
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const AuthenticatedIndexRoute = AuthenticatedIndexImport.update({
+const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-
-const errors503Route = errors503Import.update({
+const errors503Route = errors503RouteImport.update({
   id: '/(errors)/503',
   path: '/503',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const errors500Route = errors500Import.update({
+const errors500Route = errors500RouteImport.update({
   id: '/(errors)/500',
   path: '/500',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const errors404Route = errors404Import.update({
+const errors404Route = errors404RouteImport.update({
   id: '/(errors)/404',
   path: '/404',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const errors403Route = errors403Import.update({
+const errors403Route = errors403RouteImport.update({
   id: '/(errors)/403',
   path: '/403',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const errors401Route = errors401Import.update({
+const errors401Route = errors401RouteImport.update({
   id: '/(errors)/401',
   path: '/401',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const authSignOutRoute = authSignOutImport.update({
+const authSignOutRoute = authSignOutRouteImport.update({
   id: '/(auth)/sign-out',
   path: '/sign-out',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const authSignInRoute = authSignInImport.update({
+const authSignInRoute = authSignInRouteImport.update({
   id: '/(auth)/sign-in',
   path: '/sign-in',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const AuthenticatedTasksRouteRoute = AuthenticatedTasksRouteImport.update({
+const AuthenticatedTasksRouteRoute = AuthenticatedTasksRouteRouteImport.update({
   id: '/tasks',
   path: '/tasks',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-
-const AuthenticatedFlightsRouteRoute = AuthenticatedFlightsRouteImport.update({
-  id: '/flights',
-  path: '/flights',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-
+const AuthenticatedFlightsRouteRoute =
+  AuthenticatedFlightsRouteRouteImport.update({
+    id: '/flights',
+    path: '/flights',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedDocumentsRouteRoute =
-  AuthenticatedDocumentsRouteImport.update({
+  AuthenticatedDocumentsRouteRouteImport.update({
     id: '/documents',
     path: '/documents',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-
 const AuthenticatedAttachmentsRouteRoute =
-  AuthenticatedAttachmentsRouteImport.update({
+  AuthenticatedAttachmentsRouteRouteImport.update({
     id: '/attachments',
     path: '/attachments',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-
-const AuthenticatedTasksIndexRoute = AuthenticatedTasksIndexImport.update({
+const AuthenticatedTasksIndexRoute = AuthenticatedTasksIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthenticatedTasksRouteRoute,
 } as any)
-
-const AuthenticatedFlightsIndexRoute = AuthenticatedFlightsIndexImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AuthenticatedFlightsRouteRoute,
-} as any)
-
+const AuthenticatedFlightsIndexRoute =
+  AuthenticatedFlightsIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedFlightsRouteRoute,
+  } as any)
 const AuthenticatedDocumentsIndexRoute =
-  AuthenticatedDocumentsIndexImport.update({
+  AuthenticatedDocumentsIndexRouteImport.update({
     id: '/',
     path: '/',
     getParentRoute: () => AuthenticatedDocumentsRouteRoute,
   } as any)
-
 const AuthenticatedAttachmentsIndexRoute =
-  AuthenticatedAttachmentsIndexImport.update({
+  AuthenticatedAttachmentsIndexRouteImport.update({
     id: '/',
     path: '/',
     getParentRoute: () => AuthenticatedAttachmentsRouteRoute,
   } as any)
-
-const AuthenticatedTasksCreateRoute = AuthenticatedTasksCreateImport.update({
-  id: '/create',
-  path: '/create',
-  getParentRoute: () => AuthenticatedTasksRouteRoute,
-} as any)
-
-const AuthenticatedFlightsCreateRoute = AuthenticatedFlightsCreateImport.update(
-  {
+const AuthenticatedFlightsCreateRoute =
+  AuthenticatedFlightsCreateRouteImport.update({
     id: '/create',
     path: '/create',
     getParentRoute: () => AuthenticatedFlightsRouteRoute,
-  } as any,
-)
-
+  } as any)
 const AuthenticatedDocumentsCreateRoute =
-  AuthenticatedDocumentsCreateImport.update({
+  AuthenticatedDocumentsCreateRouteImport.update({
     id: '/create',
     path: '/create',
     getParentRoute: () => AuthenticatedDocumentsRouteRoute,
   } as any)
-
 const AuthenticatedAttachmentsSharedWithMeRoute =
-  AuthenticatedAttachmentsSharedWithMeImport.update({
+  AuthenticatedAttachmentsSharedWithMeRouteImport.update({
     id: '/shared-with-me',
     path: '/shared-with-me',
     getParentRoute: () => AuthenticatedAttachmentsRouteRoute,
   } as any)
-
-const AuthenticatedTasksTaskIdRouteRoute =
-  AuthenticatedTasksTaskIdRouteImport.update({
-    id: '/$task-id',
-    path: '/$task-id',
+const AuthenticatedTasksTaskIdIndexRoute =
+  AuthenticatedTasksTaskIdIndexRouteImport.update({
+    id: '/$task-id/',
+    path: '/$task-id/',
     getParentRoute: () => AuthenticatedTasksRouteRoute,
   } as any)
-
-const AuthenticatedTasksTaskIdIndexRoute =
-  AuthenticatedTasksTaskIdIndexImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => AuthenticatedTasksTaskIdRouteRoute,
-  } as any)
-
 const AuthenticatedFlightsFlightIdIndexRoute =
-  AuthenticatedFlightsFlightIdIndexImport.update({
+  AuthenticatedFlightsFlightIdIndexRouteImport.update({
     id: '/$flight-id/',
     path: '/$flight-id/',
     getParentRoute: () => AuthenticatedFlightsRouteRoute,
   } as any)
-
 const AuthenticatedDocumentsDocumentIdIndexRoute =
-  AuthenticatedDocumentsDocumentIdIndexImport.update({
+  AuthenticatedDocumentsDocumentIdIndexRouteImport.update({
     id: '/$document-id/',
     path: '/$document-id/',
     getParentRoute: () => AuthenticatedDocumentsRouteRoute,
   } as any)
-
 const AuthenticatedTasksTaskIdEditRoute =
-  AuthenticatedTasksTaskIdEditImport.update({
-    id: '/edit',
-    path: '/edit',
-    getParentRoute: () => AuthenticatedTasksTaskIdRouteRoute,
+  AuthenticatedTasksTaskIdEditRouteImport.update({
+    id: '/$task-id/edit',
+    path: '/$task-id/edit',
+    getParentRoute: () => AuthenticatedTasksRouteRoute,
   } as any)
-
 const AuthenticatedFlightsFlightIdEditRoute =
-  AuthenticatedFlightsFlightIdEditImport.update({
+  AuthenticatedFlightsFlightIdEditRouteImport.update({
     id: '/$flight-id/edit',
     path: '/$flight-id/edit',
     getParentRoute: () => AuthenticatedFlightsRouteRoute,
   } as any)
-
 const AuthenticatedDocumentsDocumentIdEditRoute =
-  AuthenticatedDocumentsDocumentIdEditImport.update({
+  AuthenticatedDocumentsDocumentIdEditRouteImport.update({
     id: '/$document-id/edit',
     path: '/$document-id/edit',
     getParentRoute: () => AuthenticatedDocumentsRouteRoute,
   } as any)
 
-// Populate the FileRoutesByPath interface
+export interface FileRoutesByFullPath {
+  '/attachments': typeof AuthenticatedAttachmentsRouteRouteWithChildren
+  '/documents': typeof AuthenticatedDocumentsRouteRouteWithChildren
+  '/flights': typeof AuthenticatedFlightsRouteRouteWithChildren
+  '/tasks': typeof AuthenticatedTasksRouteRouteWithChildren
+  '/sign-in': typeof authSignInRoute
+  '/sign-out': typeof authSignOutRoute
+  '/401': typeof errors401Route
+  '/403': typeof errors403Route
+  '/404': typeof errors404Route
+  '/500': typeof errors500Route
+  '/503': typeof errors503Route
+  '/': typeof AuthenticatedIndexRoute
+  '/attachments/shared-with-me': typeof AuthenticatedAttachmentsSharedWithMeRoute
+  '/documents/create': typeof AuthenticatedDocumentsCreateRoute
+  '/flights/create': typeof AuthenticatedFlightsCreateRoute
+  '/attachments/': typeof AuthenticatedAttachmentsIndexRoute
+  '/documents/': typeof AuthenticatedDocumentsIndexRoute
+  '/flights/': typeof AuthenticatedFlightsIndexRoute
+  '/tasks/': typeof AuthenticatedTasksIndexRoute
+  '/documents/$document-id/edit': typeof AuthenticatedDocumentsDocumentIdEditRoute
+  '/flights/$flight-id/edit': typeof AuthenticatedFlightsFlightIdEditRoute
+  '/tasks/$task-id/edit': typeof AuthenticatedTasksTaskIdEditRoute
+  '/documents/$document-id': typeof AuthenticatedDocumentsDocumentIdIndexRoute
+  '/flights/$flight-id': typeof AuthenticatedFlightsFlightIdIndexRoute
+  '/tasks/$task-id': typeof AuthenticatedTasksTaskIdIndexRoute
+}
+export interface FileRoutesByTo {
+  '/sign-in': typeof authSignInRoute
+  '/sign-out': typeof authSignOutRoute
+  '/401': typeof errors401Route
+  '/403': typeof errors403Route
+  '/404': typeof errors404Route
+  '/500': typeof errors500Route
+  '/503': typeof errors503Route
+  '/': typeof AuthenticatedIndexRoute
+  '/attachments/shared-with-me': typeof AuthenticatedAttachmentsSharedWithMeRoute
+  '/documents/create': typeof AuthenticatedDocumentsCreateRoute
+  '/flights/create': typeof AuthenticatedFlightsCreateRoute
+  '/attachments': typeof AuthenticatedAttachmentsIndexRoute
+  '/documents': typeof AuthenticatedDocumentsIndexRoute
+  '/flights': typeof AuthenticatedFlightsIndexRoute
+  '/tasks': typeof AuthenticatedTasksIndexRoute
+  '/documents/$document-id/edit': typeof AuthenticatedDocumentsDocumentIdEditRoute
+  '/flights/$flight-id/edit': typeof AuthenticatedFlightsFlightIdEditRoute
+  '/tasks/$task-id/edit': typeof AuthenticatedTasksTaskIdEditRoute
+  '/documents/$document-id': typeof AuthenticatedDocumentsDocumentIdIndexRoute
+  '/flights/$flight-id': typeof AuthenticatedFlightsFlightIdIndexRoute
+  '/tasks/$task-id': typeof AuthenticatedTasksTaskIdIndexRoute
+}
+export interface FileRoutesById {
+  __root__: typeof rootRouteImport
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/_authenticated/attachments': typeof AuthenticatedAttachmentsRouteRouteWithChildren
+  '/_authenticated/documents': typeof AuthenticatedDocumentsRouteRouteWithChildren
+  '/_authenticated/flights': typeof AuthenticatedFlightsRouteRouteWithChildren
+  '/_authenticated/tasks': typeof AuthenticatedTasksRouteRouteWithChildren
+  '/(auth)/sign-in': typeof authSignInRoute
+  '/(auth)/sign-out': typeof authSignOutRoute
+  '/(errors)/401': typeof errors401Route
+  '/(errors)/403': typeof errors403Route
+  '/(errors)/404': typeof errors404Route
+  '/(errors)/500': typeof errors500Route
+  '/(errors)/503': typeof errors503Route
+  '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/attachments/shared-with-me': typeof AuthenticatedAttachmentsSharedWithMeRoute
+  '/_authenticated/documents/create': typeof AuthenticatedDocumentsCreateRoute
+  '/_authenticated/flights/create': typeof AuthenticatedFlightsCreateRoute
+  '/_authenticated/attachments/': typeof AuthenticatedAttachmentsIndexRoute
+  '/_authenticated/documents/': typeof AuthenticatedDocumentsIndexRoute
+  '/_authenticated/flights/': typeof AuthenticatedFlightsIndexRoute
+  '/_authenticated/tasks/': typeof AuthenticatedTasksIndexRoute
+  '/_authenticated/documents/$document-id/edit': typeof AuthenticatedDocumentsDocumentIdEditRoute
+  '/_authenticated/flights/$flight-id/edit': typeof AuthenticatedFlightsFlightIdEditRoute
+  '/_authenticated/tasks/$task-id/edit': typeof AuthenticatedTasksTaskIdEditRoute
+  '/_authenticated/documents/$document-id/': typeof AuthenticatedDocumentsDocumentIdIndexRoute
+  '/_authenticated/flights/$flight-id/': typeof AuthenticatedFlightsFlightIdIndexRoute
+  '/_authenticated/tasks/$task-id/': typeof AuthenticatedTasksTaskIdIndexRoute
+}
+export interface FileRouteTypes {
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths:
+    | '/attachments'
+    | '/documents'
+    | '/flights'
+    | '/tasks'
+    | '/sign-in'
+    | '/sign-out'
+    | '/401'
+    | '/403'
+    | '/404'
+    | '/500'
+    | '/503'
+    | '/'
+    | '/attachments/shared-with-me'
+    | '/documents/create'
+    | '/flights/create'
+    | '/attachments/'
+    | '/documents/'
+    | '/flights/'
+    | '/tasks/'
+    | '/documents/$document-id/edit'
+    | '/flights/$flight-id/edit'
+    | '/tasks/$task-id/edit'
+    | '/documents/$document-id'
+    | '/flights/$flight-id'
+    | '/tasks/$task-id'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | '/sign-in'
+    | '/sign-out'
+    | '/401'
+    | '/403'
+    | '/404'
+    | '/500'
+    | '/503'
+    | '/'
+    | '/attachments/shared-with-me'
+    | '/documents/create'
+    | '/flights/create'
+    | '/attachments'
+    | '/documents'
+    | '/flights'
+    | '/tasks'
+    | '/documents/$document-id/edit'
+    | '/flights/$flight-id/edit'
+    | '/tasks/$task-id/edit'
+    | '/documents/$document-id'
+    | '/flights/$flight-id'
+    | '/tasks/$task-id'
+  id:
+    | '__root__'
+    | '/_authenticated'
+    | '/_authenticated/attachments'
+    | '/_authenticated/documents'
+    | '/_authenticated/flights'
+    | '/_authenticated/tasks'
+    | '/(auth)/sign-in'
+    | '/(auth)/sign-out'
+    | '/(errors)/401'
+    | '/(errors)/403'
+    | '/(errors)/404'
+    | '/(errors)/500'
+    | '/(errors)/503'
+    | '/_authenticated/'
+    | '/_authenticated/attachments/shared-with-me'
+    | '/_authenticated/documents/create'
+    | '/_authenticated/flights/create'
+    | '/_authenticated/attachments/'
+    | '/_authenticated/documents/'
+    | '/_authenticated/flights/'
+    | '/_authenticated/tasks/'
+    | '/_authenticated/documents/$document-id/edit'
+    | '/_authenticated/flights/$flight-id/edit'
+    | '/_authenticated/tasks/$task-id/edit'
+    | '/_authenticated/documents/$document-id/'
+    | '/_authenticated/flights/$flight-id/'
+    | '/_authenticated/tasks/$task-id/'
+  fileRoutesById: FileRoutesById
+}
+export interface RootRouteChildren {
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  authSignInRoute: typeof authSignInRoute
+  authSignOutRoute: typeof authSignOutRoute
+  errors401Route: typeof errors401Route
+  errors403Route: typeof errors403Route
+  errors404Route: typeof errors404Route
+  errors500Route: typeof errors500Route
+  errors503Route: typeof errors503Route
+}
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
@@ -232,202 +358,186 @@ declare module '@tanstack/react-router' {
       id: '/_authenticated'
       path: ''
       fullPath: ''
-      preLoaderRoute: typeof AuthenticatedRouteImport
-      parentRoute: typeof rootRoute
-    }
-    '/_authenticated/attachments': {
-      id: '/_authenticated/attachments'
-      path: '/attachments'
-      fullPath: '/attachments'
-      preLoaderRoute: typeof AuthenticatedAttachmentsRouteImport
-      parentRoute: typeof AuthenticatedRouteImport
-    }
-    '/_authenticated/documents': {
-      id: '/_authenticated/documents'
-      path: '/documents'
-      fullPath: '/documents'
-      preLoaderRoute: typeof AuthenticatedDocumentsRouteImport
-      parentRoute: typeof AuthenticatedRouteImport
-    }
-    '/_authenticated/flights': {
-      id: '/_authenticated/flights'
-      path: '/flights'
-      fullPath: '/flights'
-      preLoaderRoute: typeof AuthenticatedFlightsRouteImport
-      parentRoute: typeof AuthenticatedRouteImport
-    }
-    '/_authenticated/tasks': {
-      id: '/_authenticated/tasks'
-      path: '/tasks'
-      fullPath: '/tasks'
-      preLoaderRoute: typeof AuthenticatedTasksRouteImport
-      parentRoute: typeof AuthenticatedRouteImport
-    }
-    '/(auth)/sign-in': {
-      id: '/(auth)/sign-in'
-      path: '/sign-in'
-      fullPath: '/sign-in'
-      preLoaderRoute: typeof authSignInImport
-      parentRoute: typeof rootRoute
-    }
-    '/(auth)/sign-out': {
-      id: '/(auth)/sign-out'
-      path: '/sign-out'
-      fullPath: '/sign-out'
-      preLoaderRoute: typeof authSignOutImport
-      parentRoute: typeof rootRoute
-    }
-    '/(errors)/401': {
-      id: '/(errors)/401'
-      path: '/401'
-      fullPath: '/401'
-      preLoaderRoute: typeof errors401Import
-      parentRoute: typeof rootRoute
-    }
-    '/(errors)/403': {
-      id: '/(errors)/403'
-      path: '/403'
-      fullPath: '/403'
-      preLoaderRoute: typeof errors403Import
-      parentRoute: typeof rootRoute
-    }
-    '/(errors)/404': {
-      id: '/(errors)/404'
-      path: '/404'
-      fullPath: '/404'
-      preLoaderRoute: typeof errors404Import
-      parentRoute: typeof rootRoute
-    }
-    '/(errors)/500': {
-      id: '/(errors)/500'
-      path: '/500'
-      fullPath: '/500'
-      preLoaderRoute: typeof errors500Import
-      parentRoute: typeof rootRoute
-    }
-    '/(errors)/503': {
-      id: '/(errors)/503'
-      path: '/503'
-      fullPath: '/503'
-      preLoaderRoute: typeof errors503Import
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/': {
       id: '/_authenticated/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof AuthenticatedIndexImport
-      parentRoute: typeof AuthenticatedRouteImport
+      preLoaderRoute: typeof AuthenticatedIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/tasks/$task-id': {
-      id: '/_authenticated/tasks/$task-id'
-      path: '/$task-id'
-      fullPath: '/tasks/$task-id'
-      preLoaderRoute: typeof AuthenticatedTasksTaskIdRouteImport
-      parentRoute: typeof AuthenticatedTasksRouteImport
+    '/(errors)/503': {
+      id: '/(errors)/503'
+      path: '/503'
+      fullPath: '/503'
+      preLoaderRoute: typeof errors503RouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/attachments/shared-with-me': {
-      id: '/_authenticated/attachments/shared-with-me'
-      path: '/shared-with-me'
-      fullPath: '/attachments/shared-with-me'
-      preLoaderRoute: typeof AuthenticatedAttachmentsSharedWithMeImport
-      parentRoute: typeof AuthenticatedAttachmentsRouteImport
+    '/(errors)/500': {
+      id: '/(errors)/500'
+      path: '/500'
+      fullPath: '/500'
+      preLoaderRoute: typeof errors500RouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/documents/create': {
-      id: '/_authenticated/documents/create'
-      path: '/create'
-      fullPath: '/documents/create'
-      preLoaderRoute: typeof AuthenticatedDocumentsCreateImport
-      parentRoute: typeof AuthenticatedDocumentsRouteImport
+    '/(errors)/404': {
+      id: '/(errors)/404'
+      path: '/404'
+      fullPath: '/404'
+      preLoaderRoute: typeof errors404RouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/flights/create': {
-      id: '/_authenticated/flights/create'
-      path: '/create'
-      fullPath: '/flights/create'
-      preLoaderRoute: typeof AuthenticatedFlightsCreateImport
-      parentRoute: typeof AuthenticatedFlightsRouteImport
+    '/(errors)/403': {
+      id: '/(errors)/403'
+      path: '/403'
+      fullPath: '/403'
+      preLoaderRoute: typeof errors403RouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/tasks/create': {
-      id: '/_authenticated/tasks/create'
-      path: '/create'
-      fullPath: '/tasks/create'
-      preLoaderRoute: typeof AuthenticatedTasksCreateImport
-      parentRoute: typeof AuthenticatedTasksRouteImport
+    '/(errors)/401': {
+      id: '/(errors)/401'
+      path: '/401'
+      fullPath: '/401'
+      preLoaderRoute: typeof errors401RouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/attachments/': {
-      id: '/_authenticated/attachments/'
-      path: '/'
-      fullPath: '/attachments/'
-      preLoaderRoute: typeof AuthenticatedAttachmentsIndexImport
-      parentRoute: typeof AuthenticatedAttachmentsRouteImport
+    '/(auth)/sign-out': {
+      id: '/(auth)/sign-out'
+      path: '/sign-out'
+      fullPath: '/sign-out'
+      preLoaderRoute: typeof authSignOutRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/documents/': {
-      id: '/_authenticated/documents/'
-      path: '/'
-      fullPath: '/documents/'
-      preLoaderRoute: typeof AuthenticatedDocumentsIndexImport
-      parentRoute: typeof AuthenticatedDocumentsRouteImport
+    '/(auth)/sign-in': {
+      id: '/(auth)/sign-in'
+      path: '/sign-in'
+      fullPath: '/sign-in'
+      preLoaderRoute: typeof authSignInRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/flights/': {
-      id: '/_authenticated/flights/'
-      path: '/'
-      fullPath: '/flights/'
-      preLoaderRoute: typeof AuthenticatedFlightsIndexImport
-      parentRoute: typeof AuthenticatedFlightsRouteImport
+    '/_authenticated/tasks': {
+      id: '/_authenticated/tasks'
+      path: '/tasks'
+      fullPath: '/tasks'
+      preLoaderRoute: typeof AuthenticatedTasksRouteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/flights': {
+      id: '/_authenticated/flights'
+      path: '/flights'
+      fullPath: '/flights'
+      preLoaderRoute: typeof AuthenticatedFlightsRouteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/documents': {
+      id: '/_authenticated/documents'
+      path: '/documents'
+      fullPath: '/documents'
+      preLoaderRoute: typeof AuthenticatedDocumentsRouteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/attachments': {
+      id: '/_authenticated/attachments'
+      path: '/attachments'
+      fullPath: '/attachments'
+      preLoaderRoute: typeof AuthenticatedAttachmentsRouteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/tasks/': {
       id: '/_authenticated/tasks/'
       path: '/'
       fullPath: '/tasks/'
-      preLoaderRoute: typeof AuthenticatedTasksIndexImport
-      parentRoute: typeof AuthenticatedTasksRouteImport
+      preLoaderRoute: typeof AuthenticatedTasksIndexRouteImport
+      parentRoute: typeof AuthenticatedTasksRouteRoute
     }
-    '/_authenticated/documents/$document-id/edit': {
-      id: '/_authenticated/documents/$document-id/edit'
-      path: '/$document-id/edit'
-      fullPath: '/documents/$document-id/edit'
-      preLoaderRoute: typeof AuthenticatedDocumentsDocumentIdEditImport
-      parentRoute: typeof AuthenticatedDocumentsRouteImport
+    '/_authenticated/flights/': {
+      id: '/_authenticated/flights/'
+      path: '/'
+      fullPath: '/flights/'
+      preLoaderRoute: typeof AuthenticatedFlightsIndexRouteImport
+      parentRoute: typeof AuthenticatedFlightsRouteRoute
     }
-    '/_authenticated/flights/$flight-id/edit': {
-      id: '/_authenticated/flights/$flight-id/edit'
-      path: '/$flight-id/edit'
-      fullPath: '/flights/$flight-id/edit'
-      preLoaderRoute: typeof AuthenticatedFlightsFlightIdEditImport
-      parentRoute: typeof AuthenticatedFlightsRouteImport
+    '/_authenticated/documents/': {
+      id: '/_authenticated/documents/'
+      path: '/'
+      fullPath: '/documents/'
+      preLoaderRoute: typeof AuthenticatedDocumentsIndexRouteImport
+      parentRoute: typeof AuthenticatedDocumentsRouteRoute
     }
-    '/_authenticated/tasks/$task-id/edit': {
-      id: '/_authenticated/tasks/$task-id/edit'
-      path: '/edit'
-      fullPath: '/tasks/$task-id/edit'
-      preLoaderRoute: typeof AuthenticatedTasksTaskIdEditImport
-      parentRoute: typeof AuthenticatedTasksTaskIdRouteImport
+    '/_authenticated/attachments/': {
+      id: '/_authenticated/attachments/'
+      path: '/'
+      fullPath: '/attachments/'
+      preLoaderRoute: typeof AuthenticatedAttachmentsIndexRouteImport
+      parentRoute: typeof AuthenticatedAttachmentsRouteRoute
     }
-    '/_authenticated/documents/$document-id/': {
-      id: '/_authenticated/documents/$document-id/'
-      path: '/$document-id'
-      fullPath: '/documents/$document-id'
-      preLoaderRoute: typeof AuthenticatedDocumentsDocumentIdIndexImport
-      parentRoute: typeof AuthenticatedDocumentsRouteImport
+    '/_authenticated/flights/create': {
+      id: '/_authenticated/flights/create'
+      path: '/create'
+      fullPath: '/flights/create'
+      preLoaderRoute: typeof AuthenticatedFlightsCreateRouteImport
+      parentRoute: typeof AuthenticatedFlightsRouteRoute
+    }
+    '/_authenticated/documents/create': {
+      id: '/_authenticated/documents/create'
+      path: '/create'
+      fullPath: '/documents/create'
+      preLoaderRoute: typeof AuthenticatedDocumentsCreateRouteImport
+      parentRoute: typeof AuthenticatedDocumentsRouteRoute
+    }
+    '/_authenticated/attachments/shared-with-me': {
+      id: '/_authenticated/attachments/shared-with-me'
+      path: '/shared-with-me'
+      fullPath: '/attachments/shared-with-me'
+      preLoaderRoute: typeof AuthenticatedAttachmentsSharedWithMeRouteImport
+      parentRoute: typeof AuthenticatedAttachmentsRouteRoute
+    }
+    '/_authenticated/tasks/$task-id/': {
+      id: '/_authenticated/tasks/$task-id/'
+      path: '/$task-id'
+      fullPath: '/tasks/$task-id'
+      preLoaderRoute: typeof AuthenticatedTasksTaskIdIndexRouteImport
+      parentRoute: typeof AuthenticatedTasksRouteRoute
     }
     '/_authenticated/flights/$flight-id/': {
       id: '/_authenticated/flights/$flight-id/'
       path: '/$flight-id'
       fullPath: '/flights/$flight-id'
-      preLoaderRoute: typeof AuthenticatedFlightsFlightIdIndexImport
-      parentRoute: typeof AuthenticatedFlightsRouteImport
+      preLoaderRoute: typeof AuthenticatedFlightsFlightIdIndexRouteImport
+      parentRoute: typeof AuthenticatedFlightsRouteRoute
     }
-    '/_authenticated/tasks/$task-id/': {
-      id: '/_authenticated/tasks/$task-id/'
-      path: '/'
-      fullPath: '/tasks/$task-id/'
-      preLoaderRoute: typeof AuthenticatedTasksTaskIdIndexImport
-      parentRoute: typeof AuthenticatedTasksTaskIdRouteImport
+    '/_authenticated/documents/$document-id/': {
+      id: '/_authenticated/documents/$document-id/'
+      path: '/$document-id'
+      fullPath: '/documents/$document-id'
+      preLoaderRoute: typeof AuthenticatedDocumentsDocumentIdIndexRouteImport
+      parentRoute: typeof AuthenticatedDocumentsRouteRoute
+    }
+    '/_authenticated/tasks/$task-id/edit': {
+      id: '/_authenticated/tasks/$task-id/edit'
+      path: '/$task-id/edit'
+      fullPath: '/tasks/$task-id/edit'
+      preLoaderRoute: typeof AuthenticatedTasksTaskIdEditRouteImport
+      parentRoute: typeof AuthenticatedTasksRouteRoute
+    }
+    '/_authenticated/flights/$flight-id/edit': {
+      id: '/_authenticated/flights/$flight-id/edit'
+      path: '/$flight-id/edit'
+      fullPath: '/flights/$flight-id/edit'
+      preLoaderRoute: typeof AuthenticatedFlightsFlightIdEditRouteImport
+      parentRoute: typeof AuthenticatedFlightsRouteRoute
+    }
+    '/_authenticated/documents/$document-id/edit': {
+      id: '/_authenticated/documents/$document-id/edit'
+      path: '/$document-id/edit'
+      fullPath: '/documents/$document-id/edit'
+      preLoaderRoute: typeof AuthenticatedDocumentsDocumentIdEditRouteImport
+      parentRoute: typeof AuthenticatedDocumentsRouteRoute
     }
   }
 }
-
-// Create and export the route tree
 
 interface AuthenticatedAttachmentsRouteRouteChildren {
   AuthenticatedAttachmentsSharedWithMeRoute: typeof AuthenticatedAttachmentsSharedWithMeRoute
@@ -490,34 +600,17 @@ const AuthenticatedFlightsRouteRouteWithChildren =
     AuthenticatedFlightsRouteRouteChildren,
   )
 
-interface AuthenticatedTasksTaskIdRouteRouteChildren {
+interface AuthenticatedTasksRouteRouteChildren {
+  AuthenticatedTasksIndexRoute: typeof AuthenticatedTasksIndexRoute
   AuthenticatedTasksTaskIdEditRoute: typeof AuthenticatedTasksTaskIdEditRoute
   AuthenticatedTasksTaskIdIndexRoute: typeof AuthenticatedTasksTaskIdIndexRoute
 }
 
-const AuthenticatedTasksTaskIdRouteRouteChildren: AuthenticatedTasksTaskIdRouteRouteChildren =
-  {
-    AuthenticatedTasksTaskIdEditRoute: AuthenticatedTasksTaskIdEditRoute,
-    AuthenticatedTasksTaskIdIndexRoute: AuthenticatedTasksTaskIdIndexRoute,
-  }
-
-const AuthenticatedTasksTaskIdRouteRouteWithChildren =
-  AuthenticatedTasksTaskIdRouteRoute._addFileChildren(
-    AuthenticatedTasksTaskIdRouteRouteChildren,
-  )
-
-interface AuthenticatedTasksRouteRouteChildren {
-  AuthenticatedTasksTaskIdRouteRoute: typeof AuthenticatedTasksTaskIdRouteRouteWithChildren
-  AuthenticatedTasksCreateRoute: typeof AuthenticatedTasksCreateRoute
-  AuthenticatedTasksIndexRoute: typeof AuthenticatedTasksIndexRoute
-}
-
 const AuthenticatedTasksRouteRouteChildren: AuthenticatedTasksRouteRouteChildren =
   {
-    AuthenticatedTasksTaskIdRouteRoute:
-      AuthenticatedTasksTaskIdRouteRouteWithChildren,
-    AuthenticatedTasksCreateRoute: AuthenticatedTasksCreateRoute,
     AuthenticatedTasksIndexRoute: AuthenticatedTasksIndexRoute,
+    AuthenticatedTasksTaskIdEditRoute: AuthenticatedTasksTaskIdEditRoute,
+    AuthenticatedTasksTaskIdIndexRoute: AuthenticatedTasksTaskIdIndexRoute,
   }
 
 const AuthenticatedTasksRouteRouteWithChildren =
@@ -546,193 +639,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
-export interface FileRoutesByFullPath {
-  '': typeof AuthenticatedRouteRouteWithChildren
-  '/attachments': typeof AuthenticatedAttachmentsRouteRouteWithChildren
-  '/documents': typeof AuthenticatedDocumentsRouteRouteWithChildren
-  '/flights': typeof AuthenticatedFlightsRouteRouteWithChildren
-  '/tasks': typeof AuthenticatedTasksRouteRouteWithChildren
-  '/sign-in': typeof authSignInRoute
-  '/sign-out': typeof authSignOutRoute
-  '/401': typeof errors401Route
-  '/403': typeof errors403Route
-  '/404': typeof errors404Route
-  '/500': typeof errors500Route
-  '/503': typeof errors503Route
-  '/': typeof AuthenticatedIndexRoute
-  '/tasks/$task-id': typeof AuthenticatedTasksTaskIdRouteRouteWithChildren
-  '/attachments/shared-with-me': typeof AuthenticatedAttachmentsSharedWithMeRoute
-  '/documents/create': typeof AuthenticatedDocumentsCreateRoute
-  '/flights/create': typeof AuthenticatedFlightsCreateRoute
-  '/tasks/create': typeof AuthenticatedTasksCreateRoute
-  '/attachments/': typeof AuthenticatedAttachmentsIndexRoute
-  '/documents/': typeof AuthenticatedDocumentsIndexRoute
-  '/flights/': typeof AuthenticatedFlightsIndexRoute
-  '/tasks/': typeof AuthenticatedTasksIndexRoute
-  '/documents/$document-id/edit': typeof AuthenticatedDocumentsDocumentIdEditRoute
-  '/flights/$flight-id/edit': typeof AuthenticatedFlightsFlightIdEditRoute
-  '/tasks/$task-id/edit': typeof AuthenticatedTasksTaskIdEditRoute
-  '/documents/$document-id': typeof AuthenticatedDocumentsDocumentIdIndexRoute
-  '/flights/$flight-id': typeof AuthenticatedFlightsFlightIdIndexRoute
-  '/tasks/$task-id/': typeof AuthenticatedTasksTaskIdIndexRoute
-}
-
-export interface FileRoutesByTo {
-  '/sign-in': typeof authSignInRoute
-  '/sign-out': typeof authSignOutRoute
-  '/401': typeof errors401Route
-  '/403': typeof errors403Route
-  '/404': typeof errors404Route
-  '/500': typeof errors500Route
-  '/503': typeof errors503Route
-  '/': typeof AuthenticatedIndexRoute
-  '/attachments/shared-with-me': typeof AuthenticatedAttachmentsSharedWithMeRoute
-  '/documents/create': typeof AuthenticatedDocumentsCreateRoute
-  '/flights/create': typeof AuthenticatedFlightsCreateRoute
-  '/tasks/create': typeof AuthenticatedTasksCreateRoute
-  '/attachments': typeof AuthenticatedAttachmentsIndexRoute
-  '/documents': typeof AuthenticatedDocumentsIndexRoute
-  '/flights': typeof AuthenticatedFlightsIndexRoute
-  '/tasks': typeof AuthenticatedTasksIndexRoute
-  '/documents/$document-id/edit': typeof AuthenticatedDocumentsDocumentIdEditRoute
-  '/flights/$flight-id/edit': typeof AuthenticatedFlightsFlightIdEditRoute
-  '/tasks/$task-id/edit': typeof AuthenticatedTasksTaskIdEditRoute
-  '/documents/$document-id': typeof AuthenticatedDocumentsDocumentIdIndexRoute
-  '/flights/$flight-id': typeof AuthenticatedFlightsFlightIdIndexRoute
-  '/tasks/$task-id': typeof AuthenticatedTasksTaskIdIndexRoute
-}
-
-export interface FileRoutesById {
-  __root__: typeof rootRoute
-  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
-  '/_authenticated/attachments': typeof AuthenticatedAttachmentsRouteRouteWithChildren
-  '/_authenticated/documents': typeof AuthenticatedDocumentsRouteRouteWithChildren
-  '/_authenticated/flights': typeof AuthenticatedFlightsRouteRouteWithChildren
-  '/_authenticated/tasks': typeof AuthenticatedTasksRouteRouteWithChildren
-  '/(auth)/sign-in': typeof authSignInRoute
-  '/(auth)/sign-out': typeof authSignOutRoute
-  '/(errors)/401': typeof errors401Route
-  '/(errors)/403': typeof errors403Route
-  '/(errors)/404': typeof errors404Route
-  '/(errors)/500': typeof errors500Route
-  '/(errors)/503': typeof errors503Route
-  '/_authenticated/': typeof AuthenticatedIndexRoute
-  '/_authenticated/tasks/$task-id': typeof AuthenticatedTasksTaskIdRouteRouteWithChildren
-  '/_authenticated/attachments/shared-with-me': typeof AuthenticatedAttachmentsSharedWithMeRoute
-  '/_authenticated/documents/create': typeof AuthenticatedDocumentsCreateRoute
-  '/_authenticated/flights/create': typeof AuthenticatedFlightsCreateRoute
-  '/_authenticated/tasks/create': typeof AuthenticatedTasksCreateRoute
-  '/_authenticated/attachments/': typeof AuthenticatedAttachmentsIndexRoute
-  '/_authenticated/documents/': typeof AuthenticatedDocumentsIndexRoute
-  '/_authenticated/flights/': typeof AuthenticatedFlightsIndexRoute
-  '/_authenticated/tasks/': typeof AuthenticatedTasksIndexRoute
-  '/_authenticated/documents/$document-id/edit': typeof AuthenticatedDocumentsDocumentIdEditRoute
-  '/_authenticated/flights/$flight-id/edit': typeof AuthenticatedFlightsFlightIdEditRoute
-  '/_authenticated/tasks/$task-id/edit': typeof AuthenticatedTasksTaskIdEditRoute
-  '/_authenticated/documents/$document-id/': typeof AuthenticatedDocumentsDocumentIdIndexRoute
-  '/_authenticated/flights/$flight-id/': typeof AuthenticatedFlightsFlightIdIndexRoute
-  '/_authenticated/tasks/$task-id/': typeof AuthenticatedTasksTaskIdIndexRoute
-}
-
-export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | ''
-    | '/attachments'
-    | '/documents'
-    | '/flights'
-    | '/tasks'
-    | '/sign-in'
-    | '/sign-out'
-    | '/401'
-    | '/403'
-    | '/404'
-    | '/500'
-    | '/503'
-    | '/'
-    | '/tasks/$task-id'
-    | '/attachments/shared-with-me'
-    | '/documents/create'
-    | '/flights/create'
-    | '/tasks/create'
-    | '/attachments/'
-    | '/documents/'
-    | '/flights/'
-    | '/tasks/'
-    | '/documents/$document-id/edit'
-    | '/flights/$flight-id/edit'
-    | '/tasks/$task-id/edit'
-    | '/documents/$document-id'
-    | '/flights/$flight-id'
-    | '/tasks/$task-id/'
-  fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/sign-in'
-    | '/sign-out'
-    | '/401'
-    | '/403'
-    | '/404'
-    | '/500'
-    | '/503'
-    | '/'
-    | '/attachments/shared-with-me'
-    | '/documents/create'
-    | '/flights/create'
-    | '/tasks/create'
-    | '/attachments'
-    | '/documents'
-    | '/flights'
-    | '/tasks'
-    | '/documents/$document-id/edit'
-    | '/flights/$flight-id/edit'
-    | '/tasks/$task-id/edit'
-    | '/documents/$document-id'
-    | '/flights/$flight-id'
-    | '/tasks/$task-id'
-  id:
-    | '__root__'
-    | '/_authenticated'
-    | '/_authenticated/attachments'
-    | '/_authenticated/documents'
-    | '/_authenticated/flights'
-    | '/_authenticated/tasks'
-    | '/(auth)/sign-in'
-    | '/(auth)/sign-out'
-    | '/(errors)/401'
-    | '/(errors)/403'
-    | '/(errors)/404'
-    | '/(errors)/500'
-    | '/(errors)/503'
-    | '/_authenticated/'
-    | '/_authenticated/tasks/$task-id'
-    | '/_authenticated/attachments/shared-with-me'
-    | '/_authenticated/documents/create'
-    | '/_authenticated/flights/create'
-    | '/_authenticated/tasks/create'
-    | '/_authenticated/attachments/'
-    | '/_authenticated/documents/'
-    | '/_authenticated/flights/'
-    | '/_authenticated/tasks/'
-    | '/_authenticated/documents/$document-id/edit'
-    | '/_authenticated/flights/$flight-id/edit'
-    | '/_authenticated/tasks/$task-id/edit'
-    | '/_authenticated/documents/$document-id/'
-    | '/_authenticated/flights/$flight-id/'
-    | '/_authenticated/tasks/$task-id/'
-  fileRoutesById: FileRoutesById
-}
-
-export interface RootRouteChildren {
-  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
-  authSignInRoute: typeof authSignInRoute
-  authSignOutRoute: typeof authSignOutRoute
-  errors401Route: typeof errors401Route
-  errors403Route: typeof errors403Route
-  errors404Route: typeof errors404Route
-  errors500Route: typeof errors500Route
-  errors503Route: typeof errors503Route
-}
-
 const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   authSignInRoute: authSignInRoute,
@@ -743,163 +649,6 @@ const rootRouteChildren: RootRouteChildren = {
   errors500Route: errors500Route,
   errors503Route: errors503Route,
 }
-
-export const routeTree = rootRoute
+export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-/* ROUTE_MANIFEST_START
-{
-  "routes": {
-    "__root__": {
-      "filePath": "__root.tsx",
-      "children": [
-        "/_authenticated",
-        "/(auth)/sign-in",
-        "/(auth)/sign-out",
-        "/(errors)/401",
-        "/(errors)/403",
-        "/(errors)/404",
-        "/(errors)/500",
-        "/(errors)/503"
-      ]
-    },
-    "/_authenticated": {
-      "filePath": "_authenticated/route.tsx",
-      "children": [
-        "/_authenticated/attachments",
-        "/_authenticated/documents",
-        "/_authenticated/flights",
-        "/_authenticated/tasks",
-        "/_authenticated/"
-      ]
-    },
-    "/_authenticated/attachments": {
-      "filePath": "_authenticated/attachments/route.tsx",
-      "parent": "/_authenticated",
-      "children": [
-        "/_authenticated/attachments/shared-with-me",
-        "/_authenticated/attachments/"
-      ]
-    },
-    "/_authenticated/documents": {
-      "filePath": "_authenticated/documents/route.tsx",
-      "parent": "/_authenticated",
-      "children": [
-        "/_authenticated/documents/create",
-        "/_authenticated/documents/",
-        "/_authenticated/documents/$document-id/edit",
-        "/_authenticated/documents/$document-id/"
-      ]
-    },
-    "/_authenticated/flights": {
-      "filePath": "_authenticated/flights/route.tsx",
-      "parent": "/_authenticated",
-      "children": [
-        "/_authenticated/flights/create",
-        "/_authenticated/flights/",
-        "/_authenticated/flights/$flight-id/edit",
-        "/_authenticated/flights/$flight-id/"
-      ]
-    },
-    "/_authenticated/tasks": {
-      "filePath": "_authenticated/tasks/route.tsx",
-      "parent": "/_authenticated",
-      "children": [
-        "/_authenticated/tasks/$task-id",
-        "/_authenticated/tasks/create",
-        "/_authenticated/tasks/"
-      ]
-    },
-    "/(auth)/sign-in": {
-      "filePath": "(auth)/sign-in.tsx"
-    },
-    "/(auth)/sign-out": {
-      "filePath": "(auth)/sign-out.tsx"
-    },
-    "/(errors)/401": {
-      "filePath": "(errors)/401.tsx"
-    },
-    "/(errors)/403": {
-      "filePath": "(errors)/403.tsx"
-    },
-    "/(errors)/404": {
-      "filePath": "(errors)/404.tsx"
-    },
-    "/(errors)/500": {
-      "filePath": "(errors)/500.tsx"
-    },
-    "/(errors)/503": {
-      "filePath": "(errors)/503.tsx"
-    },
-    "/_authenticated/": {
-      "filePath": "_authenticated/index.tsx",
-      "parent": "/_authenticated"
-    },
-    "/_authenticated/tasks/$task-id": {
-      "filePath": "_authenticated/tasks/$task-id/route.tsx",
-      "parent": "/_authenticated/tasks",
-      "children": [
-        "/_authenticated/tasks/$task-id/edit",
-        "/_authenticated/tasks/$task-id/"
-      ]
-    },
-    "/_authenticated/attachments/shared-with-me": {
-      "filePath": "_authenticated/attachments/shared-with-me.tsx",
-      "parent": "/_authenticated/attachments"
-    },
-    "/_authenticated/documents/create": {
-      "filePath": "_authenticated/documents/create.tsx",
-      "parent": "/_authenticated/documents"
-    },
-    "/_authenticated/flights/create": {
-      "filePath": "_authenticated/flights/create.tsx",
-      "parent": "/_authenticated/flights"
-    },
-    "/_authenticated/tasks/create": {
-      "filePath": "_authenticated/tasks/create.tsx",
-      "parent": "/_authenticated/tasks"
-    },
-    "/_authenticated/attachments/": {
-      "filePath": "_authenticated/attachments/index.tsx",
-      "parent": "/_authenticated/attachments"
-    },
-    "/_authenticated/documents/": {
-      "filePath": "_authenticated/documents/index.tsx",
-      "parent": "/_authenticated/documents"
-    },
-    "/_authenticated/flights/": {
-      "filePath": "_authenticated/flights/index.tsx",
-      "parent": "/_authenticated/flights"
-    },
-    "/_authenticated/tasks/": {
-      "filePath": "_authenticated/tasks/index.tsx",
-      "parent": "/_authenticated/tasks"
-    },
-    "/_authenticated/documents/$document-id/edit": {
-      "filePath": "_authenticated/documents/$document-id/edit.tsx",
-      "parent": "/_authenticated/documents"
-    },
-    "/_authenticated/flights/$flight-id/edit": {
-      "filePath": "_authenticated/flights/$flight-id/edit.tsx",
-      "parent": "/_authenticated/flights"
-    },
-    "/_authenticated/tasks/$task-id/edit": {
-      "filePath": "_authenticated/tasks/$task-id/edit.tsx",
-      "parent": "/_authenticated/tasks/$task-id"
-    },
-    "/_authenticated/documents/$document-id/": {
-      "filePath": "_authenticated/documents/$document-id/index.tsx",
-      "parent": "/_authenticated/documents"
-    },
-    "/_authenticated/flights/$flight-id/": {
-      "filePath": "_authenticated/flights/$flight-id/index.tsx",
-      "parent": "/_authenticated/flights"
-    },
-    "/_authenticated/tasks/$task-id/": {
-      "filePath": "_authenticated/tasks/$task-id/index.tsx",
-      "parent": "/_authenticated/tasks/$task-id"
-    }
-  }
-}
-ROUTE_MANIFEST_END */

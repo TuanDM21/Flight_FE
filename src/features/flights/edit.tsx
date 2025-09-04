@@ -144,8 +144,7 @@ export default function EditFlightPage() {
         navigate({ to: '/flights' })
         return 'Cập nhật chuyến bay thành công!'
       },
-      error: (error) => {
-        console.error('Error updating flight:', error)
+      error: () => {
         return 'Cập nhật chuyến bay thất bại!'
       },
     })

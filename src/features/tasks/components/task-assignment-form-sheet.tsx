@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/sheet'
 import { useCreateTaskAssignmentsMutation } from '../hooks/use-create-task-assignments'
 import { createTaskAssignmentsSchema } from '../schema'
-import { TaskAssignmentField } from './task-assignment-field'
+import { TaskAssignmentsField } from './task-assignments-field'
 
 type TaskSheetFormValues = z.infer<typeof createTaskAssignmentsSchema>
 
@@ -71,12 +71,12 @@ export const TaskAssignmentFormSheet = ({
             onSubmit={form.handleSubmit(handleSubmit)}
             className='flex min-h-0 flex-1 flex-col'
           >
-            <div className='min-h-0 flex-1 overflow-y-auto p-4'>
-              <TaskAssignmentField form={form} name='assignments' />
+            <div className='min-h-0 flex-1 overflow-y-auto px-4'>
+              <TaskAssignmentsField form={form} name='assignments' />
             </div>
             <div className='flex-shrink-0 border-t p-4'>
               <Button type='submit' size='lg' className='w-full'>
-                Save Assignment
+                Lưu phân công
               </Button>
             </div>
           </form>

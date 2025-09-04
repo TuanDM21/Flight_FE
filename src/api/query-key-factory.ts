@@ -23,13 +23,6 @@ export const taskKeysFactory = {
       '/api/assignments/{id}/comments',
       { params: { path: { id: assignmentId } } },
     ] as const,
-
-  documents: (taskId: number) =>
-    [
-      'get',
-      '/api/task-documents',
-      { params: { query: { taskId: taskId } } },
-    ] as const,
 }
 
 export const flightKeysFactory = {

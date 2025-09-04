@@ -43,7 +43,7 @@ interface TaskAssignmentsDialogProps {
 const initialFormValues: TaskAssignmentUpdateForm = {
   recipientType: '',
   recipientId: 0,
-  status: 'ASSIGNED',
+  status: 'WORKING',
   note: '',
   dueAt: new Date().toISOString(),
 }
@@ -85,7 +85,7 @@ export function TaskAssignmentsDialog({
     form.reset({
       recipientType: assignment.recipientType || '',
       recipientId: assignment.recipientId,
-      status: assignment.status ?? 'ASSIGNED',
+      status: assignment.status,
       note: assignment.note || '',
       dueAt: assignment.dueAt || '',
       assignmentId: assignment.assignmentId,
@@ -94,12 +94,10 @@ export function TaskAssignmentsDialog({
 
   const handleSaveEdit = async () => {
     const { assignmentId, ...restValues } = form.getValues()
-
-    if (!assignmentId) {
+    if (assignmentId == null) {
       toast.error('Vui lòng chọn phân công để cập nhật.')
       return
     }
-
     const isValid = await form.trigger()
     if (!isValid) return
 
@@ -221,8 +219,12 @@ export function TaskAssignmentsDialog({
       <Dialog open={open} onOpenChange={() => onClose()}>
         <DialogContent
           className='max-h-7xl flex flex-col sm:max-w-7xl'
-          onPointerDownOutside={(e) => e.preventDefault()}
-          onEscapeKeyDown={(event) => event.preventDefault()}
+          onPointerDownOutside={(e) => {
+            e.preventDefault()
+          }}
+          onEscapeKeyDown={(event) => {
+            event.preventDefault()
+          }}
         >
           <DialogHeader>
             <DialogTitle>Phân công cho Task #{taskId}</DialogTitle>

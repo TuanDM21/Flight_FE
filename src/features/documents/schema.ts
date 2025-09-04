@@ -1,7 +1,6 @@
 import { z } from 'zod'
 import { MAX_FILE_SIZE, MAX_FILES_COUNT } from '../../constants/file'
 
-// Base schema với các validation chung
 const baseDocumentFields = {
   documentType: z.string().min(1, 'Loại tài liệu là bắt buộc'),
   content: z.string().min(1, 'Nội dung là bắt buộc'),

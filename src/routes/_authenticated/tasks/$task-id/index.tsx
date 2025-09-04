@@ -7,9 +7,10 @@ export const Route = createFileRoute('/_authenticated/tasks/$task-id/')({
   component: TaskDetailPage,
   pendingComponent: PageDetailSkeleton,
   loader: ({ context: { queryClient }, params: { 'task-id': taskId } }) => {
-    return queryClient.ensureQueryData(
-      getTaskDetailQueryOptions(Number(taskId))
-    )
+    queryClient.ensureQueryData(getTaskDetailQueryOptions(Number(taskId)))
+    return {
+      crumb: 'Công việc chi tiết' + ` #${taskId}`,
+    }
   },
 })
 

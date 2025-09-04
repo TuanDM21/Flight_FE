@@ -1,22 +1,18 @@
 import { differenceInMinutes, format } from 'date-fns'
 import { ColumnDef } from '@tanstack/react-table'
 import { dateFormatPatterns } from '@/config/date'
-import { Calendar, FileText, HardDrive, Hash, Users } from 'lucide-react'
+import { Calendar, FileText, HardDrive, Hash } from 'lucide-react'
 import { formatFileSize } from '@/lib/format'
-import { useDialogs } from '@/hooks/use-dialogs'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header'
-import { AttachmentDetailSheet } from '../components/attachment-detail-sheet'
 import { AttachmentRowActions } from '../components/attachment-row-actions'
-import { AttachmentViewCount } from '../components/attachment-view-count'
 import { FileExtensionCell } from '../components/file-extension-cell'
 import { FileNameCell } from '../components/file-name-cell'
 import { AttachmentItem } from '../types'
 
 interface UseAttachmentTableColumnsOptions {
   showColumns?: {
-    shared?: boolean
     actions?: boolean
   }
 }
@@ -26,19 +22,9 @@ export const useAttachmentTableColumns = (
 ): ColumnDef<AttachmentItem>[] => {
   const {
     showColumns = {
-      fileType: true,
-      shared: true,
       actions: true,
     },
   } = options
-
-  const dialogs = useDialogs()
-
-  const handleViewDetails = (attachment: AttachmentItem) => {
-    dialogs.sheet(AttachmentDetailSheet, {
-      attachment,
-    })
-  }
 
   const baseColumns: ColumnDef<AttachmentItem>[] = [
     // Always show: select, id, fileName, fileSize, uploadDate
@@ -51,14 +37,18 @@ export const useAttachmentTableColumns = (
             table.getIsAllPageRowsSelected() ||
             (table.getIsSomePageRowsSelected() && 'indeterminate')
           }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          onCheckedChange={(value) => {
+            table.toggleAllPageRowsSelected(!!value)
+          }}
           aria-label='Chọn tất cả'
         />
       ),
       cell: ({ row }) => (
         <Checkbox
           checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          onCheckedChange={(value) => {
+            row.toggleSelected(!!value)
+          }}
           aria-label='Chọn hàng'
         />
       ),
@@ -83,12 +73,7 @@ export const useAttachmentTableColumns = (
       cell: ({ cell }) => {
         const attachmentId = cell.getValue<number>()
         return (
-          <Button
-            variant='link'
-            size='sm'
-            className='h-auto p-0'
-            onClick={() => handleViewDetails(cell.row.original)}
-          >
+          <Button size='sm' className='h-auto p-0' variant='link'>
             #{attachmentId ?? 'N/A'}
           </Button>
         )
@@ -126,7 +111,7 @@ export const useAttachmentTableColumns = (
         <DataTableColumnHeader column={column} title='Kích thước' />
       ),
       cell: ({ row }) => {
-        const size = (row.getValue('fileSize') as number) || 0
+        const size = row.getValue('fileSize') || 0
         return (
           <span className='text-muted-foreground text-sm'>
             {formatFileSize(size)}
@@ -149,7 +134,7 @@ export const useAttachmentTableColumns = (
         <DataTableColumnHeader column={column} title='Ngày tải lên' />
       ),
       cell: ({ row }) => {
-        const dateValue = row.getValue('createdAt') as string
+        const dateValue = row.getValue<string>('createdAt')
         if (!dateValue) return <span className='text-muted-foreground'>-</span>
 
         const date = new Date(dateValue)
@@ -157,7 +142,7 @@ export const useAttachmentTableColumns = (
         const isRecent = differenceInMinutes(now, date) <= 5
 
         return (
-          <div className='bg-muted inline-flex items-center rounded px-2 py-1 text-xs whitespace-nowrap'>
+          <div className='inline-flex items-center rounded px-2 py-1 text-xs whitespace-nowrap'>
             <span
               className={`text-sm ${isRecent ? 'font-medium text-green-600' : ''}`}
             >
@@ -178,38 +163,11 @@ export const useAttachmentTableColumns = (
       <DataTableColumnHeader column={column} title='Loại tệp' />
     ),
     cell: ({ row }) => {
-      const fileName = row.getValue('fileName') as string
+      const fileName = row.getValue('fileName')
       return <FileExtensionCell fileName={fileName} />
     },
     size: 80,
   })
-
-  // Add shared column if enabled
-  if (showColumns.shared) {
-    optionalColumns.push({
-      id: 'shared',
-      size: 50,
-      meta: {
-        className: '',
-        label: 'Đã chia sẻ',
-        placeholder: 'Lọc theo trạng thái chia sẻ...',
-        variant: 'number',
-        icon: Users,
-      },
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title='Đã chia sẻ' />
-      ),
-      cell: ({ row }) => {
-        const attachment = row.original
-        return (
-          <AttachmentViewCount
-            attachment={attachment}
-            onViewDetails={handleViewDetails}
-          />
-        )
-      },
-    })
-  }
 
   // Add actions column if enabled
   if (showColumns.actions) {

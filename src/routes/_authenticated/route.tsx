@@ -34,10 +34,9 @@ export const Route = createFileRoute('/_authenticated')({
 })
 
 function RouteComponent() {
-  const defaultOpen = Cookies.get('sidebar_state') !== 'false'
   return (
     <CommandSearchProvider>
-      <SidebarProvider defaultOpen={defaultOpen}>
+      <SidebarProvider defaultOpen={false}>
         <SkipToMain />
         <AppSidebar />
         <div

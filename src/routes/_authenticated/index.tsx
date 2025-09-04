@@ -13,6 +13,9 @@ export const Route = createFileRoute('/_authenticated/')({
       redirect({
         to: '/tasks',
         throw: true,
+        search: {
+          type: 'assigned',
+        },
       })
     }
   },

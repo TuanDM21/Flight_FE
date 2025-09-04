@@ -33,7 +33,6 @@ export function SignInForm({ className, ...props }: SignInFormProps) {
     defaultValues: {
       email: '',
       password: '',
-      remember: false,
     },
   })
   async function onSubmit(data: LoginCredentials) {

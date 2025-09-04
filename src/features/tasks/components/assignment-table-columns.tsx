@@ -10,30 +10,21 @@ import {
   IconX,
 } from '@tabler/icons-react'
 import { dateFormatPatterns } from '@/config/date'
-import { FileTextIcon } from 'lucide-react'
+import { TasksRoute } from '@/routes/_authenticated/tasks'
+import { CheckCheck, FileTextIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/context/auth-context'
 import { Button } from '@/components/ui/button'
-import { Calendar } from '@/components/ui/calendar'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { FormControl, FormField, FormItem } from '@/components/ui/form'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
+import { Popover } from '@/components/ui/popover'
 import {
   Select,
   SelectContent,
@@ -47,6 +38,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header'
+import { DateTimePicker } from '@/components/datetime-picker'
 import { FormFieldTooltipError } from '@/components/form-field-tooltip-error'
 import { useRecipientOptions } from '@/features/tasks/hooks/use-recipient-options'
 import { updateTaskAssignmentSchema } from '@/features/tasks/schema'
@@ -59,6 +51,7 @@ import {
   assigneeTaskAssignmentStatusLabels,
   ownerTaskAssignmentStatusLabels,
 } from '@/features/tasks/utils/tasks'
+import { recipientTypeMap, recipientTypes } from '../config'
 import { EditableNoteCell } from './editable-note-cell'
 import { TaskAssignmentStatusBadge } from './task-assignment-status-badge'
 
@@ -96,6 +89,8 @@ export function useAssignmentTableColumns({
   task,
 }: AssignmentColumnsProps): ColumnDef<TaskAssignment>[] {
   const { user } = useAuth()
+  const searchParams = TasksRoute.useSearch()
+  const filterType = searchParams.type
 
   const isTaskOwner = user?.id === task.createdByUser?.id
   const { getRecipientOptions, deriveRecipientOptions } = useRecipientOptions()
@@ -165,7 +160,13 @@ export function useAssignmentTableColumns({
             />
           )
         }
-        return <div>{value || 'N/A'}</div>
+        return (
+          <div>
+            {value
+              ? recipientTypes[value as keyof typeof recipientTypes]
+              : 'N/A'}
+          </div>
+        )
       },
       size: 100,
       enableSorting: false,
@@ -188,10 +189,9 @@ export function useAssignmentTableColumns({
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title='Người nhận' />
       ),
-      cell: ({ row, cell }) => {
+      cell: ({ row }) => {
         const assignment = row.original
         const isEditing = editingAssignmentId === assignment.assignmentId
-        const value = cell.getValue<string>()
 
         if (isEditing) {
           return (
@@ -204,7 +204,9 @@ export function useAssignmentTableColumns({
                     <FormControl>
                       <Select
                         value={field.value ? String(field.value) : ''}
-                        onValueChange={(value) => field.onChange(Number(value))}
+                        onValueChange={(value) => {
+                          field.onChange(Number(value))
+                        }}
                         disabled={!currentRecipientType}
                       >
                         <FormFieldTooltipError
@@ -251,7 +253,18 @@ export function useAssignmentTableColumns({
             />
           )
         }
-        return <div>{value || 'N/A'}</div>
+
+        if (assignment.recipientType === recipientTypeMap.user) {
+          return <div>{assignment?.recipientUser?.name || 'N/A'}</div>
+        }
+        if (assignment.recipientType === recipientTypeMap.team) {
+          return <div>{assignment?.recipientUser?.teamName || 'N/A'}</div>
+        }
+        if (assignment.recipientType === recipientTypeMap.unit) {
+          return <div>{assignment?.recipientUser?.unitName || 'N/A'}</div>
+        }
+
+        return 'N/A'
       },
       size: 100,
       enableSorting: false,
@@ -264,7 +277,51 @@ export function useAssignmentTableColumns({
       ),
       cell: ({ row }) => {
         const assignment = row.original
-        const status = assignment.status || 'ASSIGNED'
+        const isEditing = editingAssignmentId === assignment.assignmentId
+        const status = assignment.status || 'DONE'
+
+        if (isEditing) {
+          return (
+            <FormField
+              control={form.control}
+              name='status'
+              render={({ field, fieldState }) => (
+                <FormItem className='flex flex-col'>
+                  <FormControl>
+                    <FormFieldTooltipError
+                      message={fieldState.error?.message || ''}
+                      showError={!!fieldState.error}
+                    >
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
+                        <SelectTrigger
+                          className={cn(
+                            'w-full',
+                            fieldState.error && 'border-destructive'
+                          )}
+                        >
+                          <SelectValue placeholder='Chọn trạng thái' />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Object.entries(taskAssignmentStatusLabels).map(
+                            ([value, label]) => (
+                              <SelectItem key={value} value={value}>
+                                {label}
+                              </SelectItem>
+                            )
+                          )}
+                        </SelectContent>
+                      </Select>
+                    </FormFieldTooltipError>
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          )
+        }
+
         return <TaskAssignmentStatusBadge status={status} />
       },
       size: 120,
@@ -318,43 +375,11 @@ export function useAssignmentTableColumns({
                       showError={!!fieldState.error}
                     >
                       <Popover>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant='outline'
-                            className={cn(
-                              'w-full justify-start text-left font-normal',
-                              form.formState.errors.dueAt &&
-                                'border-destructive'
-                            )}
-                          >
-                            {field.value ? (
-                              format(
-                                new Date(field.value),
-                                dateFormatPatterns.shortDateTime
-                              )
-                            ) : (
-                              <span className='text-muted-foreground'>
-                                Chọn ngày
-                              </span>
-                            )}
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className='w-auto p-0' align='start'>
-                          <Calendar
-                            mode='single'
-                            selected={
-                              field.value ? new Date(field.value) : undefined
-                            }
-                            onSelect={(date) =>
-                              field.onChange(
-                                date ? date.toISOString() : undefined
-                              )
-                            }
-                            initialFocus
-                            disabled={(date) => date < new Date()}
-                            className='rounded-md border'
-                          />
-                        </PopoverContent>
+                        <DateTimePicker
+                          value={field.value}
+                          onChange={field.onChange}
+                          placeholder='Chọn thời hạn hoàn thành'
+                        />
                       </Popover>
                     </FormFieldTooltipError>
                   </FormControl>
@@ -396,8 +421,6 @@ export function useAssignmentTableColumns({
       cell: ({ row }) => {
         const assignment = row.original
         const isEditing = editingAssignmentId === assignment.assignmentId
-        const isAssignedToCurrentUser =
-          user?.id === assignment.recipientUser?.id
 
         if (isEditing) {
           return (
@@ -444,37 +467,22 @@ export function useAssignmentTableColumns({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end' className='w-[160px]'>
-              {(isAssignedToCurrentUser || isTaskOwner) && (
-                <DropdownMenuSub>
-                  <DropdownMenuSubTrigger>Trạng thái</DropdownMenuSubTrigger>
-                  <DropdownMenuSubContent>
-                    <DropdownMenuRadioGroup value={String(assignment.status)}>
-                      {Object.entries(taskAssignmentStatusLabels).map(
-                        ([value, label]) => {
-                          const correctValue = value as TaskAssignmentStatus
-                          return (
-                            <DropdownMenuRadioItem
-                              key={value}
-                              value={value}
-                              disabled={value === String(assignment.status)}
-                              onClick={() =>
-                                handleUpdateAssignmentStatus(
-                                  assignment,
-                                  correctValue
-                                )
-                              }
-                            >
-                              {label}
-                            </DropdownMenuRadioItem>
-                          )
-                        }
-                      )}
-                    </DropdownMenuRadioGroup>
-                  </DropdownMenuSubContent>
-                </DropdownMenuSub>
+              {filterType === 'received' && assignment.status !== 'DONE' && (
+                <DropdownMenuItem
+                  onClick={() =>
+                    handleUpdateAssignmentStatus(assignment, 'DONE')
+                  }
+                >
+                  Hoàn thành công việc
+                  <DropdownMenuShortcut>
+                    <CheckCheck className='h-4 w-4' />
+                  </DropdownMenuShortcut>
+                </DropdownMenuItem>
               )}
               <DropdownMenuItem
-                onClick={() => handleOpenCommentsSheet(assignment)}
+                onClick={() => {
+                  handleOpenCommentsSheet(assignment)
+                }}
               >
                 Xem bình luận
                 <DropdownMenuShortcut>
@@ -484,14 +492,20 @@ export function useAssignmentTableColumns({
               {isTaskOwner && (
                 <>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => startEditing(assignment)}>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      startEditing(assignment)
+                    }}
+                  >
                     Chỉnh sửa
                     <DropdownMenuShortcut>
                       <IconEdit />
                     </DropdownMenuShortcut>
                   </DropdownMenuItem>
                   <DropdownMenuItem
-                    onClick={() => handleDeleteAssignment(assignment)}
+                    onClick={() => {
+                      handleDeleteAssignment(assignment)
+                    }}
                   >
                     Xóa
                     <DropdownMenuShortcut>

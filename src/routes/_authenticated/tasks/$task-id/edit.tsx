@@ -23,6 +23,9 @@ export const Route = createFileRoute('/_authenticated/tasks/$task-id/edit')({
         },
       })
     }
+    return {
+      crumb: 'Chỉnh sửa công việc' + ` #${taskId}`,
+    }
   },
   validateSearch: (search) =>
     z

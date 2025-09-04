@@ -74,7 +74,6 @@ export const TransferList = memo(function ({
 
   useEffect(() => {
     const leftItems = items.filter((x) => !targetKeys?.some((y) => y === x.key))
-    console.log('🚀 ~ useEffect ~ leftItems:', leftItems)
     setLeftList(leftItems)
     const rightItems = items.filter((x) => targetKeys?.some((y) => y === x.key))
     setRightList(rightItems)

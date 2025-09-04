@@ -41,7 +41,7 @@ export function FlightsPage() {
           </div>
           <FlightsPrimaryButtons />
         </div>
-        <div className='-mx-4 flex-1 overflow-hidden px-4 py-1'>
+        <div className='-mx-4 flex-1 overflow-hidden py-1'>
           <Suspense fallback={<PageTableSkeleton />}>
             <DataTable table={table} className='h-full'>
               <FlightsTableActionBar table={table} />

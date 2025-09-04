@@ -15,7 +15,6 @@ import {
 } from '@/components/ui/form'
 import { Textarea } from '@/components/ui/textarea'
 import { createTaskSchema } from '@/features/tasks/schema'
-import { CreateTasksForm } from './create'
 import { getTaskDetailQueryOptions } from './hooks/use-task-detail'
 import { useUpdateTask } from './hooks/use-update-task'
 
@@ -32,7 +31,7 @@ export default function EditTaskPage() {
 
   const taskData = taskDetailsQuery?.data || {}
 
-  const form = useForm<CreateTasksForm>({
+  const form = useForm<any>({
     resolver: zodResolver(createTaskSchema),
     defaultValues: {
       content: taskData.content || '',
@@ -48,7 +47,7 @@ export default function EditTaskPage() {
     },
   })
 
-  const onSubmit = async (data: CreateTasksForm) => {
+  const onSubmit = async (data: any) => {
     const { content, instructions, notes } = data
 
     const taskUpdatePromise = updateTaskMutation.mutateAsync({
@@ -145,9 +144,6 @@ export default function EditTaskPage() {
           </Form>
         </CardContent>
         <div className='bg-background sticky bottom-0 z-10 flex items-center justify-end space-x-2 border-t px-2 pt-2'>
-          <Button variant='outline' size='lg' form='tasks-form' type='button'>
-            Lưu bản nháp
-          </Button>
           <Button
             form='tasks-form'
             type='submit'

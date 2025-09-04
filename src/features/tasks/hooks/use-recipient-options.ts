@@ -4,22 +4,16 @@ import { LiteralUnion } from 'type-fest'
 import { useAuth } from '@/context/auth-context'
 
 export function useRecipientOptions() {
-  const { user, hasRole } = useAuth()
+  const { hasRole } = useAuth()
 
-  const getTeamQuery = $queryClient.useQuery('get', '/api/teams')
-  const getUnitsQuery = $queryClient.useQuery('get', '/api/units', {
-    params: {
-      query: {
-        teamId: user?.teamId,
-      },
-    },
-  })
+  const getTeamQuery = $queryClient.useQuery('get', '/api/teams/assignable')
+  const getUnitsQuery = $queryClient.useQuery('get', '/api/units/assignable')
   const getUsersQuery = $queryClient.useQuery('get', '/api/users/assignable')
 
   const getRecipientOptions = (
-    type: LiteralUnion<'team' | 'unit' | 'user', string>
+    type: LiteralUnion<'TEAM' | 'UNIT' | 'USER', string>
   ) => {
-    if (type === 'team') {
+    if (type === 'TEAM') {
       return (
         (getTeamQuery.data?.data ?? []).map((team) => ({
           value: team.id,
@@ -27,7 +21,7 @@ export function useRecipientOptions() {
         })) ?? []
       )
     }
-    if (type === 'unit') {
+    if (type === 'UNIT') {
       return (
         (getUnitsQuery.data?.data ?? []).map((unit) => ({
           value: unit.id,
@@ -44,9 +38,9 @@ export function useRecipientOptions() {
   }
 
   const deriveRecipientOptions = useMemo(() => {
-    const userOption = { label: 'Cá nhân', value: 'user' }
-    const teamOption = { label: 'Đội', value: 'team' }
-    const unitOption = { label: 'Tổ', value: 'unit' }
+    const userOption = { label: 'Cá nhân', value: 'USER' }
+    const teamOption = { label: 'Đội', value: 'TEAM' }
+    const unitOption = { label: 'Tổ', value: 'UNIT' }
 
     const higherRoles = ['ADMIN', 'DIRECTOR', 'VICE_DIRECTOR']
     if (higherRoles.some((role) => hasRole(role)))
