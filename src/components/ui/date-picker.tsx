@@ -55,6 +55,7 @@ export function DatePicker({
           variant={variant}
           size={size}
           disabled={disabled}
+          onClick={() => setOpen(false)}
           className={cn(
             'justify-start text-left font-normal',
             !selectedDate && 'text-muted-foreground',

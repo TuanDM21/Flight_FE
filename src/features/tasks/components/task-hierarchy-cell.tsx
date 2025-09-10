@@ -1,5 +1,4 @@
 import { Link } from '@tanstack/react-router'
-import { TasksRoute } from '@/routes/_authenticated/tasks'
 import { ChevronRight, PackagePlus } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useDialogs } from '@/hooks/use-dialogs'
@@ -18,6 +17,7 @@ interface TaskHierarchyCellProps {
   className?: string
   hasSubtask: boolean
   onToggleSubtasks?: (taskId: number) => void
+  filterType?: string
 }
 
 export function TaskHierarchyCell({
@@ -27,9 +27,8 @@ export function TaskHierarchyCell({
   className,
   onToggleSubtasks,
   hasSubtask,
+  filterType,
 }: TaskHierarchyCellProps) {
-  const searchParams = TasksRoute.useSearch()
-  const filterType = searchParams.type
   const dialogs = useDialogs()
 
   const handleViewSubtask = async () => {
@@ -50,7 +49,7 @@ export function TaskHierarchyCell({
         <>
           {/* Vertical line từ parent xuống */}
           <div
-            className='absolute w-px bg-blue-300'
+            className='bg-primary absolute w-px'
             style={{
               left: `${(level - 1) * 12 + 4}px`,
               top: '-24px',
@@ -65,7 +64,7 @@ export function TaskHierarchyCell({
               left: `${(level - 1) * 12 + 4}px`,
             }}
           >
-            <div className='h-full w-full rounded-bl border-b border-l border-blue-300' />
+            <div className='border-primary h-full w-full rounded-bl border-b border-l' />
           </div>
         </>
       )}

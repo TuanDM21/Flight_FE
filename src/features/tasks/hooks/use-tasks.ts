@@ -1,9 +1,9 @@
 import { format, parse } from 'date-fns'
 import $queryClient from '@/api'
 import { dateFormatPatterns } from '@/config/date'
-import { TasksQueryParams } from '../types'
+import { MyTasksQueryParams } from '../types'
 
-export const tasksQueryOptions = (queryParams: TasksQueryParams) => {
+export const tasksQueryOptions = (queryParams: MyTasksQueryParams) => {
   const params = { ...queryParams }
 
   if (params.startTime) {

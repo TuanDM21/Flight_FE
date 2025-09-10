@@ -39,7 +39,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { DataTableActionBarAction } from '@/components/data-table/data-table-action-bar'
 import { useUploadAttachments } from '../../attachments/hooks/use-upload-attachments'
 import { CreateTaskFormOutput } from '../types'
-import { taskPriorityOptions } from '../utils/tasks'
+import { taskPriorityOptions } from '../utils'
 import { TaskAssignmentsField } from './task-assignments-field'
 
 interface CreateTaskFormProps {

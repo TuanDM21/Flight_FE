@@ -5,7 +5,7 @@ import {
   taskStatusIcons,
   taskStatusFilterLabels,
   taskStatusStyles,
-} from '@/features/tasks/utils/tasks'
+} from '@/features/tasks/utils'
 
 interface TaskStatusBadgeProps {
   status: TaskStatus

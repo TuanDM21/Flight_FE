@@ -1,7 +1,7 @@
 export const recipientTypes = {
-  USER: 'Người dùng',
-  TEAM: 'Nhóm',
-  UNIT: 'Đơn vị',
+  USER: 'Cá nhân',
+  TEAM: 'Đội',
+  UNIT: 'Tổ',
 } satisfies Record<string, string>
 
 export const recipientTypeMap = {

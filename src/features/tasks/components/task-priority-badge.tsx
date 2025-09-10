@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { TaskPriority } from '../types'
-import { priorityIcons, priorityLabels, priorityStyles } from '../utils/tasks'
+import { priorityIcons, priorityLabels, priorityStyles } from '../utils'
 
 interface TaskPriorityBadgeProps {
   priority: TaskPriority

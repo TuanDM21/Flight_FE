@@ -376,7 +376,7 @@ function DataTableFilterItem<TData>({
             <Button
               variant='ghost'
               size='sm'
-              className='dark:bg-input/30 rounded-none rounded-l-md border border-r-0 font-normal'
+              className='bg-muted/50 rounded-none rounded-l-md border border-r-0 font-normal'
             >
               {columnMeta?.icon && (
                 <columnMeta.icon className='text-muted-foreground' />
@@ -476,7 +476,7 @@ function DataTableFilterItem<TData>({
           aria-controls={filterItemId}
           variant='ghost'
           size='sm'
-          className='dark:bg-input/30 h-full rounded-none rounded-r-md border border-l-0 px-1.5 font-normal'
+          className='bg-muted/50 h-full rounded-none rounded-r-md border border-l-0 px-1.5 font-normal'
           onClick={() => {
             onFilterRemove(filter.filterId)
           }}

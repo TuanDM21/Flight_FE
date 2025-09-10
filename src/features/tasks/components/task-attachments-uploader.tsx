@@ -78,7 +78,7 @@ export function TaskAttachmentsUploader({
             const isAbortError = error.name === 'AbortError'
 
             const errorMessage = isAbortError
-              ? 'Việc tải lên đã bị người dùng hủy'
+              ? 'Việc tải lên đã bị Cá nhân hủy'
               : error.message || 'Đã xảy ra lỗi trong quá trình tải lên.'
 
             toast.error(

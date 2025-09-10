@@ -60,6 +60,7 @@ export function DateRangePicker({
         <Button
           variant={variant}
           size={size}
+          onClick={() => setOpen(false)}
           disabled={disabled}
           className={cn(
             'justify-start text-left font-normal',

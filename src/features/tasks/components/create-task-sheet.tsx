@@ -15,16 +15,19 @@ import {
 } from '@/components/ui/sheet'
 import { useCreateTask } from '../hooks/use-create-task'
 import { useCreateTaskForm } from '../hooks/use-create-task-form'
-import { CreateTaskFormOutput } from '../types'
+import { CreateTaskFormOutput, TaskFilterTypes } from '../types'
 import { CreateTaskForm } from './create-task-form'
 
-interface CreateTaskSheetPayload {}
+interface CreateTaskSheetPayload {
+  filterType: TaskFilterTypes
+}
 
 export const CreateTaskSheet: React.FC<DialogProps<CreateTaskSheetPayload>> = ({
   open,
   onClose,
+  payload: { filterType },
 }) => {
-  const createTaskMutation = useCreateTask()
+  const createTaskMutation = useCreateTask(filterType)
   const abortControllerRef = useRef<AbortController | null>(null)
 
   const onReset = useCallback(() => {
@@ -74,7 +77,7 @@ export const CreateTaskSheet: React.FC<DialogProps<CreateTaskSheetPayload>> = ({
         <SheetHeader className='shadow-sm backdrop-blur-sm'>
           <SheetTitle>Tạo công việc</SheetTitle>
           <SheetDescription>
-            Tạo công việc mới và giao cho các thành viên trong nhóm
+            Tạo công việc mới và giao cho các thành viên trong đội
           </SheetDescription>
         </SheetHeader>
 

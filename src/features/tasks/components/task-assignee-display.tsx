@@ -14,19 +14,11 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { UserItem } from '@/features/users/types'
+import { getAbbreviation } from '../utils'
 
 interface TaskAssigneeDisplayProps {
   users: UserItem[]
   maxVisible?: number
-}
-
-const getInitials = (name: string) => {
-  return name
-    ?.split(' ')
-    .map((n) => n[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2)
 }
 
 export function TaskAssigneeDisplay({
@@ -76,7 +68,7 @@ export function TaskAssigneeDisplay({
                 )}
               >
                 <AvatarFallback className='text-xs'>
-                  {getInitials(name)}
+                  {getAbbreviation(name)}
                 </AvatarFallback>
               </Avatar>
             </HoverCardTrigger>

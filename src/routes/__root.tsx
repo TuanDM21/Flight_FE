@@ -6,15 +6,12 @@ import { envVariables } from '@/lib/env'
 import { AuthContext } from '@/context/auth-context'
 import { DialogsProvider } from '@/context/dialogs-context'
 import { NavigationProgress } from '@/components/navigation-progress'
-import { AppAbility } from '@/features/ability/types'
 import GeneralError from '@/features/errors/general-error'
 import NotFoundError from '@/features/errors/not-found-error'
 
 interface AppRouterContext {
   queryClient: QueryClient
   auth: AuthContext
-
-  ability: AppAbility
 }
 export const Route = createRootRouteWithContext<AppRouterContext>()({
   component: () => {

@@ -1,10 +1,13 @@
 import * as z from 'zod'
+import { fileSchema } from '../attachments/schema'
 import { ASSIGNMENT_STATUSES, TASK_PRIORITIES } from './constants'
 
 export const assignmentsSchema = z
   .array(
     z.object({
-      recipientType: z.string().min(1, 'Vui lòng chọn loại người nhận'),
+      recipientType: z.enum(['USER', 'TEAM', 'UNIT'], {
+        error: 'Vui lòng chọn loại người nhận',
+      }),
       recipientId: z
         .number({ error: 'Vui lòng chọn người nhận' })
         .int('Vui lòng chọn người nhận hợp lệ'),
@@ -16,16 +19,16 @@ export const assignmentsSchema = z
   .optional()
 
 export const createTaskSchema = z.object({
-  title: z.string().min(1, { error: 'Vui lòng nhập tiêu đề nhiệm vụ' }),
-  content: z.string().min(1, { error: 'Vui lòng nhập nội dung nhiệm vụ' }),
+  title: z.string().min(1, { error: 'Vui lòng nhập tiêu đề công việc' }),
+  content: z.string().min(1, { error: 'Vui lòng nhập nội dung công việc' }),
   instructions: z
     .string()
-    .min(1, { error: 'Vui lòng nhập hướng dẫn nhiệm vụ' }),
+    .min(1, { error: 'Vui lòng nhập hướng dẫn công việc' }),
   notes: z.string().optional(),
   assignments: assignmentsSchema,
   attachmentIds: z.array(z.number()).default([]),
   priority: z.enum(TASK_PRIORITIES),
-  files: z.array(z.custom<File>()).default([]).optional(),
+  files: z.array(fileSchema).optional(),
 })
 
 export const updateTaskAssignmentSchema = z.object({

@@ -86,6 +86,7 @@ export function DataTableDateFilter<TData>({
   const { format: formatPattern = dateFormatPatterns.fullDate } =
     column.columnDef.meta || {}
   const urlFormat = (column.columnDef.meta as any)?.urlFormat || 'dd/MM/yyyy'
+  const [open, setOpen] = React.useState(false)
 
   const selectedDates = React.useMemo<DateSelection>(() => {
     if (!columnFilterValue) {
@@ -107,6 +108,7 @@ export function DataTableDateFilter<TData>({
 
   const onSelect = React.useCallback(
     (date: Date | DateRange | undefined) => {
+      setOpen(false)
       if (!date) {
         column.setFilterValue(undefined)
         return
@@ -200,7 +202,7 @@ export function DataTableDateFilter<TData>({
   }, [selectedDates, multiple, formatDateRange, title])
 
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button variant='outline' size='sm' className='border-dashed'>
           {hasValue ? (

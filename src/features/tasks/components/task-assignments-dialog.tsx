@@ -1,7 +1,6 @@
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { TasksRoute } from '@/routes/_authenticated/tasks'
 import { FileUser, Users } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuth } from '@/context/auth-context'
@@ -22,8 +21,9 @@ import {
   Task,
   TaskAssignment,
   TaskAssignmentStatus,
+  TaskFilterTypes,
 } from '@/features/tasks/types'
-import { allTaskAssignmentStatusLabels } from '@/features/tasks/utils/tasks'
+import { allTaskAssignmentStatusLabels } from '@/features/tasks/utils'
 import { useCreateTaskAssignmentsMutation } from '../hooks/use-create-task-assignments'
 import { useDeleteTaskAssignmentMutation } from '../hooks/use-delete-task-assignment'
 import { useTaskAssignments } from '../hooks/use-task-assignments'
@@ -38,6 +38,8 @@ type TaskAssignmentUpdateForm = z.infer<typeof updateTaskAssignmentSchema> & {
 
 interface TaskAssignmentsDialogProps {
   task: Task
+  filterType: TaskFilterTypes
+  allowCellEditing: boolean
 }
 
 const initialFormValues: TaskAssignmentUpdateForm = {
@@ -53,11 +55,10 @@ export function TaskAssignmentsDialog({
   open,
   onClose,
 }: DialogProps<TaskAssignmentsDialogProps>) {
-  const { task } = payload
+  const { task, filterType, allowCellEditing } = payload
 
   const taskId = task.id!
-  const searchParams = TasksRoute.useSearch()
-  const currentType = searchParams.type || 'assigned'
+  const currentType = filterType || 'assigned'
   const { user } = useAuth()
   const dialogs = useDialogs()
 
@@ -187,12 +188,15 @@ export function TaskAssignmentsDialog({
     editingAssignmentId,
     form,
     task,
+    filterType: currentType,
+    allowCellEditing,
     handleSaveEdit,
     resetAssignmentForm,
     handleUpdateAssignmentStatus,
     handleOpenCommentsSheet: (assignment: TaskAssignment) => {
       dialogs.sheet(TaskAssignmentCommentsSheet, {
         assignmentId: assignment.assignmentId!,
+        allowCellEditing,
       })
     },
     startEditing,
@@ -227,16 +231,16 @@ export function TaskAssignmentsDialog({
           }}
         >
           <DialogHeader>
-            <DialogTitle>Phân công cho Task #{taskId}</DialogTitle>
+            <DialogTitle>Danh sách phân công của task #{taskId}</DialogTitle>
           </DialogHeader>
 
-          <div className='flex justify-end gap-2'>
-            {!noAssignments && isTaskOwner && (
+          <div className='flex justify-end'>
+            {!noAssignments && isTaskOwner && allowCellEditing && (
               <Button
                 className='space-x-1'
                 onClick={handleOpenCreateAssignmentSheet}
               >
-                <span>Tạo phân công</span> <FileUser />
+                <span>Thêm phân công</span> <FileUser />
               </Button>
             )}
           </div>
@@ -262,11 +266,9 @@ export function TaskAssignmentsDialog({
                         className='space-x-1'
                         onClick={handleOpenCreateAssignmentSheet}
                       >
-                        <span>Tạo phân công</span> <FileUser />
+                        <span>Thêm phân công</span>
+                        <FileUser />
                       </Button>
-                      <p className='text-muted-foreground max-w-sm text-sm'>
-                        Hãy là người đầu tiên tạo phân công cho task này.
-                      </p>
                     </>
                   )}
                 </div>

@@ -8,7 +8,6 @@ import { Form } from '@/components/ui/form'
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet'
@@ -46,24 +45,21 @@ export const TaskAssignmentFormSheet = ({
     })
 
     toast.promise(promise, {
-      loading: `Creating task assignment...`,
+      loading: 'Đang tạo phân công...',
       success: () => {
         onClose()
         form.reset()
-        return `Tạo phân công nhiệm vụ thành công!`
+        return `Tạo phân công công việc thành công!`
       },
-      error: `Không thể tạo phân công nhiệm vụ. Vui lòng thử lại.`,
+      error: `Không thể tạo phân công công việc. Vui lòng thử lại.`,
     })
   }
 
   return (
     <Sheet open={open} onOpenChange={() => onClose()}>
-      <SheetContent className='flex h-full w-full flex-col sm:max-w-2xl'>
+      <SheetContent className='flex h-full w-full flex-col sm:max-w-3xl'>
         <SheetHeader className='flex-shrink-0 border-b'>
-          <SheetTitle>Tạo phân công nhiệm vụ</SheetTitle>
-          <SheetDescription>
-            Tạo phân công mới cho nhiệm vụ này.
-          </SheetDescription>
+          <SheetTitle>Tạo phân công công việc</SheetTitle>
         </SheetHeader>
 
         <Form {...form}>
@@ -71,7 +67,7 @@ export const TaskAssignmentFormSheet = ({
             onSubmit={form.handleSubmit(handleSubmit)}
             className='flex min-h-0 flex-1 flex-col'
           >
-            <div className='min-h-0 flex-1 overflow-y-auto px-4'>
+            <div className='min-h-0 flex-1 overflow-y-auto px-4 pb-2'>
               <TaskAssignmentsField form={form} name='assignments' />
             </div>
             <div className='flex-shrink-0 border-t p-4'>

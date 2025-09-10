@@ -1,19 +1,20 @@
 import { useQuery } from '@tanstack/react-query'
 import { IconPlus } from '@tabler/icons-react'
-import { TasksRoute } from '@/routes/_authenticated/tasks'
 import { RefreshCcw } from 'lucide-react'
 import { useDialogs } from '@/hooks/use-dialogs'
 import { Button } from '@/components/ui/button'
 import { tasksQueryOptions } from '../hooks/use-tasks'
+import { TaskFilterTypes } from '../types'
 import { CreateTaskSheet } from './create-task-sheet'
 
-export function TasksPrimaryButtons() {
-  const searchParams = TasksRoute.useSearch()
-  const currentType = searchParams.type || 'assigned'
+interface TasksPrimaryButtonsProps {
+  filterType: TaskFilterTypes
+}
 
+export function TasksPrimaryButtons({ filterType }: TasksPrimaryButtonsProps) {
   const { refetch, isFetching } = useQuery({
     ...tasksQueryOptions({
-      type: currentType,
+      type: filterType,
     }),
     enabled: false,
   })
@@ -21,7 +22,9 @@ export function TasksPrimaryButtons() {
   const dialogs = useDialogs()
 
   const handleOpenCreateTaskSheet = () => {
-    dialogs.sheet(CreateTaskSheet, {})
+    dialogs.sheet(CreateTaskSheet, {
+      filterType,
+    })
   }
 
   const handleRefresh = () => {
@@ -41,7 +44,7 @@ export function TasksPrimaryButtons() {
           className={`mr-2 h-4 w-4 ${isFetching ? 'animate-spin' : ''}`}
         />
       </Button>
-      {currentType !== 'received' && (
+      {filterType !== 'received' && (
         <Button className='space-x-1' onClick={handleOpenCreateTaskSheet}>
           <span>Tạo mới</span> <IconPlus size={18} />
         </Button>

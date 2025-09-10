@@ -27,7 +27,7 @@ import {
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { DateTimePicker } from '@/components/datetime-picker'
-import { useRecipientOptions } from '../hooks/use-recipient-options'
+import { useAvailableRecipientOptions } from '../hooks/use-available-recipient-options'
 
 type TaskAssignmentsFieldProps<T extends FieldValues = FieldValues> = {
   form: UseFormReturn<T>
@@ -38,7 +38,8 @@ export function TaskAssignmentsField<T extends FieldValues = FieldValues>({
   form,
   name,
 }: TaskAssignmentsFieldProps<T>) {
-  const { getRecipientOptions, deriveRecipientOptions } = useRecipientOptions()
+  const { getRecipientOptions, deriveRecipientOptions } =
+    useAvailableRecipientOptions()
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
@@ -61,7 +62,7 @@ export function TaskAssignmentsField<T extends FieldValues = FieldValues>({
 
   return (
     <div className='space-y-4'>
-      <FormLabel>Mức độ ưu tiên</FormLabel>
+      <FormLabel>Phân công</FormLabel>
 
       <div className='space-y-6'>
         {fields.length === 0 && (
@@ -86,14 +87,14 @@ export function TaskAssignmentsField<T extends FieldValues = FieldValues>({
             <Card key={field.id} className='border-l-4 p-6 shadow-sm'>
               <div className='mb-6 flex items-center justify-between'>
                 <div className='flex items-center gap-3'>
-                  <div className='flex size-10 items-center justify-center rounded-full bg-purple-100 text-sm font-bold'>
+                  <div className='bg-primary/10 text-primary flex size-10 items-center justify-center rounded-full text-sm font-bold'>
                     {index + 1}
                   </div>
                   <div>
-                    <h4 className='text-lg font-semibold text-gray-800'>
+                    <h4 className='text-foreground text-lg font-semibold'>
                       Phân công {index + 1}
                     </h4>
-                    <p className='text-sm text-gray-500'>
+                    <p className='text-muted-foreground text-sm'>
                       Chỉ định đối tượng thực hiện và thời hạn hoàn thành
                     </p>
                   </div>
@@ -105,7 +106,7 @@ export function TaskAssignmentsField<T extends FieldValues = FieldValues>({
                   onClick={() => {
                     remove(index)
                   }}
-                  className='flex items-center gap-2 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700'
+                  className='border-destructive/20 text-destructive hover:bg-destructive/10 hover:text-destructive flex items-center gap-2'
                 >
                   <UserX className='size-4' />
                   Xóa phân công
@@ -118,7 +119,7 @@ export function TaskAssignmentsField<T extends FieldValues = FieldValues>({
                     name={`${name}.${index}.recipientType` as Path<T>}
                     render={({ field }) => (
                       <FormItem className='w-full'>
-                        <FormLabel className='text-sm font-medium text-gray-700'>
+                        <FormLabel className='text-foreground/80 text-sm font-medium'>
                           Loại đối tượng nhận
                         </FormLabel>
                         <Select
@@ -165,7 +166,7 @@ export function TaskAssignmentsField<T extends FieldValues = FieldValues>({
 
                       return (
                         <FormItem className='w-full'>
-                          <FormLabel className='text-sm font-medium text-gray-700'>
+                          <FormLabel className='text-foreground/80 text-sm font-medium'>
                             Đối tượng nhận
                           </FormLabel>
                           <Select
@@ -176,7 +177,7 @@ export function TaskAssignmentsField<T extends FieldValues = FieldValues>({
                             disabled={!currentRecipientType}
                           >
                             <FormControl>
-                              <SelectTrigger className='w-full border-gray-300'>
+                              <SelectTrigger className='w-full'>
                                 <SelectValue placeholder='Chọn đối tượng nhận' />
                               </SelectTrigger>
                             </FormControl>
@@ -187,7 +188,7 @@ export function TaskAssignmentsField<T extends FieldValues = FieldValues>({
                                 )
                                 if (options.length === 0) {
                                   return (
-                                    <div className='px-2 py-1.5 text-sm text-gray-500'>
+                                    <div className='text-muted-foreground px-2 py-1.5 text-sm'>
                                       Vui lòng chọn loại người nhận
                                     </div>
                                   )
@@ -214,7 +215,7 @@ export function TaskAssignmentsField<T extends FieldValues = FieldValues>({
                     name={`${name}.${index}.dueAt` as Path<T>}
                     render={({ field }) => (
                       <FormItem className='w-full'>
-                        <FormLabel className='text-sm font-medium text-gray-700'>
+                        <FormLabel className='text-foreground/80 text-sm font-medium'>
                           Thời hạn hoàn thành
                         </FormLabel>
                         <FormControl>
@@ -235,13 +236,13 @@ export function TaskAssignmentsField<T extends FieldValues = FieldValues>({
                   name={`${name}.${index}.note` as Path<T>}
                   render={({ field }) => (
                     <FormItem className='w-full'>
-                      <FormLabel className='text-sm font-medium text-gray-700'>
+                      <FormLabel className='text-foreground/80 text-sm font-medium'>
                         Ghi chú phân công
                       </FormLabel>
                       <FormControl>
                         <Textarea
                           placeholder='Nhập ghi chú phân công'
-                          className='min-h-24 border-gray-300'
+                          className='min-h-24'
                           {...field}
                         />
                       </FormControl>
@@ -253,7 +254,7 @@ export function TaskAssignmentsField<T extends FieldValues = FieldValues>({
                 {/* Assignment Summary Badge */}
                 {assignmentValues?.[index]?.recipientId &&
                   assignmentValues?.[index]?.recipientType && (
-                    <div className='rounded-lg border border-purple-200 bg-purple-50 p-3'>
+                    <div className='border-primary/20 bg-primary/5 rounded-lg border p-3'>
                       <div className='flex items-center gap-2'>
                         <span className='text-sm font-medium'>
                           Tóm tắt phân công

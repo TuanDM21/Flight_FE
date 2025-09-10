@@ -31,7 +31,10 @@ export function DataTableViewOptions<TData>({
       table
         .getAllColumns()
         .filter(
-          (column) => column.accessorFn !== undefined && column.getCanHide()
+          (column) =>
+            column.accessorFn !== undefined &&
+            column.getCanHide() &&
+            !column.columnDef.isFilterVisibleOnly
         ),
     [table]
   )
@@ -44,7 +47,7 @@ export function DataTableViewOptions<TData>({
           role='combobox'
           variant='outline'
           size='sm'
-          className='ml-auto hidden h-8 lg:flex'
+          className='ml-auto hidden lg:flex'
         >
           <Settings2 />
           Hiển thị

@@ -26,13 +26,7 @@ export type TaskPriority = NonNullable<Task['priority']>
 
 export type TaskAttachment = NonNullable<Task['attachments']>[number]
 
-export type TaskDocument = any
-
 export type TaskAssignmentStatus = NonNullable<TaskAssignment['status']>
-
-export type TaskDocumentAttachment = NonNullable<
-  TaskDocument['attachments']
->[number]
 
 export type CreateTaskAssignments = z.infer<typeof createTaskAssignmentsSchema>
 
@@ -46,5 +40,8 @@ export type TaskFilterTypes = 'created' | 'assigned' | 'received'
 
 export type CreateTaskFormOutput = z.input<typeof createTaskSchema>
 
-export type TasksQueryParams =
+export type MyTasksQueryParams =
   paths['/api/tasks/my']['get']['parameters']['query']
+
+export type AllTasksQueryParams =
+  paths['/api/tasks/company']['get']['parameters']['query']

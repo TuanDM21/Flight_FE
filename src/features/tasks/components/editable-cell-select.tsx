@@ -1,4 +1,3 @@
-import { TasksRoute } from '@/routes/_authenticated/tasks'
 import { Option } from '@/types/data-table'
 import { CellContext } from 'node_modules/@tanstack/table-core/build/lib/core/cell'
 import { cn } from '@/lib/utils'
@@ -13,6 +12,8 @@ import {
 interface EditableCellSelectProps<TData, TValue>
   extends CellContext<TData, TValue> {
   options: Option[]
+  filterType?: string
+  allowCellEditing: boolean
 }
 
 export function EditableCellSelect<TData, TValue>({
@@ -21,13 +22,12 @@ export function EditableCellSelect<TData, TValue>({
   column,
   table,
   options,
+  filterType,
+  allowCellEditing,
 }: EditableCellSelectProps<TData, TValue>) {
   const initialValue = getValue() as string
-  const cellWidth = column.getSize()
   const level = (row.original as { level?: number }).level ?? 0
-  const searchParams = TasksRoute.useSearch()
-  const filterType = searchParams.type
-  const isDisabled = level > 0 || filterType === 'received'
+  const isDisabled = !allowCellEditing || level > 0 || filterType === 'received'
 
   const handleValueChange = (newValue: string) => {
     table.options.meta?.updateCellValue({
@@ -45,11 +45,10 @@ export function EditableCellSelect<TData, TValue>({
     >
       <SelectTrigger
         className={cn(
-          'hover:ring-ring w-full truncate border-0 bg-transparent px-1 py-0 text-left text-sm shadow-none hover:ring-1 focus:ring-0 focus-visible:ring-0',
+          'hover:ring-ring mr-2 w-full truncate border-0 bg-transparent px-1 py-0 text-left text-sm shadow-none hover:ring-1 focus:ring-0 focus-visible:ring-0',
           isDisabled && 'cursor-not-allowed opacity-50'
         )}
         aria-label={`select-status-${column.id}`}
-        style={{ width: cellWidth }}
       >
         <SelectValue />
       </SelectTrigger>

@@ -22,17 +22,19 @@ export function getCommonPinningStyles<TData>({
     right: isPinned === 'right' ? `${column.getAfter('right')}px` : undefined,
     position: isPinned ? 'sticky' : 'relative',
     background: isPinned ? 'var(--background)' : undefined,
-    width: column.getSize(),
+    width: `${column.getSize()}px`,
+    minWidth: `${column.columnDef.minSize || 50}px`,
+    maxWidth: `${column.columnDef.maxSize || 1000}px`,
     zIndex: isPinned ? 2 : 0,
     ...(isLastLeftPinnedColumn
       ? {
-          filter: 'drop-shadow(4px 0 8px rgba(0,0,0,0.06))',
-          WebkitFilter: 'drop-shadow(4px 0 8px rgba(0,0,0,0.06))',
+          filter: 'drop-shadow(4px 0 8px hsl(0 0% 0% / 0.06))',
+          WebkitFilter: 'drop-shadow(4px 0 8px hsl(0 0% 0% / 0.06))',
         }
       : isFirstRightPinnedColumn
         ? {
-            filter: 'drop-shadow(-4px 0 8px rgba(0,0,0,0.06))',
-            WebkitFilter: 'drop-shadow(-4px 0 8px rgba(0,0,0,0.06))',
+            filter: 'drop-shadow(-4px 0 8px hsl(0 0% 0% / 0.06))',
+            WebkitFilter: 'drop-shadow(-4px 0 8px hsl(0 0% 0% / 0.06))',
           }
         : {}),
   }

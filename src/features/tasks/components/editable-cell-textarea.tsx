@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { TasksRoute } from '@/routes/_authenticated/tasks'
 import { CellContext } from 'node_modules/@tanstack/table-core/build/lib/core/cell'
 import { cn } from '@/lib/utils'
 import {
@@ -19,6 +18,8 @@ import { useEditing } from '../context/editing-context'
 interface EditableCellTextareaProps<TData, TValue>
   extends CellContext<TData, TValue> {
   maxLength?: number
+  filterType?: string
+  allowCellEditing: boolean
 }
 
 export function EditableCellTextarea<TData, TValue>({
@@ -27,21 +28,20 @@ export function EditableCellTextarea<TData, TValue>({
   column,
   table,
   maxLength,
+  filterType,
+  allowCellEditing,
 }: EditableCellTextareaProps<TData, TValue>) {
   const { editingCellId, setEditingCellId, isAnyEditing } = useEditing()
   const [isHoverOpen, setIsHoverOpen] = useState(false)
 
   const initialValue = getValue() as string
-  const cellWidth = column.getSize()
   const [value, setValue] = useState(initialValue)
 
   const cellId = `${row.id}-${column.id}`
   const isOpen = editingCellId === cellId
 
   const level = (row.original as { level?: number }).level ?? 0
-  const searchParams = TasksRoute.useSearch()
-  const filterType = searchParams.type
-  const isDisabled = level > 0 || filterType === 'received'
+  const isDisabled = !allowCellEditing || level > 0 || filterType === 'received'
 
   useEffect(() => {
     setValue(initialValue)
@@ -107,10 +107,9 @@ export function EditableCellTextarea<TData, TValue>({
               value={value}
               readOnly={isDisabled}
               className={cn(
-                'hover:ring-ring w-full truncate border-0 bg-transparent px-1 py-0 text-left text-sm shadow-none hover:ring-1 focus-visible:ring-[1px]',
+                'hover:ring-ring mr-2 w-full truncate border-0 bg-transparent px-1 py-0 text-left text-sm shadow-none hover:ring-1 focus-visible:ring-[1px]',
                 isDisabled && 'cursor-not-allowed opacity-60'
               )}
-              style={{ width: cellWidth }}
               aria-label='editable-text-input'
               onChange={(e) => !isDisabled && setValue(e.target.value)}
               onBlur={handleSave}
@@ -122,10 +121,6 @@ export function EditableCellTextarea<TData, TValue>({
         {/* HoverCard Content - Shows on hover */}
         <HoverCardContent
           className={cn('max-h-60 w-80 max-w-sm overflow-y-auto p-3')}
-          style={{
-            width: `${cellWidth}px`,
-            maxWidth: `${cellWidth}px`,
-          }}
           side='top'
           align='start'
         >
@@ -136,12 +131,7 @@ export function EditableCellTextarea<TData, TValue>({
 
         {/* Popover Content - Shows on click for editing */}
         <PopoverContent
-          className={cn('h-42 min-h-42 p-0 pt-1 pr-1')}
-          style={{
-            width: `${cellWidth}px`,
-            minWidth: `${cellWidth}px`,
-            maxWidth: `${cellWidth}px`,
-          }}
+          className={cn('h-42 min-h-42 w-80 max-w-sm p-0 pt-1 pr-1')}
           align='start'
           sideOffset={-32}
         >

@@ -14,13 +14,15 @@
       "name": "Azure Pre-signed URL File Management",
       "description": "APIs quản lý file đính kèm sử dụng Azure Pre-signed URL"
     },
+    { "name": "User Management", "description": "APIs for managing users" },
     { "name": "Authentication", "description": "APIs for user authentication" },
-    { "name": "Team Management", "description": "APIs for managing teams" }
+    { "name": "Team Management", "description": "APIs for managing teams" },
+    { "name": "Unit Management", "description": "APIs for managing units" }
   ],
   "paths": {
     "/api/users/{id}": {
       "get": {
-        "tags": ["user-controller"],
+        "tags": ["User Management"],
         "summary": "Get user by ID",
         "description": "Retrieve a user by their ID",
         "operationId": "getUserById",
@@ -33,6 +35,14 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "Successfully retrieved user",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/UserApiResponse" }
+              }
+            }
+          },
           "404": {
             "description": "User not found",
             "content": {
@@ -41,8 +51,8 @@
               }
             }
           },
-          "200": {
-            "description": "Successfully retrieved user",
+          "500": {
+            "description": "Internal server error",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
@@ -52,7 +62,7 @@
         }
       },
       "put": {
-        "tags": ["user-controller"],
+        "tags": ["User Management"],
         "summary": "Update user",
         "description": "Update an existing user",
         "operationId": "updateUser",
@@ -73,8 +83,8 @@
           "required": true
         },
         "responses": {
-          "404": {
-            "description": "User not found",
+          "400": {
+            "description": "Invalid input",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
@@ -85,6 +95,22 @@
             "description": "User updated successfully",
             "content": {
               "*/*": {
+                "schema": { "$ref": "#/components/schemas/UserApiResponse" }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
@@ -92,7 +118,7 @@
         }
       },
       "delete": {
-        "tags": ["user-controller"],
+        "tags": ["User Management"],
         "summary": "Delete user",
         "description": "Delete a user by ID",
         "operationId": "deleteUser",
@@ -107,6 +133,24 @@
         "responses": {
           "204": {
             "description": "User deleted successfully",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDeleteApiResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
@@ -131,16 +175,16 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "Successfully retrieved user shift",
+          "404": {
+            "description": "User shift not found",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
           },
-          "404": {
-            "description": "User shift not found",
+          "200": {
+            "description": "Successfully retrieved user shift",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
@@ -289,6 +333,14 @@
           }
         ],
         "responses": {
+          "404": {
+            "description": "Không tìm thấy công việc",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
+              }
+            }
+          },
           "200": {
             "description": "Thành công",
             "content": {
@@ -296,14 +348,6 @@
                 "schema": {
                   "$ref": "#/components/schemas/TaskDetailApiResponse"
                 }
-              }
-            }
-          },
-          "404": {
-            "description": "Không tìm thấy công việc",
-            "content": {
-              "*/*": {
-                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
           }
@@ -331,19 +375,19 @@
           "required": true
         },
         "responses": {
-          "404": {
-            "description": "Không tìm thấy công việc",
-            "content": {
-              "*/*": {
-                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
-              }
-            }
-          },
           "200": {
             "description": "Cập nhật thành công",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/TaskApiResponse" }
+              }
+            }
+          },
+          "404": {
+            "description": "Không tìm thấy công việc",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
           }
@@ -528,16 +572,16 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "Successfully retrieved flight",
+          "404": {
+            "description": "Flight not found",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
           },
-          "404": {
-            "description": "Flight not found",
+          "200": {
+            "description": "Successfully retrieved flight",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
@@ -568,8 +612,8 @@
           "required": true
         },
         "responses": {
-          "400": {
-            "description": "Invalid input data",
+          "200": {
+            "description": "Flight updated successfully",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
@@ -584,8 +628,8 @@
               }
             }
           },
-          "200": {
-            "description": "Flight updated successfully",
+          "400": {
+            "description": "Invalid input data",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
@@ -638,7 +682,9 @@
             "description": "Lấy chi tiết file thành công",
             "content": {
               "*/*": {
-                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
+                "schema": {
+                  "$ref": "#/components/schemas/AttachmentApiResponse"
+                }
               }
             }
           },
@@ -680,7 +726,9 @@
             "description": "Cập nhật file thành công",
             "content": {
               "*/*": {
-                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
+                "schema": {
+                  "$ref": "#/components/schemas/AttachmentApiResponse"
+                }
               }
             }
           },
@@ -708,16 +756,16 @@
           }
         ],
         "responses": {
-          "500": {
-            "description": "Lỗi server khi xóa file",
+          "200": {
+            "description": "Xóa file thành công",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
           },
-          "200": {
-            "description": "Xóa file thành công",
+          "500": {
+            "description": "Lỗi server khi xóa file",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
@@ -754,7 +802,9 @@
             "description": "Lấy assignment thành công",
             "content": {
               "*/*": {
-                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
+                "schema": {
+                  "$ref": "#/components/schemas/AssignmentApiResponse"
+                }
               }
             }
           },
@@ -796,7 +846,9 @@
             "description": "Cập nhật assignment thành công",
             "content": {
               "*/*": {
-                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
+                "schema": {
+                  "$ref": "#/components/schemas/AssignmentApiResponse"
+                }
               }
             }
           },
@@ -1023,13 +1075,21 @@
     },
     "/api/users": {
       "get": {
-        "tags": ["user-controller"],
+        "tags": ["User Management"],
         "summary": "Get all users",
         "description": "Retrieve a list of all users",
         "operationId": "getAllUsers",
         "responses": {
           "200": {
             "description": "Successfully retrieved all users",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/UserListApiResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
@@ -1039,7 +1099,7 @@
         }
       },
       "post": {
-        "tags": ["user-controller"],
+        "tags": ["User Management"],
         "summary": "Create user",
         "description": "Create a new user",
         "operationId": "createUser",
@@ -1052,8 +1112,24 @@
           "required": true
         },
         "responses": {
-          "200": {
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
+              }
+            }
+          },
+          "201": {
             "description": "User created successfully",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/UserApiResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
@@ -1065,7 +1141,7 @@
     },
     "/api/users/logout-cleanup": {
       "post": {
-        "tags": ["user-controller"],
+        "tags": ["User Management"],
         "operationId": "logoutCleanup",
         "responses": {
           "200": {
@@ -1077,7 +1153,7 @@
     },
     "/api/users/expo-push-token": {
       "post": {
-        "tags": ["user-controller"],
+        "tags": ["User Management"],
         "summary": "Save Expo Push Token",
         "description": "Save Expo Push Token for the current user",
         "operationId": "saveExpoPushToken",
@@ -1099,7 +1175,7 @@
     },
     "/api/users/device-token/remove": {
       "post": {
-        "tags": ["user-controller"],
+        "tags": ["User Management"],
         "operationId": "removeDeviceToken",
         "requestBody": {
           "content": { "application/json": { "schema": { "type": "string" } } },
@@ -1199,16 +1275,16 @@
           "required": true
         },
         "responses": {
-          "200": {
-            "description": "Shifts applied successfully",
+          "409": {
+            "description": "Conflict in applying shifts",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
           },
-          "409": {
-            "description": "Conflict in applying shifts",
+          "200": {
+            "description": "Shifts applied successfully",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
@@ -1257,6 +1333,14 @@
             "description": "Successfully retrieved all teams",
             "content": {
               "*/*": {
+                "schema": { "$ref": "#/components/schemas/TeamListApiResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
@@ -1277,17 +1361,29 @@
           "required": true
         },
         "responses": {
-          "200": {
-            "description": "Team created successfully",
-            "content": {
-              "*/*": { "schema": { "$ref": "#/components/schemas/TeamDTO" } }
-            }
-          },
           "400": {
             "description": "Invalid input",
             "content": {
               "*/*": {
-                "schema": { "$ref": "#/components/schemas/ApiResponseTeamDTO" }
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
+              }
+            }
+          },
+          "201": {
+            "description": "Team created successfully",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamCreateApiResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
           }
@@ -1535,6 +1631,32 @@
         }
       }
     },
+    "/api/tasks/force-update-overdue": {
+      "post": {
+        "tags": ["task-controller"],
+        "summary": "Force update overdue status",
+        "description": "Manually trigger overdue status update for all assignments and tasks. Useful for testing or immediate update without waiting for scheduled job.",
+        "operationId": "forceUpdateOverdueStatus",
+        "responses": {
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
+              }
+            }
+          },
+          "200": {
+            "description": "Overdue update completed successfully",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/shifts": {
       "get": {
         "tags": ["shift-controller"],
@@ -1710,16 +1832,24 @@
           "required": true
         },
         "responses": {
+          "201": {
+            "description": "Registration successful",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/RegisterApiResponse" }
+              }
+            }
+          },
           "400": {
-            "description": "Invalid input",
+            "description": "Invalid input or user already exists",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
           },
-          "200": {
-            "description": "Registration successful",
+          "500": {
+            "description": "Internal server error",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
@@ -1744,6 +1874,14 @@
           "required": true
         },
         "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/LoginApiResponse" }
+              }
+            }
+          },
           "401": {
             "description": "Invalid credentials",
             "content": {
@@ -1752,8 +1890,16 @@
               }
             }
           },
-          "200": {
-            "description": "Login successful",
+          "404": {
+            "description": "User not found",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
@@ -1778,6 +1924,16 @@
           "required": true
         },
         "responses": {
+          "200": {
+            "description": "Tạo pre-signed URL thành công",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PreSignedUrlApiResponse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Dữ liệu đầu vào không hợp lệ",
             "content": {
@@ -1788,14 +1944,6 @@
           },
           "500": {
             "description": "Lỗi server khi tạo pre-signed URL",
-            "content": {
-              "*/*": {
-                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
-              }
-            }
-          },
-          "200": {
-            "description": "Tạo pre-signed URL thành công",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
@@ -1830,16 +1978,18 @@
               }
             }
           },
-          "404": {
-            "description": "Không tìm thấy file hoặc upload thất bại",
+          "200": {
+            "description": "Xác nhận upload thành công",
             "content": {
               "*/*": {
-                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
+                "schema": {
+                  "$ref": "#/components/schemas/AttachmentListApiResponse"
+                }
               }
             }
           },
-          "200": {
-            "description": "Xác nhận upload thành công",
+          "404": {
+            "description": "Không tìm thấy file hoặc upload thất bại",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
@@ -1870,7 +2020,9 @@
             "description": "Tạo assignment thành công",
             "content": {
               "*/*": {
-                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
+                "schema": {
+                  "$ref": "#/components/schemas/AssignmentListApiResponse"
+                }
               }
             }
           }
@@ -1906,7 +2058,9 @@
             "description": "Thêm comment thành công",
             "content": {
               "*/*": {
-                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
+                "schema": {
+                  "$ref": "#/components/schemas/AssignmentCommentsApiResponse"
+                }
               }
             }
           }
@@ -2147,7 +2301,7 @@
     },
     "/api/users/search": {
       "get": {
-        "tags": ["user-controller"],
+        "tags": ["User Management"],
         "summary": "Search users",
         "description": "Search users by keyword (name or email)",
         "operationId": "searchUsersByKeyword",
@@ -2173,11 +2327,21 @@
     },
     "/api/users/me": {
       "get": {
-        "tags": ["user-controller"],
+        "tags": ["User Management"],
         "summary": "Get current user",
         "description": "Get the current user based on token",
         "operationId": "getCurrentUser",
         "responses": {
+          "200": {
+            "description": "Successfully retrieved current user",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CurrentUserApiResponse"
+                }
+              }
+            }
+          },
           "401": {
             "description": "Unauthorized",
             "content": {
@@ -2186,8 +2350,8 @@
               }
             }
           },
-          "200": {
-            "description": "Successfully retrieved current user",
+          "500": {
+            "description": "Internal server error",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
@@ -2199,7 +2363,7 @@
     },
     "/api/users/filter": {
       "get": {
-        "tags": ["user-controller"],
+        "tags": ["User Management"],
         "summary": "Filter users",
         "description": "Filter users by team, unit, or search text",
         "operationId": "filterUsers",
@@ -2228,6 +2392,22 @@
             "description": "Successfully filtered users",
             "content": {
               "*/*": {
+                "schema": { "$ref": "#/components/schemas/UserListApiResponse" }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid filter parameters",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
@@ -2237,7 +2417,7 @@
     },
     "/api/users/directors": {
       "get": {
-        "tags": ["user-controller"],
+        "tags": ["User Management"],
         "summary": "Get users with role DIRECTOR or VICE_DIRECTOR",
         "description": "Retrieve a list of users with role DIRECTOR or VICE_DIRECTOR",
         "operationId": "getDirectorsAndViceDirectors",
@@ -2255,13 +2435,29 @@
     },
     "/api/users/assignable": {
       "get": {
-        "tags": ["user-controller"],
+        "tags": ["User Management"],
         "summary": "Get assignable users",
         "description": "Lấy danh sách user mà user hiện tại có thể giao việc cho theo phân quyền",
         "operationId": "getAssignableUsers",
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Successfully retrieved assignable users",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/UserListApiResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - User not authorized",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
@@ -2745,7 +2941,7 @@
     },
     "/api/units": {
       "get": {
-        "tags": ["unit-controller"],
+        "tags": ["Unit Management"],
         "summary": "Get all units",
         "description": "Retrieve a list of all units or units by teamId",
         "operationId": "getUnits",
@@ -2762,6 +2958,22 @@
             "description": "Successfully retrieved all units",
             "content": {
               "*/*": {
+                "schema": { "$ref": "#/components/schemas/UnitListApiResponse" }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid teamId parameter",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
@@ -2771,13 +2983,31 @@
     },
     "/api/units/assignable": {
       "get": {
-        "tags": ["unit-controller"],
+        "tags": ["Unit Management"],
         "summary": "Get assignable units",
         "description": "Lấy danh sách unit mà user hiện tại có thể giao việc cho theo phân quyền",
         "operationId": "getAssignableUnits",
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Successfully retrieved assignable units",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssignableUnitsApiResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - User not authorized",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
@@ -2795,7 +3025,25 @@
         "operationId": "getAssignableTeams",
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Successfully retrieved assignable teams",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssignableTeamsApiResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - User not authorized",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
@@ -2820,19 +3068,19 @@
           }
         ],
         "responses": {
-          "404": {
-            "description": "Không tìm thấy task",
-            "content": {
-              "*/*": {
-                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
-              }
-            }
-          },
           "200": {
             "description": "Thành công",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/TaskTreeApiResponse" }
+              }
+            }
+          },
+          "404": {
+            "description": "Không tìm thấy task",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
           }
@@ -2897,103 +3145,6 @@
                 "schema": {
                   "$ref": "#/components/schemas/TaskSubtasksApiResponse"
                 }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/tasks/unit": {
-      "get": {
-        "tags": ["task-controller"],
-        "summary": "API đơn vị: Lấy tất cả công việc theo phân quyền với advanced search, filter status, pagination",
-        "description": "🏢 UNIT API với role-based permissions: 📋 PERMISSION LOGIC: • ADMIN/DIRECTOR/VICE_DIRECTOR: Xem TẤT CẢ tasks trong hệ thống • Các role khác: Chỉ xem tasks của TEAM mình 🎯 STATUS FILTER: IN_PROGRESS, COMPLETED, OVERDUE 🔍 KEYWORD SEARCH: Tìm kiếm trong 5 fields - ID, title, content, instructions, notes ⚡ ADVANCED FILTERS: priorities (LOW/NORMAL/HIGH/URGENT), time range (yyyy-MM-dd) 📄 PAGINATION: page (1-based), size (max 100, default 20)",
-        "operationId": "getUnitTasks",
-        "parameters": [
-          {
-            "name": "status",
-            "in": "query",
-            "description": "Filter theo status",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "enum": ["IN_PROGRESS", "COMPLETED", "OVERDUE", "OPEN"]
-            }
-          },
-          {
-            "name": "keyword",
-            "in": "query",
-            "description": "Từ khóa tìm kiếm (search trong 5 fields): ID, title, content, instructions, notes",
-            "required": false,
-            "schema": { "type": "string" },
-            "example": "urgent task"
-          },
-          {
-            "name": "startTime",
-            "in": "query",
-            "description": "Ngày bắt đầu (format: yyyy-MM-dd)",
-            "required": false,
-            "schema": { "type": "string" },
-            "example": "2025-08-01"
-          },
-          {
-            "name": "endTime",
-            "in": "query",
-            "description": "Ngày kết thúc (format: yyyy-MM-dd)",
-            "required": false,
-            "schema": { "type": "string" },
-            "example": "2025-08-31"
-          },
-          {
-            "name": "priorities",
-            "in": "query",
-            "description": "Danh sách priority để filter",
-            "required": false,
-            "schema": {
-              "type": "array",
-              "description": "LOW: Không khẩn cấp, NORMAL: Bình thường, HIGH: Quan trọng, URGENT: Khẩn cấp",
-              "enum": ["LOW", "NORMAL", "HIGH", "URGENT"]
-            }
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "description": "Số trang (bắt đầu từ 1)",
-            "required": false,
-            "schema": { "type": "integer", "format": "int32", "default": 1 },
-            "example": 1
-          },
-          {
-            "name": "size",
-            "in": "query",
-            "description": "Số items per page (max 100)",
-            "required": false,
-            "schema": { "type": "integer", "format": "int32", "default": 20 },
-            "example": 20
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Thành công",
-            "content": {
-              "*/*": {
-                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
-              }
-            }
-          },
-          "400": {
-            "description": "Tham số không hợp lệ",
-            "content": {
-              "*/*": {
-                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
-              }
-            }
-          },
-          "403": {
-            "description": "Không có quyền truy cập",
-            "content": {
-              "*/*": {
-                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
           }
@@ -3097,6 +3248,136 @@
           }
         ],
         "responses": {
+          "400": {
+            "description": "Tham số không hợp lệ",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
+              }
+            }
+          },
+          "200": {
+            "description": "Thành công",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/MyTasksApiResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tasks/company": {
+      "get": {
+        "tags": ["task-controller"],
+        "summary": "API công ty: Lấy tất cả công việc theo phân quyền với advanced search, filter status, pagination",
+        "description": "🏢 COMPANY API với role-based permissions: 📋 PERMISSION LOGIC: • ADMIN/DIRECTOR/VICE_DIRECTOR: Xem TẤT CẢ tasks trong hệ thống • Các role khác: Chỉ xem tasks của TEAM mình 🎯 STATUS FILTER: IN_PROGRESS, COMPLETED, OVERDUE 🔍 KEYWORD SEARCH: Tìm kiếm trong 5 fields - ID, title, content, instructions, notes ⚡ ADVANCED FILTERS: priorities (LOW/NORMAL/HIGH/URGENT), time range (yyyy-MM-dd) 👥 RECIPIENT SEARCH: teamIds, userIds, unitIds (đơn giản hơn recipientTypes/recipientIds) 📄 PAGINATION: page (1-based), size (max 100, default 20)",
+        "operationId": "getCompanyTasks",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter theo status",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["IN_PROGRESS", "COMPLETED", "OVERDUE", "OPEN"]
+            }
+          },
+          {
+            "name": "keyword",
+            "in": "query",
+            "description": "Từ khóa tìm kiếm (search trong 5 fields): ID, title, content, instructions, notes",
+            "required": false,
+            "schema": { "type": "string" },
+            "example": "urgent task"
+          },
+          {
+            "name": "startTime",
+            "in": "query",
+            "description": "Ngày bắt đầu (format: yyyy-MM-dd)",
+            "required": false,
+            "schema": { "type": "string" },
+            "example": "2025-08-01"
+          },
+          {
+            "name": "endTime",
+            "in": "query",
+            "description": "Ngày kết thúc (format: yyyy-MM-dd)",
+            "required": false,
+            "schema": { "type": "string" },
+            "example": "2025-08-31"
+          },
+          {
+            "name": "priorities",
+            "in": "query",
+            "description": "Danh sách priority để filter",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "description": "LOW: Không khẩn cấp, NORMAL: Bình thường, HIGH: Quan trọng, URGENT: Khẩn cấp",
+              "enum": ["LOW", "NORMAL", "HIGH", "URGENT"]
+            }
+          },
+          {
+            "name": "teamIds",
+            "in": "query",
+            "description": "Danh sách Team IDs để filter tasks giao cho teams",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": { "type": "integer", "format": "int32" }
+            },
+            "example": "1,2,3"
+          },
+          {
+            "name": "userIds",
+            "in": "query",
+            "description": "Danh sách User IDs để filter tasks giao cho users",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": { "type": "integer", "format": "int32" }
+            },
+            "example": "1,5,10"
+          },
+          {
+            "name": "unitIds",
+            "in": "query",
+            "description": "Danh sách Unit IDs để filter tasks giao cho units",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": { "type": "integer", "format": "int32" }
+            },
+            "example": "1,2"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Số trang (bắt đầu từ 1)",
+            "required": false,
+            "schema": { "type": "integer", "format": "int32", "default": 1 },
+            "example": 1
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "Số items per page (max 100)",
+            "required": false,
+            "schema": { "type": "integer", "format": "int32", "default": 20 },
+            "example": 20
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Tham số không hợp lệ",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
+              }
+            }
+          },
           "200": {
             "description": "Thành công",
             "content": {
@@ -3105,8 +3386,8 @@
               }
             }
           },
-          "400": {
-            "description": "Tham số không hợp lệ",
+          "403": {
+            "description": "Không có quyền truy cập",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
@@ -3352,16 +3633,16 @@
           }
         ],
         "responses": {
-          "400": {
-            "description": "Invalid date format or parameters",
+          "200": {
+            "description": "Successfully retrieved flights by criteria",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
           },
-          "200": {
-            "description": "Successfully retrieved flights by criteria",
+          "400": {
+            "description": "Invalid date format or parameters",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
@@ -3422,7 +3703,9 @@
             "description": "Lấy danh sách file thành công",
             "content": {
               "*/*": {
-                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
+                "schema": {
+                  "$ref": "#/components/schemas/AttachmentListApiResponse"
+                }
               }
             }
           }
@@ -3452,14 +3735,6 @@
               }
             }
           },
-          "200": {
-            "description": "Tạo download URL thành công",
-            "content": {
-              "*/*": {
-                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
-              }
-            }
-          },
           "404": {
             "description": "Không tìm thấy file đính kèm",
             "content": {
@@ -3467,30 +3742,14 @@
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
-          }
-        }
-      }
-    },
-    "/api/attachments/available": {
-      "get": {
-        "tags": ["Azure Pre-signed URL File Management"],
-        "summary": "Lấy danh sách file chưa gán vào task",
-        "description": "Lấy danh sách tất cả file chưa được gán vào task nào (chỉ admin)",
-        "operationId": "getAvailableAttachments",
-        "responses": {
-          "200": {
-            "description": "Lấy danh sách file thành công",
-            "content": {
-              "*/*": {
-                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
-              }
-            }
           },
-          "403": {
-            "description": "Không có quyền truy cập",
+          "200": {
+            "description": "Tạo download URL thành công",
             "content": {
               "*/*": {
-                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
+                "schema": {
+                  "$ref": "#/components/schemas/DownloadUrlApiResponse"
+                }
               }
             }
           }
@@ -3516,7 +3775,9 @@
             "description": "Lấy danh sách comment thành công",
             "content": {
               "*/*": {
-                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
+                "schema": {
+                  "$ref": "#/components/schemas/AssignmentCommentsApiResponse"
+                }
               }
             }
           }
@@ -3542,7 +3803,9 @@
             "description": "Lấy danh sách assignment thành công",
             "content": {
               "*/*": {
-                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
+                "schema": {
+                  "$ref": "#/components/schemas/AssignmentListApiResponse"
+                }
               }
             }
           }
@@ -3752,16 +4015,16 @@
           "required": true
         },
         "responses": {
-          "200": {
-            "description": "Xoá thành công",
+          "400": {
+            "description": "Dữ liệu không hợp lệ",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
           },
-          "400": {
-            "description": "Dữ liệu không hợp lệ",
+          "200": {
+            "description": "Xoá thành công",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
@@ -3811,16 +4074,16 @@
               }
             }
           },
-          "500": {
-            "description": "Lỗi server khi xóa file",
+          "200": {
+            "description": "Xóa file thành công",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
           },
-          "200": {
-            "description": "Xóa file thành công",
+          "500": {
+            "description": "Lỗi server khi xóa file",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
@@ -3968,7 +4231,8 @@
             "type": "array",
             "items": { "$ref": "#/components/schemas/UserPermission" }
           }
-        }
+        },
+        "description": "User data"
       },
       "UserFlightShift": {
         "type": "object",
@@ -4015,6 +4279,29 @@
           }
         },
         "description": "Response chuẩn cho tất cả API"
+      },
+      "UserApiResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Response message",
+            "example": "Thành công"
+          },
+          "statusCode": {
+            "type": "integer",
+            "description": "HTTP status code",
+            "format": "int32",
+            "example": 200
+          },
+          "data": { "$ref": "#/components/schemas/User" },
+          "success": {
+            "type": "boolean",
+            "description": "Success status",
+            "example": true
+          }
+        },
+        "description": "API response wrapper for single user operations"
       },
       "AssignShiftRequest": {
         "type": "object",
@@ -4259,6 +4546,29 @@
         "type": "object",
         "properties": { "fileName": { "type": "string" } }
       },
+      "AttachmentApiResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Response message",
+            "example": "Thành công"
+          },
+          "statusCode": {
+            "type": "integer",
+            "description": "HTTP status code",
+            "format": "int32",
+            "example": 200
+          },
+          "data": { "$ref": "#/components/schemas/AttachmentDTO" },
+          "success": {
+            "type": "boolean",
+            "description": "Success status",
+            "example": true
+          }
+        },
+        "description": "API response wrapper for single attachment operations"
+      },
       "AttachmentDTO": {
         "type": "object",
         "properties": {
@@ -4343,7 +4653,8 @@
           },
           "permissions": { "type": "array", "items": { "type": "string" } }
         },
-        "description": "User who uploaded the file"
+        "description": "Unit leader (DEPRECATED - will be removed)",
+        "deprecated": true
       },
       "UpdateAssignmentRequest": {
         "type": "object",
@@ -4357,6 +4668,100 @@
           },
           "note": { "type": "string" }
         }
+      },
+      "AssignmentApiResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Response message",
+            "example": "Đã tạo thành công"
+          },
+          "statusCode": {
+            "type": "integer",
+            "description": "HTTP status code",
+            "format": "int32",
+            "example": 201
+          },
+          "data": { "$ref": "#/components/schemas/AssignmentDTO" },
+          "success": {
+            "type": "boolean",
+            "description": "Success status",
+            "example": true
+          }
+        },
+        "description": "API response wrapper for assignment creation/update operations"
+      },
+      "AssignmentDTO": {
+        "type": "object",
+        "properties": {
+          "assignmentId": {
+            "type": "integer",
+            "description": "Assignment ID",
+            "format": "int32",
+            "example": 1
+          },
+          "taskId": {
+            "type": "integer",
+            "description": "Task ID",
+            "format": "int32",
+            "example": 5
+          },
+          "recipientType": {
+            "type": "string",
+            "description": "Recipient type",
+            "example": "USER",
+            "enum": ["USER", "TEAM", "UNIT"]
+          },
+          "assignedAt": {
+            "type": "string",
+            "description": "Assignment timestamp",
+            "format": "date-time"
+          },
+          "dueAt": {
+            "type": "string",
+            "description": "Due date",
+            "format": "date-time"
+          },
+          "completedAt": {
+            "type": "string",
+            "description": "Completion timestamp",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string",
+            "description": "Assignment status",
+            "example": "IN_PROGRESS",
+            "enum": ["WORKING", "DONE", "CANCELLED", "OVERDUE"]
+          },
+          "note": {
+            "type": "string",
+            "description": "Assignment note",
+            "example": "Urgent task"
+          },
+          "assignedByUser": { "$ref": "#/components/schemas/UserDTO" },
+          "completedByUser": { "$ref": "#/components/schemas/UserDTO" },
+          "recipientUser": { "$ref": "#/components/schemas/UserDTO" },
+          "recipientId": {
+            "type": "integer",
+            "description": "Recipient ID (team or unit ID)",
+            "format": "int32",
+            "example": 10
+          },
+          "recipientTeamName": {
+            "type": "string",
+            "description": "Team name (if recipientType = TEAM)",
+            "example": "Security Team"
+          },
+          "recipientUnitName": {
+            "type": "string",
+            "description": "Unit name (if recipientType = UNIT)",
+            "example": "Airport Operations"
+          },
+          "recipientTeamLead": { "$ref": "#/components/schemas/UserDTO" },
+          "recipientUnitLead": { "$ref": "#/components/schemas/UserDTO" }
+        },
+        "description": "Assignment information for tasks"
       },
       "ActivityDTO": {
         "required": ["endTime", "location", "name", "startTime"],
@@ -4413,16 +4818,31 @@
         "properties": {
           "id": { "type": "integer", "format": "int32" },
           "teamName": { "type": "string" }
-        }
+        },
+        "description": "List of assignable teams for current user"
       },
-      "ApiResponseTeamDTO": {
+      "TeamCreateApiResponse": {
         "type": "object",
         "properties": {
-          "message": { "type": "string" },
-          "statusCode": { "type": "integer", "format": "int32" },
+          "message": {
+            "type": "string",
+            "description": "Response message",
+            "example": "Tạo team thành công"
+          },
+          "statusCode": {
+            "type": "integer",
+            "description": "HTTP status code",
+            "format": "int32",
+            "example": 201
+          },
           "data": { "$ref": "#/components/schemas/TeamDTO" },
-          "success": { "type": "boolean" }
-        }
+          "success": {
+            "type": "boolean",
+            "description": "Success status",
+            "example": true
+          }
+        },
+        "description": "API response wrapper for team creation operations"
       },
       "AssignmentRequest": {
         "required": ["recipientId", "recipientType"],
@@ -4643,6 +5063,50 @@
           "unitId": { "type": "integer", "format": "int32" }
         }
       },
+      "RegisterApiResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Response message",
+            "example": "Đăng ký thành công"
+          },
+          "statusCode": {
+            "type": "integer",
+            "description": "HTTP status code",
+            "format": "int32",
+            "example": 201
+          },
+          "data": { "$ref": "#/components/schemas/RegisterDTO" },
+          "success": {
+            "type": "boolean",
+            "description": "Success status",
+            "example": true
+          }
+        },
+        "description": "API response wrapper for registration operations"
+      },
+      "RegisterDTO": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int32" },
+          "name": { "type": "string" },
+          "email": { "type": "string" },
+          "role": { "$ref": "#/components/schemas/RoleDTO" },
+          "team": { "$ref": "#/components/schemas/TeamDTO" },
+          "unit": { "$ref": "#/components/schemas/UnitDTO" }
+        },
+        "description": "Registration data"
+      },
+      "UnitDTO": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int32" },
+          "unitName": { "type": "string" },
+          "teamId": { "type": "integer", "format": "int32" }
+        },
+        "description": "List of assignable units for current user"
+      },
       "LoginRequest": {
         "required": ["email", "password"],
         "type": "object",
@@ -4650,6 +5114,38 @@
           "email": { "type": "string" },
           "password": { "type": "string" }
         }
+      },
+      "LoginApiResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Response message",
+            "example": "Đăng nhập thành công"
+          },
+          "statusCode": {
+            "type": "integer",
+            "description": "HTTP status code",
+            "format": "int32",
+            "example": 200
+          },
+          "data": { "$ref": "#/components/schemas/LoginDTO" },
+          "success": {
+            "type": "boolean",
+            "description": "Success status",
+            "example": true
+          }
+        },
+        "description": "API response wrapper for login operations"
+      },
+      "LoginDTO": {
+        "type": "object",
+        "properties": {
+          "accessToken": { "type": "string" },
+          "tokenType": { "type": "string" },
+          "expiresIn": { "type": "integer", "format": "int64" }
+        },
+        "description": "Login data containing token and user info"
       },
       "FileUploadInfo": {
         "required": ["contentType", "fileName", "fileSize"],
@@ -4700,6 +5196,61 @@
         },
         "description": "Request để upload file - hỗ trợ cả single và multiple files"
       },
+      "FlexiblePreSignedUrlDTO": {
+        "required": ["files"],
+        "type": "object",
+        "properties": {
+          "files": {
+            "type": "array",
+            "description": "Danh sách pre-signed URL",
+            "items": { "$ref": "#/components/schemas/PreSignedUrlDTO" }
+          },
+          "message": {
+            "type": "string",
+            "description": "Thông báo kết quả",
+            "example": "Tạo thành công 3 pre-signed URL"
+          }
+        },
+        "description": "Response cho pre-signed URL - hỗ trợ cả single và multiple files"
+      },
+      "PreSignedUrlApiResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Response message",
+            "example": "Tạo pre-signed URL thành công"
+          },
+          "statusCode": {
+            "type": "integer",
+            "description": "HTTP status code",
+            "format": "int32",
+            "example": 200
+          },
+          "data": { "$ref": "#/components/schemas/FlexiblePreSignedUrlDTO" },
+          "success": {
+            "type": "boolean",
+            "description": "Success status",
+            "example": true
+          }
+        },
+        "description": "API response wrapper for pre-signed URL generation"
+      },
+      "PreSignedUrlDTO": {
+        "type": "object",
+        "properties": {
+          "uploadUrl": { "type": "string" },
+          "attachmentId": { "type": "integer", "format": "int32" },
+          "fileName": { "type": "string" },
+          "uniqueFileName": { "type": "string" },
+          "fileSize": { "type": "integer", "format": "int64" },
+          "contentType": { "type": "string" },
+          "expiresAt": { "type": "string", "format": "date-time" },
+          "message": { "type": "string" },
+          "hasError": { "type": "boolean" }
+        },
+        "description": "Danh sách pre-signed URL"
+      },
       "ConfirmFlexibleUploadRequest": {
         "required": ["attachmentIds"],
         "type": "object",
@@ -4716,6 +5267,33 @@
           }
         },
         "description": "Request để xác nhận upload file - hỗ trợ cả single và multiple files"
+      },
+      "AttachmentListApiResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Response message",
+            "example": "Thành công"
+          },
+          "statusCode": {
+            "type": "integer",
+            "description": "HTTP status code",
+            "format": "int32",
+            "example": 200
+          },
+          "data": {
+            "type": "array",
+            "description": "List of attachments",
+            "items": { "$ref": "#/components/schemas/AttachmentDTO" }
+          },
+          "success": {
+            "type": "boolean",
+            "description": "Success status",
+            "example": true
+          }
+        },
+        "description": "API response wrapper for attachment list operations"
       },
       "CreateAssignmentRequest": {
         "type": "object",
@@ -4736,9 +5314,76 @@
           }
         }
       },
+      "AssignmentListApiResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Response message",
+            "example": "Thành công"
+          },
+          "statusCode": {
+            "type": "integer",
+            "description": "HTTP status code",
+            "format": "int32",
+            "example": 200
+          },
+          "data": {
+            "type": "array",
+            "description": "List of assignments",
+            "items": { "$ref": "#/components/schemas/AssignmentDTO" }
+          },
+          "success": {
+            "type": "boolean",
+            "description": "Success status",
+            "example": true
+          }
+        },
+        "description": "API response wrapper for assignment list operations"
+      },
       "AssignmentCommentRequest": {
         "type": "object",
         "properties": { "comment": { "type": "string" } }
+      },
+      "AssignmentCommentHistoryDTO": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "assignmentId": { "type": "integer", "format": "int64" },
+          "comment": { "type": "string" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "user": { "$ref": "#/components/schemas/UserDTO" }
+        },
+        "description": "List of assignment comments"
+      },
+      "AssignmentCommentsApiResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Response message",
+            "example": "Thành công"
+          },
+          "statusCode": {
+            "type": "integer",
+            "description": "HTTP status code",
+            "format": "int32",
+            "example": 200
+          },
+          "data": {
+            "type": "array",
+            "description": "List of assignment comments",
+            "items": {
+              "$ref": "#/components/schemas/AssignmentCommentHistoryDTO"
+            }
+          },
+          "success": {
+            "type": "boolean",
+            "description": "Success status",
+            "example": true
+          }
+        },
+        "description": "API response wrapper for assignment comments"
       },
       "FlightTimeUpdateRequest": {
         "type": "object",
@@ -4751,76 +5396,163 @@
           "eventType": { "type": "string" }
         }
       },
-      "AssignmentDTO": {
+      "UserListApiResponse": {
         "type": "object",
         "properties": {
-          "assignmentId": {
+          "message": {
+            "type": "string",
+            "description": "Response message",
+            "example": "Thành công"
+          },
+          "statusCode": {
             "type": "integer",
-            "description": "Assignment ID",
+            "description": "HTTP status code",
             "format": "int32",
-            "example": 1
+            "example": 200
           },
-          "taskId": {
-            "type": "integer",
-            "description": "Task ID",
-            "format": "int32",
-            "example": 5
+          "data": {
+            "type": "array",
+            "description": "List of users",
+            "items": { "$ref": "#/components/schemas/UserDTO" }
           },
-          "recipientType": {
-            "type": "string",
-            "description": "Recipient type",
-            "example": "USER",
-            "enum": ["USER", "TEAM", "UNIT"]
-          },
-          "assignedAt": {
-            "type": "string",
-            "description": "Assignment timestamp",
-            "format": "date-time"
-          },
-          "dueAt": {
-            "type": "string",
-            "description": "Due date",
-            "format": "date-time"
-          },
-          "completedAt": {
-            "type": "string",
-            "description": "Completion timestamp",
-            "format": "date-time"
-          },
-          "status": {
-            "type": "string",
-            "description": "Assignment status",
-            "example": "IN_PROGRESS",
-            "enum": ["WORKING", "DONE", "CANCELLED", "OVERDUE"]
-          },
-          "note": {
-            "type": "string",
-            "description": "Assignment note",
-            "example": "Urgent task"
-          },
-          "assignedByUser": { "$ref": "#/components/schemas/UserDTO" },
-          "completedByUser": { "$ref": "#/components/schemas/UserDTO" },
-          "recipientUser": { "$ref": "#/components/schemas/UserDTO" },
-          "recipientId": {
-            "type": "integer",
-            "description": "Recipient ID (team or unit ID)",
-            "format": "int32",
-            "example": 10
-          },
-          "recipientTeamName": {
-            "type": "string",
-            "description": "Team name (if recipientType = TEAM)",
-            "example": "Security Team"
-          },
-          "recipientUnitName": {
-            "type": "string",
-            "description": "Unit name (if recipientType = UNIT)",
-            "example": "Airport Operations"
-          },
-          "recipientTeamLead": { "$ref": "#/components/schemas/UserDTO" },
-          "recipientUnitLead": { "$ref": "#/components/schemas/UserDTO" }
+          "success": {
+            "type": "boolean",
+            "description": "Success status",
+            "example": true
+          }
         },
-        "description": "Assignment information for tasks"
+        "description": "API response wrapper for user list operations"
+      },
+      "CurrentUserApiResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Response message",
+            "example": "Thành công"
+          },
+          "statusCode": {
+            "type": "integer",
+            "description": "HTTP status code",
+            "format": "int32",
+            "example": 200
+          },
+          "data": { "$ref": "#/components/schemas/UserDTO" },
+          "success": {
+            "type": "boolean",
+            "description": "Success status",
+            "example": true
+          }
+        },
+        "description": "API response wrapper for current user operations"
+      },
+      "UnitListApiResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Response message",
+            "example": "Thành công"
+          },
+          "statusCode": {
+            "type": "integer",
+            "description": "HTTP status code",
+            "format": "int32",
+            "example": 200
+          },
+          "data": {
+            "type": "array",
+            "description": "List of units (all units or filtered by teamId)",
+            "items": { "$ref": "#/components/schemas/UnitDTO" }
+          },
+          "success": {
+            "type": "boolean",
+            "description": "Success status",
+            "example": true
+          }
+        },
+        "description": "API response wrapper for unit list operations"
+      },
+      "AssignableUnitsApiResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Response message",
+            "example": "Thành công"
+          },
+          "statusCode": {
+            "type": "integer",
+            "description": "HTTP status code",
+            "format": "int32",
+            "example": 200
+          },
+          "data": {
+            "type": "array",
+            "description": "List of assignable units for current user",
+            "items": { "$ref": "#/components/schemas/UnitDTO" }
+          },
+          "success": {
+            "type": "boolean",
+            "description": "Success status",
+            "example": true
+          }
+        },
+        "description": "API response wrapper for assignable units operations"
+      },
+      "TeamListApiResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Response message",
+            "example": "Thành công"
+          },
+          "statusCode": {
+            "type": "integer",
+            "description": "HTTP status code",
+            "format": "int32",
+            "example": 200
+          },
+          "data": {
+            "type": "array",
+            "description": "List of teams",
+            "items": { "$ref": "#/components/schemas/TeamDTO" }
+          },
+          "success": {
+            "type": "boolean",
+            "description": "Success status",
+            "example": true
+          }
+        },
+        "description": "API response wrapper for team list operations"
+      },
+      "AssignableTeamsApiResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Response message",
+            "example": "Thành công"
+          },
+          "statusCode": {
+            "type": "integer",
+            "description": "HTTP status code",
+            "format": "int32",
+            "example": 200
+          },
+          "data": {
+            "type": "array",
+            "description": "List of assignable teams for current user",
+            "items": { "$ref": "#/components/schemas/TeamDTO" }
+          },
+          "success": {
+            "type": "boolean",
+            "description": "Success status",
+            "example": true
+          }
+        },
+        "description": "API response wrapper for assignable teams operations"
       },
       "TaskDetailDTO": {
         "type": "object",
@@ -5238,6 +5970,56 @@
           "createdAt": { "type": "string", "format": "date-time" },
           "isRead": { "type": "boolean" }
         }
+      },
+      "DownloadUrlApiResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Response message",
+            "example": "Tạo download URL thành công"
+          },
+          "statusCode": {
+            "type": "integer",
+            "description": "HTTP status code",
+            "format": "int32",
+            "example": 200
+          },
+          "data": {
+            "type": "string",
+            "description": "Download URL string",
+            "example": "https://storage.blob.core.windows.net/container/file.pdf?signature=..."
+          },
+          "success": {
+            "type": "boolean",
+            "description": "Success status",
+            "example": true
+          }
+        },
+        "description": "API response wrapper for download URL generation"
+      },
+      "UserDeleteApiResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Response message",
+            "example": "Xóa user thành công"
+          },
+          "statusCode": {
+            "type": "integer",
+            "description": "HTTP status code",
+            "format": "int32",
+            "example": 204
+          },
+          "data": { "type": "object", "writeOnly": true },
+          "success": {
+            "type": "boolean",
+            "description": "Success status",
+            "example": true
+          }
+        },
+        "description": "API response wrapper for user delete operations"
       },
       "BulkDeleteTasksRequest": {
         "required": ["taskIds"],

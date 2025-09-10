@@ -11,7 +11,7 @@ export const sidebarData: SidebarData = {
   team: {
     name: 'Dong Hoi Airport',
     logo: TicketsPlane,
-    plan: 'Cảng hàng không Đồng Hới',
+    plan: '',
   },
   navGroups: [
     {
@@ -31,6 +31,16 @@ export const sidebarData: SidebarData = {
           title: 'Công việc',
           url: '/tasks',
           icon: IconChecklist,
+          items: [
+            {
+              title: 'Công việc chung',
+              url: '/tasks/all',
+            },
+            {
+              title: 'Công việc của tôi',
+              url: '/tasks/my',
+            },
+          ],
         },
         // {
         //   title: 'Tài liệu',

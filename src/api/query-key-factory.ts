@@ -39,18 +39,6 @@ export const userKeysFactory = {
   list: () => ['get', '/api/users'] as const,
 }
 
-export const documentKeysFactory = {
-  lists: () => ['get', '/api/documents'] as const,
-  detail: (id: number) =>
-    ['get', '/api/documents/{id}', { params: { path: { id } } }] as const,
-  documentAttachmentsDownloadUrl: (attachmentId: number) =>
-    [
-      'get',
-      '/api/attachments/download-url/{attachmentId}',
-      { params: { path: { attachmentId: attachmentId } } },
-    ] as const,
-}
-
 export const attachmentKeysFactory = {
   myAttachments: () => ['get', '/api/attachments/my-files'] as const,
   detail: (id: number) =>

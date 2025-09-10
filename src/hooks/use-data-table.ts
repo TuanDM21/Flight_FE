@@ -283,6 +283,8 @@ export function useDataTable<TData>(props: UseDataTableProps<TData>) {
       enableColumnFilter: false,
     },
     enableRowSelection: true,
+    enableColumnResizing: true,
+    columnResizeMode: 'onChange',
     onRowSelectionChange: setRowSelection,
     onPaginationChange,
     onSortingChange,

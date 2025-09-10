@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import PageDetailSkeleton from '@/components/page-detail-skeleton'
-import TaskDetailPage from '@/features/tasks/detail'
-import { getTaskDetailQueryOptions } from '@/features/tasks/hooks/use-task-detail'
+import TaskDetailPage from '@/features/task-detail'
+import { getTaskDetailQueryOptions } from '@/features/task-detail/hooks/use-task-detail'
 
 export const Route = createFileRoute('/_authenticated/tasks/$task-id/')({
   component: TaskDetailPage,
