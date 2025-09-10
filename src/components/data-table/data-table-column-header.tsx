@@ -24,7 +24,7 @@ export function DataTableColumnHeader<TData, TValue>({
   ...props
 }: DataTableColumnHeaderProps<TData, TValue>) {
   if (!column.getCanSort() && !column.getCanHide()) {
-    return <div className={cn(className)}>{title}</div>
+    return <div className={cn('truncate', className)}>{title}</div>
   }
 
   return (
@@ -36,7 +36,7 @@ export function DataTableColumnHeader<TData, TValue>({
         )}
         {...props}
       >
-        {title}
+        <span className='truncate'>{title}</span>
         {column.getCanSort() &&
           (column.getIsSorted() === 'desc' ? (
             <ChevronDown />

@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { createFileRoute, redirect } from '@tanstack/react-router'
+import { getTaskDetailQueryOptions } from '@/features/task-detail/hooks/use-task-detail'
 import EditTaskPage from '@/features/tasks/edit'
-import { getTaskDetailQueryOptions } from '@/features/tasks/hooks/use-task-detail'
 
 export const Route = createFileRoute('/_authenticated/tasks/$task-id/edit')({
   loader: async ({
@@ -22,6 +22,9 @@ export const Route = createFileRoute('/_authenticated/tasks/$task-id/edit')({
           redirect: location.href,
         },
       })
+    }
+    return {
+      crumb: 'Chỉnh sửa công việc' + ` #${taskId}`,
     }
   },
   validateSearch: (search) =>

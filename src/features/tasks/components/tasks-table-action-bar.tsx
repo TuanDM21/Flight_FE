@@ -1,7 +1,6 @@
 'use client'
 
 import { Table } from '@tanstack/react-table'
-import { TasksRoute } from '@/routes/_authenticated/tasks'
 import { Trash2 } from 'lucide-react'
 import { Separator } from '@/components/ui/separator'
 import {
@@ -9,17 +8,20 @@ import {
   DataTableActionBarAction,
   DataTableActionBarSelection,
 } from '@/components/data-table/data-table-action-bar'
-import { Task } from '@/features/tasks/types'
+import { HierarchicalTask, TaskFilterTypes } from '@/features/tasks/types'
 import { useDeleteTasksConfirm } from '../hooks/use-delete-tasks-confirm'
 
 interface TasksTableActionBarProps {
-  table: Table<Task>
+  table: Table<HierarchicalTask>
+  filterType: TaskFilterTypes
 }
 
-export function TasksTableActionBar({ table }: TasksTableActionBarProps) {
+export function TasksTableActionBar({
+  table,
+  filterType,
+}: TasksTableActionBarProps) {
   const rows = table.getFilteredSelectedRowModel().rows
-  const searchParams = TasksRoute.useSearch()
-  const currentType = searchParams.type || 'assigned'
+  const currentType = filterType
   const { onDeleteTasks } = useDeleteTasksConfirm(currentType)
 
   const handleDeleteSelected = () => {
@@ -28,7 +30,10 @@ export function TasksTableActionBar({ table }: TasksTableActionBarProps) {
   }
 
   return (
-    <DataTableActionBar table={table} visible={rows.length > 0}>
+    <DataTableActionBar
+      table={table}
+      visible={rows.length > 0 && currentType !== 'received'}
+    >
       <DataTableActionBarSelection table={table} />
       <Separator
         orientation='vertical'
@@ -37,7 +42,7 @@ export function TasksTableActionBar({ table }: TasksTableActionBarProps) {
       <div className='flex items-center gap-1.5'>
         <DataTableActionBarAction
           size='icon'
-          tooltip='Xóa nhiệm vụ'
+          tooltip='Xóa công việc'
           onClick={handleDeleteSelected}
         >
           <Trash2 />

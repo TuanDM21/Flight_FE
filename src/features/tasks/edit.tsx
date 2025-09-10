@@ -15,8 +15,7 @@ import {
 } from '@/components/ui/form'
 import { Textarea } from '@/components/ui/textarea'
 import { createTaskSchema } from '@/features/tasks/schema'
-import { CreateTasksForm } from './create'
-import { getTaskDetailQueryOptions } from './hooks/use-task-detail'
+import { getTaskDetailQueryOptions } from '../task-detail/hooks/use-task-detail'
 import { useUpdateTask } from './hooks/use-update-task'
 
 export default function EditTaskPage() {
@@ -32,7 +31,7 @@ export default function EditTaskPage() {
 
   const taskData = taskDetailsQuery?.data || {}
 
-  const form = useForm<CreateTasksForm>({
+  const form = useForm<any>({
     resolver: zodResolver(createTaskSchema),
     defaultValues: {
       content: taskData.content || '',
@@ -48,7 +47,7 @@ export default function EditTaskPage() {
     },
   })
 
-  const onSubmit = async (data: CreateTasksForm) => {
+  const onSubmit = async (data: any) => {
     const { content, instructions, notes } = data
 
     const taskUpdatePromise = updateTaskMutation.mutateAsync({
@@ -65,12 +64,12 @@ export default function EditTaskPage() {
     })
 
     toast.promise(taskUpdatePromise, {
-      loading: `Đang cập nhật nhiệm vụ #${taskId}...`,
+      loading: `Đang cập nhật công việc #${taskId}...`,
       success: () => {
         void navigate({ to: '/tasks', search: { type: currentType } })
-        return `Nhiệm vụ #${taskId} đã được cập nhật thành công!`
+        return `Công việc #${taskId} đã được cập nhật thành công!`
       },
-      error: `Không thể cập nhật nhiệm vụ #${taskId}`,
+      error: `Không thể cập nhật công việc #${taskId}`,
     })
   }
 
@@ -78,7 +77,7 @@ export default function EditTaskPage() {
     <div className='px-4 py-2'>
       <Card className='py-4'>
         <CardHeader>
-          <CardTitle>Chỉnh sửa nhiệm vụ</CardTitle>
+          <CardTitle>Chỉnh sửa công việc</CardTitle>
         </CardHeader>
 
         <CardContent>
@@ -145,16 +144,13 @@ export default function EditTaskPage() {
           </Form>
         </CardContent>
         <div className='bg-background sticky bottom-0 z-10 flex items-center justify-end space-x-2 border-t px-2 pt-2'>
-          <Button variant='outline' size='lg' form='tasks-form' type='button'>
-            Lưu bản nháp
-          </Button>
           <Button
             form='tasks-form'
             type='submit'
             size='lg'
             disabled={updateTaskMutation.isPending}
           >
-            Lưu nhiệm vụ
+            Lưu công việc
           </Button>
         </div>
       </Card>

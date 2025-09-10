@@ -1,31 +1,19 @@
-import { z } from 'zod'
-import { createFileRoute } from '@tanstack/react-router'
-import { Main } from '@/components/layout/main'
-import PageTableSkeleton from '@/components/page-table-skeleton'
-import { TasksPage } from '@/features/tasks'
-import { tasksQueryOptions } from '@/features/tasks/hooks/use-tasks'
-
-function TasksPageWrapper() {
-  return (
-    <Main fixed>
-      <TasksPage />
-    </Main>
-  )
-}
+import { createFileRoute, redirect } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/_authenticated/tasks/')({
   loader: async ({ context }) => {
-    const { queryClient } = context
-    return queryClient.ensureQueryData(tasksQueryOptions('assigned'))
-  },
-  validateSearch: (search) =>
-    z
-      .object({
-        type: z.enum(['created', 'assigned', 'received']).optional(),
+    if (!context.auth.isAuthenticated) {
+      throw redirect({
+        to: '/sign-in',
+        search: {
+          redirect: location.href,
+        },
       })
-      .parse(search),
-  component: TasksPageWrapper,
-  pendingComponent: PageTableSkeleton,
+    } else {
+      redirect({
+        to: '/tasks/all',
+        throw: true,
+      })
+    }
+  },
 })
-
-export { Route as TasksRoute }

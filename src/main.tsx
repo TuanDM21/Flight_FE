@@ -4,30 +4,20 @@ import {
   QueryCache,
   QueryClient,
   QueryClientProvider,
-  QueryKey,
 } from '@tanstack/react-query'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { NuqsAdapter } from 'nuqs/adapters/react'
 import { toast } from 'sonner'
+import { Toaster } from './components/ui/sonner'
 import { AuthProvider, useAuth } from './context/auth-context'
 import { FontProvider } from './context/font-context'
 import { ThemeProvider } from './context/theme-context'
-import AbilityProvider from './features/ability/context/ability'
-import { useAbility } from './features/ability/hooks/use-ability'
 import './index.css'
 import { loadEnvVariables } from './lib/env'
 import { FetchError } from './models/fetch-error'
 import { routeTree } from './routeTree.gen'
 
 loadEnvVariables()
-
-declare module '@tanstack/react-query' {
-  interface Register {
-    mutationMeta: {
-      invalidatesQuery?: QueryKey
-    }
-  }
-}
 
 const queryClient = new QueryClient({
   mutationCache: new MutationCache({
@@ -66,22 +56,14 @@ const router = createRouter({
   context: {
     auth: undefined!,
     queryClient,
-    ability: undefined!,
   },
   defaultPreload: 'intent',
   defaultPreloadStaleTime: 0,
 })
 
-declare module '@tanstack/react-router' {
-  interface Register {
-    router: typeof router
-  }
-}
-
 export function App() {
   const auth = useAuth()
-  const ability = useAbility()
-  return <RouterProvider router={router} context={{ auth, ability }} />
+  return <RouterProvider router={router} context={{ auth }} />
 }
 
 const rootElement = document.querySelector('#root')!
@@ -94,14 +76,14 @@ if (!rootElement.innerHTML) {
         <AuthProvider>
           <ThemeProvider defaultTheme='light' storageKey='vite-ui-theme'>
             <FontProvider>
-              <AbilityProvider>
-                <App />
-              </AbilityProvider>
+              <App />
+              <Toaster richColors className='pointer-events-auto' />
             </FontProvider>
           </ThemeProvider>
         </AuthProvider>
       </QueryClientProvider>
     </NuqsAdapter>
+
     // </StrictMode>
   )
 }

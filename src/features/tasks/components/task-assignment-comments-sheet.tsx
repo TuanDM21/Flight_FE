@@ -25,12 +25,13 @@ import { useTaskAssignmentComments } from '../hooks/use-task-assignment-comments
 
 interface TaskAssignmentCommentsSheetPayload {
   assignmentId: number
+  allowCellEditing: boolean
 }
 
 export const TaskAssignmentCommentsSheet: React.FC<
   DialogProps<TaskAssignmentCommentsSheetPayload>
 > = ({ payload, open, onClose }) => {
-  const { assignmentId } = payload
+  const { assignmentId, allowCellEditing } = payload
   const { data: comments, isLoading: isCommentsLoading } =
     useTaskAssignmentComments(assignmentId)
   const createTaskAssignmentCommentMutation =
@@ -95,7 +96,7 @@ export const TaskAssignmentCommentsSheet: React.FC<
     <Sheet open={open} onOpenChange={() => onClose()}>
       <SheetContent className='flex h-full w-full flex-col sm:max-w-2xl'>
         <SheetHeader className='flex-shrink-0 border-b'>
-          <SheetTitle>Bình luận cho Phân công #{assignmentId}</SheetTitle>
+          <SheetTitle>Bình luận cho phân công #{assignmentId}</SheetTitle>
           <SheetDescription>
             Xem và trả lời bình luận cho phân công này.
           </SheetDescription>
@@ -161,28 +162,30 @@ export const TaskAssignmentCommentsSheet: React.FC<
             )}
           </div>
 
-          <div className='flex-shrink-0'>
-            <div className='relative'>
-              <Textarea
-                className='max-h-[200px] min-h-[80px] w-full resize-none rounded border p-2 pr-20'
-                value={commentMessage}
-                onChange={(e) => setCommentMessage(e.target.value)}
-                onKeyDown={handleKeyDown}
-              />
-              <Button
-                className='absolute right-2 bottom-2 h-8 rounded bg-blue-500 px-3 text-sm text-white hover:bg-blue-600'
-                onClick={handleReply}
-                disabled={
-                  !commentMessage.trim() ||
-                  createTaskAssignmentCommentMutation.isPending
-                }
-              >
-                {createTaskAssignmentCommentMutation.isPending
-                  ? 'Đang gửi...'
-                  : 'Trả lời'}
-              </Button>
+          {allowCellEditing && (
+            <div className='flex-shrink-0'>
+              <div className='relative'>
+                <Textarea
+                  className='max-h-[200px] min-h-[80px] w-full resize-none rounded border p-2 pr-20'
+                  value={commentMessage}
+                  onChange={(e) => setCommentMessage(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                />
+                <Button
+                  className='absolute right-2 bottom-2 h-8 rounded bg-blue-500 px-3 text-sm text-white hover:bg-blue-600'
+                  onClick={handleReply}
+                  disabled={
+                    !commentMessage.trim() ||
+                    createTaskAssignmentCommentMutation.isPending
+                  }
+                >
+                  {createTaskAssignmentCommentMutation.isPending
+                    ? 'Đang gửi...'
+                    : 'Trả lời'}
+                </Button>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </SheetContent>
     </Sheet>

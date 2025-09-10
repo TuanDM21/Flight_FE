@@ -23,13 +23,6 @@ export const taskKeysFactory = {
       '/api/assignments/{id}/comments',
       { params: { path: { id: assignmentId } } },
     ] as const,
-
-  documents: (taskId: number) =>
-    [
-      'get',
-      '/api/task-documents',
-      { params: { query: { taskId: taskId } } },
-    ] as const,
 }
 
 export const flightKeysFactory = {
@@ -44,18 +37,6 @@ export const flightKeysFactory = {
 export const userKeysFactory = {
   me: ['get', '/api/users/me'] as const,
   list: () => ['get', '/api/users'] as const,
-}
-
-export const documentKeysFactory = {
-  lists: () => ['get', '/api/documents'] as const,
-  detail: (id: number) =>
-    ['get', '/api/documents/{id}', { params: { path: { id } } }] as const,
-  documentAttachmentsDownloadUrl: (attachmentId: number) =>
-    [
-      'get',
-      '/api/attachments/download-url/{attachmentId}',
-      { params: { path: { attachmentId: attachmentId } } },
-    ] as const,
 }
 
 export const attachmentKeysFactory = {

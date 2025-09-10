@@ -1,67 +1,41 @@
 import { useMemo } from 'react'
 import $queryClient from '@/api'
-import { LiteralUnion } from 'type-fest'
-import { useAuth } from '@/context/auth-context'
 
 export function useRecipientOptions() {
-  const { user, hasRole } = useAuth()
-
-  const getTeamQuery = $queryClient.useQuery('get', '/api/teams')
-  const getUnitsQuery = $queryClient.useQuery('get', '/api/units', {
-    params: {
-      query: {
-        teamId: user?.teamId,
-      },
-    },
-  })
+  const getTeamQuery = $queryClient.useQuery('get', '/api/teams/assignable')
+  const getUnitsQuery = $queryClient.useQuery('get', '/api/units/assignable')
   const getUsersQuery = $queryClient.useQuery('get', '/api/users/assignable')
 
-  const getRecipientOptions = (
-    type: LiteralUnion<'team' | 'unit' | 'user', string>
-  ) => {
-    if (type === 'team') {
-      return (
-        (getTeamQuery.data?.data ?? []).map((team) => ({
-          value: team.id,
-          label: team.teamName,
-        })) ?? []
-      )
-    }
-    if (type === 'unit') {
-      return (
-        (getUnitsQuery.data?.data ?? []).map((unit) => ({
-          value: unit.id,
-          label: unit.unitName,
-        })) ?? []
-      )
-    }
+  const teamOptions = useMemo(() => {
     return (
-      (getUsersQuery.data?.data ?? []).map((user) => ({
-        value: user.id,
-        label: user.name,
+      (getTeamQuery.data?.data ?? []).map((team) => ({
+        value: team.id!.toString(),
+        label: team.teamName!,
       })) ?? []
     )
-  }
+  }, [getTeamQuery.data?.data])
 
-  const deriveRecipientOptions = useMemo(() => {
-    const userOption = { label: 'Cá nhân', value: 'user' }
-    const teamOption = { label: 'Đội', value: 'team' }
-    const unitOption = { label: 'Tổ', value: 'unit' }
+  const unitOptions = useMemo(() => {
+    return (
+      (getUnitsQuery.data?.data ?? []).map((unit) => ({
+        value: unit.id!.toString(),
+        label: unit.unitName!,
+      })) ?? []
+    )
+  }, [getUnitsQuery.data?.data])
 
-    const higherRoles = ['ADMIN', 'DIRECTOR', 'VICE_DIRECTOR']
-    if (higherRoles.some((role) => hasRole(role)))
-      return [userOption, teamOption, unitOption]
-    const mediumRoles = ['TEAM_VICE_LEAD', 'TEAM_LEAD']
-    if (mediumRoles.some((role) => hasRole(role)))
-      return [userOption, unitOption]
-    return [userOption]
-  }, [hasRole])
+  const userOptions = useMemo(() => {
+    return (
+      (getUsersQuery.data?.data ?? []).map((user) => ({
+        value: user.id!.toString(),
+        label: user.name!,
+      })) ?? []
+    )
+  }, [getUsersQuery.data?.data])
 
   return {
-    getTeamQuery,
-    getUnitsQuery,
-    getUsersQuery,
-    getRecipientOptions,
-    deriveRecipientOptions,
+    teamOptions,
+    unitOptions,
+    userOptions,
   }
 }

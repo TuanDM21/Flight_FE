@@ -74,7 +74,6 @@ export const TransferList = memo(function ({
 
   useEffect(() => {
     const leftItems = items.filter((x) => !targetKeys?.some((y) => y === x.key))
-    console.log('🚀 ~ useEffect ~ leftItems:', leftItems)
     setLeftList(leftItems)
     const rightItems = items.filter((x) => targetKeys?.some((y) => y === x.key))
     setRightList(rightItems)
@@ -86,7 +85,7 @@ export const TransferList = memo(function ({
         <div className='flex items-center justify-between'>
           <Input
             placeholder='Tìm kiếm'
-            className='rounded-tr-none rounded-br-none rounded-bl-none focus-visible:border-blue-500 focus-visible:ring-0'
+            className='focus-visible:border-primary rounded-tr-none rounded-br-none rounded-bl-none focus-visible:ring-0'
             value={leftSearch}
             onChange={(e) => setLeftSearch(e.target.value)}
           />
@@ -140,7 +139,7 @@ export const TransferList = memo(function ({
           </Button>
           <Input
             placeholder='Tìm kiếm'
-            className='rounded-tl-none rounded-br-none rounded-bl-none focus-visible:border-blue-500 focus-visible:ring-0'
+            className='focus-visible:border-primary rounded-tl-none rounded-br-none rounded-bl-none focus-visible:ring-0'
             value={rightSearch}
             onChange={(e) => setRightSearch(e.target.value)}
           />

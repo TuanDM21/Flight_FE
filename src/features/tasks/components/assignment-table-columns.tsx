@@ -1,7 +1,6 @@
 import { z } from 'zod'
 import { format } from 'date-fns'
 import { UseFormReturn, useWatch } from 'react-hook-form'
-import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { ColumnDef } from '@tanstack/react-table'
 import {
   IconDeviceFloppy,
@@ -10,30 +9,12 @@ import {
   IconX,
 } from '@tabler/icons-react'
 import { dateFormatPatterns } from '@/config/date'
-import { FileTextIcon } from 'lucide-react'
+import { CheckCheck, FileTextIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/context/auth-context'
 import { Button } from '@/components/ui/button'
-import { Calendar } from '@/components/ui/calendar'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
 import { FormControl, FormField, FormItem } from '@/components/ui/form'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
+import { Popover } from '@/components/ui/popover'
 import {
   Select,
   SelectContent,
@@ -47,8 +28,9 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header'
+import { DateTimePicker } from '@/components/datetime-picker'
 import { FormFieldTooltipError } from '@/components/form-field-tooltip-error'
-import { useRecipientOptions } from '@/features/tasks/hooks/use-recipient-options'
+import { useAvailableRecipientOptions } from '@/features/tasks/hooks/use-available-recipient-options'
 import { updateTaskAssignmentSchema } from '@/features/tasks/schema'
 import {
   Task,
@@ -58,7 +40,8 @@ import {
 import {
   assigneeTaskAssignmentStatusLabels,
   ownerTaskAssignmentStatusLabels,
-} from '@/features/tasks/utils/tasks'
+} from '@/features/tasks/utils'
+import { recipientTypes } from '../config'
 import { EditableNoteCell } from './editable-note-cell'
 import { TaskAssignmentStatusBadge } from './task-assignment-status-badge'
 
@@ -79,8 +62,9 @@ interface AssignmentColumnsProps {
   startEditing: (assignment: TaskAssignment) => void
   handleDeleteAssignment: (assignment: TaskAssignment) => void
   updateAssignmentMutation: { isPending: boolean }
-
+  filterType: string
   task: Task
+  allowCellEditing: boolean
 }
 
 export function useAssignmentTableColumns({
@@ -93,12 +77,15 @@ export function useAssignmentTableColumns({
   startEditing,
   handleDeleteAssignment,
   updateAssignmentMutation,
+  filterType,
   task,
+  allowCellEditing,
 }: AssignmentColumnsProps): ColumnDef<TaskAssignment>[] {
   const { user } = useAuth()
 
   const isTaskOwner = user?.id === task.createdByUser?.id
-  const { getRecipientOptions, deriveRecipientOptions } = useRecipientOptions()
+  const { getRecipientOptions, deriveRecipientOptions } =
+    useAvailableRecipientOptions()
 
   const currentRecipientType = useWatch({
     control: form.control,
@@ -165,23 +152,30 @@ export function useAssignmentTableColumns({
             />
           )
         }
-        return <div>{value || 'N/A'}</div>
+        return (
+          <div>
+            {value
+              ? recipientTypes[value as keyof typeof recipientTypes]
+              : 'N/A'}
+          </div>
+        )
       },
       size: 100,
       enableSorting: false,
+      enableHiding: false,
     },
     {
       id: 'recipientUser',
       accessorKey: 'recipientUser',
       accessorFn: (row) => {
-        if (row.recipientType === 'user') {
+        if (row.recipientType === 'USER') {
           return row.recipientUser?.name ?? ''
         }
-        if (row.recipientType === 'team') {
-          return row.recipientUser?.teamName ?? ''
+        if (row.recipientType === 'TEAM') {
+          return row.recipientTeamName
         }
-        if (row.recipientType === 'unit') {
-          return row.recipientUser?.unitName ?? ''
+        if (row.recipientType === 'UNIT') {
+          return row.recipientUnitName
         }
         return 'N/A'
       },
@@ -190,8 +184,8 @@ export function useAssignmentTableColumns({
       ),
       cell: ({ row, cell }) => {
         const assignment = row.original
-        const isEditing = editingAssignmentId === assignment.assignmentId
         const value = cell.getValue<string>()
+        const isEditing = editingAssignmentId === assignment.assignmentId
 
         if (isEditing) {
           return (
@@ -204,7 +198,9 @@ export function useAssignmentTableColumns({
                     <FormControl>
                       <Select
                         value={field.value ? String(field.value) : ''}
-                        onValueChange={(value) => field.onChange(Number(value))}
+                        onValueChange={(value) => {
+                          field.onChange(Number(value))
+                        }}
                         disabled={!currentRecipientType}
                       >
                         <FormFieldTooltipError
@@ -251,10 +247,12 @@ export function useAssignmentTableColumns({
             />
           )
         }
-        return <div>{value || 'N/A'}</div>
+
+        return value
       },
       size: 100,
       enableSorting: false,
+      enableHiding: false,
     },
     {
       id: 'status',
@@ -264,22 +262,56 @@ export function useAssignmentTableColumns({
       ),
       cell: ({ row }) => {
         const assignment = row.original
-        const status = assignment.status || 'ASSIGNED'
+        const isEditing = editingAssignmentId === assignment.assignmentId
+        const status = assignment.status || 'DONE'
+
+        if (isEditing) {
+          return (
+            <FormField
+              control={form.control}
+              name='status'
+              render={({ field, fieldState }) => (
+                <FormItem className='flex flex-col'>
+                  <FormControl>
+                    <FormFieldTooltipError
+                      message={fieldState.error?.message || ''}
+                      showError={!!fieldState.error}
+                    >
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
+                        <SelectTrigger
+                          className={cn(
+                            'w-full',
+                            fieldState.error && 'border-destructive'
+                          )}
+                        >
+                          <SelectValue placeholder='Chọn trạng thái' />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Object.entries(taskAssignmentStatusLabels).map(
+                            ([value, label]) => (
+                              <SelectItem key={value} value={value}>
+                                {label}
+                              </SelectItem>
+                            )
+                          )}
+                        </SelectContent>
+                      </Select>
+                    </FormFieldTooltipError>
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          )
+        }
+
         return <TaskAssignmentStatusBadge status={status} />
       },
       size: 120,
       enableSorting: false,
-    },
-    {
-      id: 'assignedByUser',
-      accessorKey: 'assignedByUser',
-      accessorFn: (row) => row.assignedByUser?.name ?? '',
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title='Được giao bởi' />
-      ),
-      cell: ({ cell }) => <div>{cell.getValue<string>() || 'N/A'}</div>,
-      size: 100,
-      enableSorting: false,
+      enableHiding: false,
     },
     {
       id: 'assignedAt',
@@ -294,6 +326,7 @@ export function useAssignmentTableColumns({
         return <div>{format(date, dateFormatPatterns.fullDateTime)}</div>
       },
       enableSorting: false,
+      enableHiding: false,
     },
     {
       id: 'dueAt',
@@ -318,43 +351,11 @@ export function useAssignmentTableColumns({
                       showError={!!fieldState.error}
                     >
                       <Popover>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant='outline'
-                            className={cn(
-                              'w-full justify-start text-left font-normal',
-                              form.formState.errors.dueAt &&
-                                'border-destructive'
-                            )}
-                          >
-                            {field.value ? (
-                              format(
-                                new Date(field.value),
-                                dateFormatPatterns.shortDateTime
-                              )
-                            ) : (
-                              <span className='text-muted-foreground'>
-                                Chọn ngày
-                              </span>
-                            )}
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className='w-auto p-0' align='start'>
-                          <Calendar
-                            mode='single'
-                            selected={
-                              field.value ? new Date(field.value) : undefined
-                            }
-                            onSelect={(date) =>
-                              field.onChange(
-                                date ? date.toISOString() : undefined
-                              )
-                            }
-                            initialFocus
-                            disabled={(date) => date < new Date()}
-                            className='rounded-md border'
-                          />
-                        </PopoverContent>
+                        <DateTimePicker
+                          value={field.value}
+                          onChange={field.onChange}
+                          placeholder='Chọn thời hạn hoàn thành'
+                        />
                       </Popover>
                     </FormFieldTooltipError>
                   </FormControl>
@@ -368,6 +369,7 @@ export function useAssignmentTableColumns({
         return <div>{format(date, dateFormatPatterns.fullDateTime)}</div>
       },
       enableSorting: false,
+      enableHiding: false,
     },
     {
       id: 'note',
@@ -387,6 +389,7 @@ export function useAssignmentTableColumns({
       },
       size: 200,
       enableSorting: false,
+      enableHiding: false,
     },
     {
       id: 'actions',
@@ -396,8 +399,15 @@ export function useAssignmentTableColumns({
       cell: ({ row }) => {
         const assignment = row.original
         const isEditing = editingAssignmentId === assignment.assignmentId
-        const isAssignedToCurrentUser =
-          user?.id === assignment.recipientUser?.id
+        const isTaskAssigner = user?.id === assignment.assignedByUser?.id
+        const isUserTaskRecipient = user?.id === assignment.recipientUser?.id
+        const isUnitTaskRecipient =
+          assignment.recipientType === 'UNIT' && user?.roleName == 'UNIT_LEAD'
+        const isTeamTaskRecipient =
+          assignment.recipientType === 'TEAM' && user?.roleName == 'TEAM_LEAD'
+
+        const isAnyTaskRecipient =
+          isUserTaskRecipient || isUnitTaskRecipient || isTeamTaskRecipient
 
         if (isEditing) {
           return (
@@ -432,83 +442,85 @@ export function useAssignmentTableColumns({
             </div>
           )
         }
+
         return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant='ghost'
-                className='data-[state=open]:bg-muted flex h-8 w-8 p-0'
-              >
-                <DotsHorizontalIcon className='h-4 w-4' />
-                <span className='sr-only'>Mở menu</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align='end' className='w-[160px]'>
-              {(isAssignedToCurrentUser || isTaskOwner) && (
-                <DropdownMenuSub>
-                  <DropdownMenuSubTrigger>Trạng thái</DropdownMenuSubTrigger>
-                  <DropdownMenuSubContent>
-                    <DropdownMenuRadioGroup value={String(assignment.status)}>
-                      {Object.entries(taskAssignmentStatusLabels).map(
-                        ([value, label]) => {
-                          const correctValue = value as TaskAssignmentStatus
-                          return (
-                            <DropdownMenuRadioItem
-                              key={value}
-                              value={value}
-                              disabled={value === String(assignment.status)}
-                              onClick={() =>
-                                handleUpdateAssignmentStatus(
-                                  assignment,
-                                  correctValue
-                                )
-                              }
-                            >
-                              {label}
-                            </DropdownMenuRadioItem>
-                          )
-                        }
-                      )}
-                    </DropdownMenuRadioGroup>
-                  </DropdownMenuSubContent>
-                </DropdownMenuSub>
+          <div className='flex space-x-1'>
+            {filterType === 'received' &&
+              assignment.status !== 'DONE' &&
+              isAnyTaskRecipient &&
+              allowCellEditing && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant='ghost'
+                      size='icon'
+                      onClick={() =>
+                        handleUpdateAssignmentStatus(assignment, 'DONE')
+                      }
+                    >
+                      <CheckCheck className='h-4 w-4' />
+                      <span className='sr-only'>Hoàn thành công việc</span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Hoàn thành công việc</TooltipContent>
+                </Tooltip>
               )}
-              <DropdownMenuItem
-                onClick={() => handleOpenCommentsSheet(assignment)}
-              >
-                Xem bình luận
-                <DropdownMenuShortcut>
-                  <FileTextIcon />
-                </DropdownMenuShortcut>
-              </DropdownMenuItem>
-              {isTaskOwner && (
-                <>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => startEditing(assignment)}>
-                    Chỉnh sửa
-                    <DropdownMenuShortcut>
-                      <IconEdit />
-                    </DropdownMenuShortcut>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => handleDeleteAssignment(assignment)}
-                  >
-                    Xóa
-                    <DropdownMenuShortcut>
-                      <IconTrash />
-                    </DropdownMenuShortcut>
-                  </DropdownMenuItem>
-                </>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant='ghost'
+                  size='icon'
+                  onClick={() => {
+                    handleOpenCommentsSheet(assignment)
+                  }}
+                >
+                  <FileTextIcon className='h-4 w-4' />
+                  <span className='sr-only'>Xem bình luận</span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Xem bình luận</TooltipContent>
+            </Tooltip>
+
+            {isTaskAssigner && allowCellEditing && (
+              <>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant='ghost'
+                      size='icon'
+                      onClick={() => {
+                        startEditing(assignment)
+                      }}
+                    >
+                      <IconEdit className='h-4 w-4' />
+                      <span className='sr-only'>Chỉnh sửa</span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Chỉnh sửa</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant='ghost'
+                      size='icon'
+                      onClick={() => {
+                        handleDeleteAssignment(assignment)
+                      }}
+                    >
+                      <IconTrash className='h-4 w-4' />
+                      <span className='sr-only'>Xóa</span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Xóa</TooltipContent>
+                </Tooltip>
+              </>
+            )}
+          </div>
         )
       },
-      size: 20,
-      meta: {
-        className: 'sticky right-0 bg-background border-l',
-      },
+      size: 120,
       enableSorting: false,
+      enableHiding: false,
     },
   ]
 }

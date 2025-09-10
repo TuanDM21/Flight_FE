@@ -2,11 +2,11 @@ import { useQueryClient } from '@tanstack/react-query'
 import $queryClient from '@/api'
 import { BaseApiResponse } from '@/types/response'
 import { taskKeysFactory } from '@/api/query-key-factory'
-import { Task, TaskFilterTypes } from '@/features/tasks/types'
+import { Task, TaskFilterTypes, TaskResponse } from '@/features/tasks/types'
 
 interface OptimisticBulkDeleteContext {
   taskIds: number[]
-  previousTasksList?: BaseApiResponse<Task[]>
+  previousTasksList?: BaseApiResponse<TaskResponse>
   previousTaskDetails?: Map<number, BaseApiResponse<Task>>
 }
 
@@ -21,10 +21,7 @@ export const useDeleteTasks = (filterType: TaskFilterTypes) => {
       ],
     },
     onMutate: async (variables): Promise<OptimisticBulkDeleteContext> => {
-      const taskIds = variables?.body?.taskIds || []
-      if (taskIds.length === 0) {
-        return { taskIds: [] }
-      }
+      const taskIds = variables?.body?.taskIds
 
       // Cancel any outgoing refetches to avoid overwriting our optimistic update
       await queryClient.cancelQueries({
@@ -40,7 +37,7 @@ export const useDeleteTasks = (filterType: TaskFilterTypes) => {
 
       // Snapshot the previous values
       const previousTasksList = queryClient.getQueryData<
-        BaseApiResponse<Task[]>
+        BaseApiResponse<TaskResponse>
       >(taskKeysFactory.listAssignees(filterType))
 
       // Store previous task details
@@ -55,15 +52,25 @@ export const useDeleteTasks = (filterType: TaskFilterTypes) => {
       }
 
       // Optimistically update by removing the tasks with the given IDs
-      queryClient.setQueryData(
+      queryClient.setQueryData<BaseApiResponse<TaskResponse>>(
         taskKeysFactory.listAssignees(filterType),
-        (old: BaseApiResponse<Task[]> | undefined) => {
+        (old) => {
           if (!old?.data) return old
 
-          return {
-            ...old,
-            data: old.data.filter((task) => !taskIds.includes(task.id!)),
+          // Check if data has tasks array property (assuming TaskResponse has a tasks property)
+          if (old.data.tasks && Array.isArray(old.data.tasks)) {
+            return {
+              ...old,
+              data: {
+                ...old.data,
+                tasks: old.data.tasks.filter(
+                  (task) => !taskIds.includes(task.id!)
+                ),
+              },
+            }
           }
+
+          return old
         }
       )
 

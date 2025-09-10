@@ -33,7 +33,7 @@ import { getSortingStateParser } from '@/lib/parsers'
 import { useDebouncedCallback } from '@/hooks/use-debounced-callback'
 
 const PAGE_KEY = 'page'
-const PER_PAGE_KEY = 'perPage'
+const PER_PAGE_KEY = 'size'
 const SORT_KEY = 'sort'
 const ARRAY_SEPARATOR = ','
 const DEBOUNCE_MS = 300
@@ -202,14 +202,23 @@ export function useDataTable<TData>(props: UseDataTableProps<TData>) {
   const initialColumnFilters: ColumnFiltersState = React.useMemo(() => {
     if (enableAdvancedFilter) return []
 
+    const columnMap = new Map(columns.map((col) => [col.id, col]))
+
     return Object.entries(filterValues).reduce<ColumnFiltersState>(
       (filters, [key, value]) => {
         if (value !== null) {
+          const column = columnMap.get(key)
+          const isDateColumn =
+            column?.meta?.variant === 'date' ||
+            column?.meta?.variant === 'dateRange'
+
           const processedValue = Array.isArray(value)
             ? value
-            : typeof value === 'string' && /[^a-zA-Z0-9]/.test(value)
-              ? value.split(/[^a-zA-Z0-9]+/).filter(Boolean)
-              : [value]
+            : isDateColumn
+              ? [value]
+              : typeof value === 'string' && /[^a-zA-Z0-9]/.test(value)
+                ? value.split(/[^a-zA-Z0-9]+/).filter(Boolean)
+                : [value]
 
           filters.push({
             id: key,
@@ -220,7 +229,7 @@ export function useDataTable<TData>(props: UseDataTableProps<TData>) {
       },
       []
     )
-  }, [filterValues, enableAdvancedFilter])
+  }, [filterValues, enableAdvancedFilter, columns])
 
   const [columnFilters, setColumnFilters] =
     React.useState<ColumnFiltersState>(initialColumnFilters)
@@ -274,6 +283,8 @@ export function useDataTable<TData>(props: UseDataTableProps<TData>) {
       enableColumnFilter: false,
     },
     enableRowSelection: true,
+    enableColumnResizing: true,
+    columnResizeMode: 'onChange',
     onRowSelectionChange: setRowSelection,
     onPaginationChange,
     onSortingChange,

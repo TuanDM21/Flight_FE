@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import { format } from 'date-fns'
 import type { Column, Table } from '@tanstack/react-table'
 import type { ExtendedColumnFilter, FilterOperator } from '@/types/data-table'
 import {
@@ -188,7 +189,9 @@ export function DataTableFilterMenu<TData>({
         filters.length > 0
       ) {
         event.preventDefault()
-        onFilterRemove(filters.at(-1)?.filterId ?? '')
+        onFilterRemove(
+          filters.length > 0 ? filters[filters.length - 1].filterId : ''
+        )
       }
     },
     [filters, onFilterRemove]
@@ -373,7 +376,7 @@ function DataTableFilterItem<TData>({
             <Button
               variant='ghost'
               size='sm'
-              className='dark:bg-input/30 rounded-none rounded-l-md border border-r-0 font-normal'
+              className='bg-muted/50 rounded-none rounded-l-md border border-r-0 font-normal'
             >
               {columnMeta?.icon && (
                 <columnMeta.icon className='text-muted-foreground' />
@@ -473,7 +476,7 @@ function DataTableFilterItem<TData>({
           aria-controls={filterItemId}
           variant='ghost'
           size='sm'
-          className='dark:bg-input/30 h-full rounded-none rounded-r-md border border-l-0 px-1.5 font-normal'
+          className='bg-muted/50 h-full rounded-none rounded-r-md border border-l-0 px-1.5 font-normal'
           onClick={() => {
             onFilterRemove(filter.filterId)
           }}
@@ -555,7 +558,7 @@ function FilterValueSelector<TData>({
           mode='single'
           selected={value ? new Date(value) : undefined}
           onSelect={(date) => {
-            onSelect(date?.getTime().toString() ?? '')
+            onSelect(date ? format(date, 'yyyy-MM-dd') : '')
           }}
         />
       )
@@ -844,8 +847,8 @@ function onFilterInputRender<TData>({
                   onFilterUpdate(filter.filterId, {
                     value: date
                       ? [
-                          (date.from?.getTime() ?? '').toString(),
-                          (date.to?.getTime() ?? '').toString(),
+                          date.from ? format(date.from, 'yyyy-MM-dd') : '',
+                          date.to ? format(date.to, 'yyyy-MM-dd') : '',
                         ]
                       : [],
                   })
@@ -860,7 +863,7 @@ function onFilterInputRender<TData>({
                 }
                 onSelect={(date) => {
                   onFilterUpdate(filter.filterId, {
-                    value: (date?.getTime() ?? '').toString(),
+                    value: date ? format(date, 'yyyy-MM-dd') : '',
                   })
                 }}
               />

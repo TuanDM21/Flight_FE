@@ -117,7 +117,7 @@ function DataTableActionBarAction({
       <TooltipTrigger asChild>{trigger}</TooltipTrigger>
       <TooltipContent
         sideOffset={6}
-        className='bg-accent text-foreground border font-semibold dark:bg-zinc-900 [&>span]:hidden'
+        className='bg-accent text-foreground border font-semibold [&>span]:hidden'
       >
         <p>{tooltip}</p>
       </TooltipContent>
@@ -158,7 +158,7 @@ function DataTableActionBarSelection<TData>({
         </TooltipTrigger>
         <TooltipContent
           sideOffset={10}
-          className='bg-accent text-foreground flex items-center gap-2 border px-2 py-1 font-semibold dark:bg-zinc-900 [&>span]:hidden'
+          className='bg-accent text-foreground flex items-center gap-2 border px-2 py-1 font-semibold [&>span]:hidden'
         >
           <p>Xóa lựa chọn</p>
           <kbd className='bg-background text-foreground rounded border px-1.5 py-px font-mono text-[0.7rem] font-normal shadow-xs select-none'>

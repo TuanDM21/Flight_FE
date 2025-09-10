@@ -77,7 +77,7 @@ export function DataTableFacetedFilter<TData, TValue>({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant='outline' size='sm' className='border-dashed'>
+        <Button variant='outline' className='border-dashed'>
           {selectedValues.size > 0 ? (
             <div
               role='button'
@@ -110,7 +110,7 @@ export function DataTableFacetedFilter<TData, TValue>({
                     variant='secondary'
                     className='rounded-sm px-1 font-normal'
                   >
-                    {selectedValues.size} selected
+                    {selectedValues.size} đã chọn
                   </Badge>
                 ) : (
                   options
@@ -148,13 +148,13 @@ export function DataTableFacetedFilter<TData, TValue>({
                   >
                     <div
                       className={cn(
-                        'border-primary flex size-4 items-center justify-center rounded-sm border',
+                        'border-primary text-primary-foreground flex size-4 items-center justify-center rounded-sm border',
                         isSelected
                           ? 'bg-primary'
                           : 'opacity-50 [&_svg]:invisible'
                       )}
                     >
-                      <Check />
+                      <Check className='text-current' />
                     </div>
                     {option.icon && <option.icon />}
                     <span className='truncate'>{option.label}</span>
@@ -177,7 +177,7 @@ export function DataTableFacetedFilter<TData, TValue>({
                     }}
                     className='justify-center text-center'
                   >
-                    Clear filters
+                    Xóa bộ lọc
                   </CommandItem>
                 </CommandGroup>
               </>

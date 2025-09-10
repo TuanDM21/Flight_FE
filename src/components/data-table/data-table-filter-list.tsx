@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import { format } from 'date-fns'
 import type { Column, ColumnMeta, Table } from '@tanstack/react-table'
 import { dataTableConfig } from '@/config/data-table'
 import type {
@@ -66,6 +67,37 @@ import {
   SortableOverlay,
 } from '@/components/ui/sortable'
 import { DataTableRangeFilter } from '@/components/data-table/data-table-range-filter'
+
+// Helper function to parse date values
+function parseFilterDateValue(
+  value: string | number | undefined
+): Date | undefined {
+  if (!value) return undefined
+
+  try {
+    if (typeof value === 'number') {
+      // If it's a timestamp
+      return new Date(value)
+    }
+
+    // If it's a string, check different formats
+    if (typeof value === 'string') {
+      // Check if it's dd/MM/yyyy format
+      if (/^\d{2}\/\d{2}\/\d{4}$/.test(value)) {
+        const [day, month, year] = value.split('/')
+        return new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
+      }
+
+      // Otherwise assume yyyy-MM-dd or other standard format
+      const date = new Date(value)
+      return isNaN(date.getTime()) ? undefined : date
+    }
+
+    return undefined
+  } catch {
+    return undefined
+  }
+}
 
 const FILTERS_KEY = 'filters'
 const JOIN_OPERATOR_KEY = 'joinOperator'
@@ -182,7 +214,9 @@ export function DataTableFilterList<TData>({
         filters.length > 0
       ) {
         event.preventDefault()
-        onFilterRemove(filters.at(-1)?.filterId ?? '')
+        onFilterRemove(
+          filters.length > 0 ? filters[filters.length - 1].filterId : ''
+        )
       }
     },
     [filters, onFilterRemove]
@@ -718,11 +752,11 @@ function onFilterInputRender<TData>({
 
       const displayValue =
         filter.operator === 'isBetween' && dateValue.length === 2
-          ? `${formatDate(new Date(Number(dateValue[0])))} - ${formatDate(
-              new Date(Number(dateValue[1]))
+          ? `${formatDate(parseFilterDateValue(dateValue[0]))} - ${formatDate(
+              parseFilterDateValue(dateValue[1])
             )}`
           : dateValue[0]
-            ? formatDate(new Date(Number(dateValue[0])))
+            ? formatDate(parseFilterDateValue(dateValue[0]))
             : 'Pick a date'
 
       return (
@@ -768,8 +802,8 @@ function onFilterInputRender<TData>({
                   onFilterUpdate(filter.filterId, {
                     value: date
                       ? [
-                          (date.from?.getTime() ?? '').toString(),
-                          (date.to?.getTime() ?? '').toString(),
+                          date.from ? format(date.from, 'yyyy-MM-dd') : '',
+                          date.to ? format(date.to, 'yyyy-MM-dd') : '',
                         ]
                       : [],
                   })
@@ -785,7 +819,7 @@ function onFilterInputRender<TData>({
                 }
                 onSelect={(date) => {
                   onFilterUpdate(filter.filterId, {
-                    value: (date?.getTime() ?? '').toString(),
+                    value: date ? format(date, 'yyyy-MM-dd') : '',
                   })
                 }}
               />

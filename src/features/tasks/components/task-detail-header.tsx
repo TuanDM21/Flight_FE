@@ -12,7 +12,7 @@ export function TaskDetailHeader({ taskId, onDelete }: TaskDetailHeaderProps) {
     <div className='mb-4 flex items-center justify-between'>
       <div className='flex items-center space-x-4'>
         <div>
-          <h1 className='text-2xl font-bold'>Nhiệm vụ #{taskId}</h1>
+          <h1 className='text-2xl font-bold'>Công việc #{taskId}</h1>
         </div>
       </div>
 

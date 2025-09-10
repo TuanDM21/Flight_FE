@@ -34,9 +34,9 @@ export const useUpdateTaskAssignment = (
       >(taskKeysFactory.assignments(taskId))
 
       // Optimistically update the assignments list
-      queryClient.setQueryData(
+      queryClient.setQueryData<BaseApiResponse<TaskAssignment[]>>(
         taskKeysFactory.assignments(taskId),
-        (old: BaseApiResponse<TaskAssignment[]> | undefined) => {
+        (old) => {
           if (!old?.data) return old
           return {
             ...old,
@@ -45,6 +45,8 @@ export const useUpdateTaskAssignment = (
                 return {
                   ...assignment,
                   ...variables.body,
+                  recipientType: variables.body
+                    .recipientType as TaskAssignment['recipientType'],
                   updatedAt: new Date().toISOString(),
                 }
               }

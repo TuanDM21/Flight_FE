@@ -5,7 +5,7 @@ import {
   allTaskAssignmentStatusLabels,
   taskAssignmentsStatusIcons,
   taskAssignmentsStatusStyles,
-} from '@/features/tasks/utils/tasks'
+} from '@/features/tasks/utils'
 
 interface TaskAssignmentStatusBadgeProps {
   status: TaskAssignmentStatus

@@ -2,57 +2,76 @@ import { useQueryClient } from '@tanstack/react-query'
 import $queryClient from '@/api'
 import { BaseApiResponse } from '@/types/response'
 import { taskKeysFactory } from '@/api/query-key-factory'
-import { Task } from '../types'
+import { Task, TaskFilterTypes, TaskResponse } from '../types'
 
-export const useCreateTask = (filterType = 'assigned') => {
+interface OptimisticCreateTaskContext {
+  previousTasks?: BaseApiResponse<TaskResponse>
+}
+
+export const useCreateTask = (filterType: TaskFilterTypes) => {
   const queryClient = useQueryClient()
   return $queryClient.useMutation('post', '/api/tasks', {
-    meta: {
-      invalidatesQuery: [taskKeysFactory.listAssignees(filterType)],
-    },
     onMutate: async (variables) => {
       // Cancel any outgoing refetches to prevent them overwriting our optimistic update
       await queryClient.cancelQueries({
         queryKey: taskKeysFactory.listAssignees(filterType),
       })
       // Snapshot the current value
-      const previousTasks = queryClient.getQueryData<BaseApiResponse<Task[]>>(
-        taskKeysFactory.listAssignees(filterType)
+      const previousTasks = queryClient.getQueryData<
+        BaseApiResponse<TaskResponse[]>
+      >(taskKeysFactory.listAssignees(filterType))
+      const { content, instructions, notes, assignments, title } =
+        variables?.body || {}
+      if (
+        (assignments?.length !== 0 && filterType === 'created') ||
+        (assignments?.length === 0 && filterType !== 'created')
       )
+        return {
+          previousTasks,
+        }
+
       // Optimistically update the list by adding the new task
-      queryClient.setQueryData<BaseApiResponse<Task[]>>(
+      queryClient.setQueryData<BaseApiResponse<TaskResponse>>(
         taskKeysFactory.listAssignees(filterType),
-        (old: any) => {
+        (old) => {
           if (!old?.data) return old
-          // Create a temporary ID for the optimistic update
-          const tempId = Date.now()
-          const { content, instructions, notes } = variables?.body || {}
-          const newTaskData = {
-            id: tempId,
+          const newTaskData: Task = {
+            id: Date.now(),
+            title,
             content,
             instructions,
             notes,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
-            status: 'ASSIGNED',
-            // Add any other required fields with default values that might be needed
+            status: 'OPEN',
+            assignments: assignments ?? [],
           }
           return {
             ...old,
-            data: [newTaskData, ...old.data],
+            data: {
+              ...old.data,
+              tasks: [newTaskData, ...(old.data.tasks || [])],
+            },
           }
         }
       )
       return { previousTasks }
     },
-    onError: (_, __, context: any) => {
+    onError: (_, __, context) => {
+      const optimisticContext = context as OptimisticCreateTaskContext
       // Restore the previous state if available
-      if (context?.previousTasks) {
+      if (optimisticContext?.previousTasks) {
         queryClient.setQueryData(
           taskKeysFactory.listAssignees(filterType),
-          context.previousTasks
+          optimisticContext.previousTasks
         )
       }
+    },
+    onSettled: () => {
+      // Always refetch after error or success:
+      queryClient.invalidateQueries({
+        queryKey: taskKeysFactory.listAssignees(filterType),
+      })
     },
   })
 }

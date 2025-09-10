@@ -1,48 +1,36 @@
-import { DocumentAttachment } from '@/features/documents/types'
-
-export async function convertToFile(obj: DocumentAttachment): Promise<File> {
-  if (!obj.filePath || !obj.fileName || !obj.createdAt) {
-    throw new Error('Invalid DocumentAttachment object')
-  }
-
-  const response = await fetch(obj.filePath)
-  if (!response.ok) {
-    throw new Error(`Không thể tải file: ${response.statusText}`)
-  }
-
-  const blob = await response.blob()
-
-  const file = new File([blob], obj.fileName, {
-    type: blob.type || 'application/octet-stream',
-    lastModified: new Date(obj.createdAt).getTime(),
-  })
-
-  return file
-}
-
-export function downloadFileFromUrl({
+export async function downloadFileFromUrl({
   url,
   filename,
 }: {
   url: string
   filename?: string
 }): Promise<void> {
-  return new Promise((resolve, reject) => {
-    try {
-      const a = document.createElement('a')
-      a.href = url
-      if (filename) a.download = filename
+  try {
+    const response = await fetch(url)
+    if (!response.ok) throw new Error('Network response was not ok')
 
-      document.body.appendChild(a)
+    const blob = await response.blob()
+    const blobUrl = window.URL.createObjectURL(blob)
 
-      a.click()
+    const link = document.createElement('a')
+    link.href = blobUrl
+    link.download = filename || 'download'
 
-      document.body.removeChild(a)
-      resolve()
-    } catch (error) {
-      reject(error)
-    }
-  })
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+
+    // Cleanup blob URL
+    window.URL.revokeObjectURL(blobUrl)
+  } catch (error) {
+    const a = document.createElement('a')
+    a.href = url
+    if (filename) a.download = filename
+
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+  }
 }
 
 export function getFileExtension(fileName: string): string {

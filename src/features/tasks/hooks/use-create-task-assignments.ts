@@ -30,7 +30,7 @@ export function useCreateTaskAssignmentsMutation() {
 
           return {
             ...old,
-            data: [...old.data, ...(assignments || [])],
+            data: [...old.data, ...((assignments as TaskAssignment[]) || [])],
           }
         }
       )

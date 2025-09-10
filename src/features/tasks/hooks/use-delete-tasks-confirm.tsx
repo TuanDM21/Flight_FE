@@ -16,7 +16,7 @@ export const useDeleteTasksConfirm = (filterType: TaskFilterTypes) => {
     const confirmed = await dialogs.confirm(
       <div className='space-y-3'>
         <p className='text-muted-foreground text-sm'>
-          Bạn có chắc chắn muốn xóa {taskCount} nhiệm vụ được chọn?
+          Bạn có chắc chắn muốn xóa {taskCount} công việc được chọn?
         </p>
         <div className='bg-destructive/10 rounded-md p-3'>
           <p className='text-destructive mb-2 text-sm font-medium'>
@@ -25,11 +25,11 @@ export const useDeleteTasksConfirm = (filterType: TaskFilterTypes) => {
           <ul className='text-destructive ml-4 list-disc space-y-1 text-sm'>
             <li>Tất cả phân công và bình luận</li>
             <li>Tất cả tài liệu đính kèm</li>
-            <li>Lịch sử và tiến độ nhiệm vụ</li>
+            <li>Lịch sử và tiến độ công việc</li>
           </ul>
         </div>
         <div className='text-muted-foreground text-sm'>
-          <p className='mb-2 font-medium'>Danh sách nhiệm vụ sẽ bị xóa:</p>
+          <p className='mb-2 font-medium'>Danh sách công việc sẽ bị xóa:</p>
           <div className='bg-muted/50 max-h-32 overflow-y-auto rounded border p-2 text-xs'>
             {tasks.slice(0, 10).map((task) => (
               <div key={task.id} className='py-1'>
@@ -41,7 +41,7 @@ export const useDeleteTasksConfirm = (filterType: TaskFilterTypes) => {
             ))}
             {tasks.length > 10 && (
               <div className='text-muted-foreground py-1 italic'>
-                ...và {tasks.length - 10} nhiệm vụ khác
+                ...và {tasks.length - 10} công việc khác
               </div>
             )}
           </div>
@@ -51,7 +51,7 @@ export const useDeleteTasksConfirm = (filterType: TaskFilterTypes) => {
         </p>
       </div>,
       {
-        title: `Xóa ${taskCount} nhiệm vụ`,
+        title: `Xóa ${taskCount} công việc`,
         severity: 'error',
         okText: 'Xóa tất cả',
         cancelText: 'Hủy bỏ',
@@ -66,11 +66,12 @@ export const useDeleteTasksConfirm = (filterType: TaskFilterTypes) => {
       })
 
       toast.promise(deleteTasksPromise, {
-        loading: `Đang xóa ${taskCount} nhiệm vụ...`,
+        loading: `Đang xóa ${taskCount} công việc...`,
         success: () => {
-          return `Đã xóa thành công ${taskCount} nhiệm vụ.`
+          return `Đã xóa thành công ${taskCount} công việc.`
         },
-        error: `Không thể xóa các nhiệm vụ. Vui lòng thử lại.`,
+        error: (error) =>
+          error.message ?? `Không thể xóa các công việc. Vui lòng thử lại.`,
       })
     }
   }

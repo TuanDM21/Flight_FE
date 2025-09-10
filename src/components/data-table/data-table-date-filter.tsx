@@ -1,10 +1,11 @@
 'use client'
 
 import * as React from 'react'
+import { format, parse } from 'date-fns'
 import type { Column } from '@tanstack/react-table'
+import { dateFormatPatterns } from '@/config/date'
 import { CalendarIcon, XCircle } from 'lucide-react'
 import type { DateRange } from 'react-day-picker'
-import { formatDate } from '@/lib/format'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -20,14 +21,35 @@ function getIsDateRange(value: DateSelection): value is DateRange {
   return value && typeof value === 'object' && !Array.isArray(value)
 }
 
-function parseAsDate(timestamp: number | string | undefined): Date | undefined {
-  if (!timestamp) return undefined
-  const numericTimestamp =
-    typeof timestamp === 'string' ? Number(timestamp) : timestamp
-  const date = new Date(numericTimestamp)
-  return Number.isNaN(date.getTime()) ? undefined : date
-}
+function parseAsDate(
+  value: string | number | undefined,
+  dateFormat: string
+): Date | undefined {
+  if (!value) return undefined
 
+  try {
+    if (typeof value === 'number') {
+      // If it's a timestamp
+      return new Date(value)
+    }
+
+    // If it's a string and we have a format, use date-fns parse
+    if (typeof value === 'string' && dateFormat) {
+      const parsed = parse(value, dateFormat, new Date())
+      return isNaN(parsed.getTime()) ? undefined : parsed
+    }
+
+    // Fallback to standard Date parsing
+    if (typeof value === 'string') {
+      const date = new Date(value)
+      return isNaN(date.getTime()) ? undefined : date
+    }
+
+    return undefined
+  } catch {
+    return undefined
+  }
+}
 function parseColumnFilterValue(value: unknown) {
   if (value === null || value === undefined) {
     return []
@@ -61,6 +83,10 @@ export function DataTableDateFilter<TData>({
   multiple,
 }: DataTableDateFilterProps<TData>) {
   const columnFilterValue = column.getFilterValue()
+  const { format: formatPattern = dateFormatPatterns.fullDate } =
+    column.columnDef.meta || {}
+  const urlFormat = (column.columnDef.meta as any)?.urlFormat || 'dd/MM/yyyy'
+  const [open, setOpen] = React.useState(false)
 
   const selectedDates = React.useMemo<DateSelection>(() => {
     if (!columnFilterValue) {
@@ -70,32 +96,33 @@ export function DataTableDateFilter<TData>({
     if (multiple) {
       const timestamps = parseColumnFilterValue(columnFilterValue)
       return {
-        from: parseAsDate(timestamps[0]),
-        to: parseAsDate(timestamps[1]),
+        from: parseAsDate(timestamps[0], urlFormat),
+        to: parseAsDate(timestamps[1], urlFormat),
       }
     }
 
     const timestamps = parseColumnFilterValue(columnFilterValue)
-    const date = parseAsDate(timestamps[0])
+    const date = parseAsDate(timestamps[0], urlFormat)
     return date ? [date] : []
   }, [columnFilterValue, multiple])
 
   const onSelect = React.useCallback(
     (date: Date | DateRange | undefined) => {
+      setOpen(false)
       if (!date) {
         column.setFilterValue(undefined)
         return
       }
 
       if (multiple && !('getTime' in date)) {
-        const from = date.from?.getTime()
-        const to = date.to?.getTime()
+        const from = date.from ? format(date.from, urlFormat) : undefined
+        const to = date.to ? format(date.to, urlFormat) : undefined
         column.setFilterValue(from || to ? [from, to] : undefined)
       } else if (!multiple && 'getTime' in date) {
-        column.setFilterValue(date.getTime())
+        column.setFilterValue(format(date, urlFormat))
       }
     },
-    [column, multiple]
+    [column, multiple, urlFormat]
   )
 
   const onReset = React.useCallback(
@@ -115,13 +142,16 @@ export function DataTableDateFilter<TData>({
     return selectedDates.length > 0
   }, [multiple, selectedDates])
 
-  const formatDateRange = React.useCallback((range: DateRange) => {
-    if (!range.from && !range.to) return ''
-    if (range.from && range.to) {
-      return `${formatDate(range.from)} - ${formatDate(range.to)}`
-    }
-    return formatDate(range.from ?? range.to)
-  }, [])
+  const formatDateRange = React.useCallback(
+    (range: DateRange) => {
+      if (!range.from && !range.to) return ''
+      if (range.from && range.to) {
+        return `${format(range.from, formatPattern)} - ${format(range.to, formatPattern)}`
+      }
+      return format(range.from ?? range.to!, formatPattern)
+    },
+    [formatPattern]
+  )
 
   const label = React.useMemo(() => {
     if (multiple) {
@@ -152,7 +182,7 @@ export function DataTableDateFilter<TData>({
 
     const hasSelectedDate = selectedDates.length > 0
     const dateText = hasSelectedDate
-      ? formatDate(selectedDates[0])
+      ? format(selectedDates[0], formatPattern)
       : 'Select date'
 
     return (
@@ -172,7 +202,7 @@ export function DataTableDateFilter<TData>({
   }, [selectedDates, multiple, formatDateRange, title])
 
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button variant='outline' size='sm' className='border-dashed'>
           {hasValue ? (

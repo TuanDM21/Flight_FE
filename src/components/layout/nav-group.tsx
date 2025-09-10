@@ -38,7 +38,9 @@ export function NavGroup({ title, items }: NavGroup) {
   const href = useLocation({ select: (location) => location.href })
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>{title}</SidebarGroupLabel>
+      <SidebarGroupLabel className='overflow-hidden transition-all duration-200 ease-linear group-data-[collapsible=icon]:hidden group-data-[collapsible=icon]:opacity-0'>
+        {title}
+      </SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => {
           const key = `${item.title}-${item.url}`
@@ -59,7 +61,9 @@ export function NavGroup({ title, items }: NavGroup) {
 }
 
 const NavBadge = ({ children }: { children: ReactNode }) => (
-  <Badge className='rounded-full px-1 py-0 text-xs'>{children}</Badge>
+  <Badge className='overflow-hidden rounded-full px-1 py-0 text-xs transition-all duration-200 ease-linear group-data-[collapsible=icon]:w-0 group-data-[collapsible=icon]:opacity-0'>
+    {children}
+  </Badge>
 )
 
 const SidebarMenuLink = ({
@@ -84,7 +88,9 @@ const SidebarMenuLink = ({
           }}
         >
           {item.icon && <item.icon />}
-          <span>{item.title}</span>
+          <span className='overflow-hidden transition-all duration-200 ease-linear group-data-[collapsible=icon]:w-0 group-data-[collapsible=icon]:opacity-0'>
+            {item.title}
+          </span>
           {item.badge && <NavBadge>{item.badge}</NavBadge>}
         </Link>
       </SidebarMenuButton>
@@ -110,7 +116,9 @@ const SidebarMenuCollapsible = ({
         <CollapsibleTrigger asChild>
           <SidebarMenuButton tooltip={item.title}>
             {item.icon && <item.icon />}
-            <span>{item.title}</span>
+            <span className='overflow-hidden transition-all duration-200 ease-linear group-data-[collapsible=icon]:w-0 group-data-[collapsible=icon]:opacity-0'>
+              {item.title}
+            </span>
             {item.badge && <NavBadge>{item.badge}</NavBadge>}
             <ChevronRight className='ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90' />
           </SidebarMenuButton>
@@ -130,7 +138,9 @@ const SidebarMenuCollapsible = ({
                     }}
                   >
                     {subItem.icon && <subItem.icon />}
-                    <span>{subItem.title}</span>
+                    <span className='overflow-hidden transition-all duration-200 ease-linear group-data-[collapsible=icon]:w-0 group-data-[collapsible=icon]:opacity-0'>
+                      {subItem.title}
+                    </span>
                     {subItem.badge && <NavBadge>{subItem.badge}</NavBadge>}
                   </Link>
                 </SidebarMenuSubButton>
@@ -159,7 +169,9 @@ const SidebarMenuCollapsedDropdown = ({
             isActive={checkIsActive(href, item)}
           >
             {item.icon && <item.icon />}
-            <span>{item.title}</span>
+            <span className='overflow-hidden transition-all duration-200 ease-linear group-data-[collapsible=icon]:w-0 group-data-[collapsible=icon]:opacity-0'>
+              {item.title}
+            </span>
             {item.badge && <NavBadge>{item.badge}</NavBadge>}
             <ChevronRight className='ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90' />
           </SidebarMenuButton>
