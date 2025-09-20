@@ -1,0 +1,119 @@
+name: Build and Deploy to VPS
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build-and-push:
+    outputs:
+      image_full: ${{ steps.set_tag.outputs.image_full }}
+      image_tag: ${{ steps.set_tag.outputs.image_tag }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set image tag
+        id: set_tag
+        run: |
+          # Compute a safe tag: use 'latest' for main, else branch-shortsha
+          BRANCH_NAME="${{ github.ref_name }}"
+          # fallback: parse from GITHUB_REF if github.ref_name empty
+          if [ -z "$BRANCH_NAME" ]; then
+            BRANCH_NAME=$(echo "${GITHUB_REF}" | sed 's#refs/heads/##; s#refs/tags/##')
+          fi
+          SHORT_SHA=$(echo "${GITHUB_SHA}" | cut -c1-7)
+          if [ "${GITHUB_REF}" = "refs/heads/main" ]; then
+            IMAGE_TAG="latest"
+          else
+            # sanitize branch name (replace / and invalid chars)
+            SANITIZED=$(echo "$BRANCH_NAME" | sed 's#[/ ]#-#g' | sed 's/[^A-Za-z0-9._-]/-/g')
+            IMAGE_TAG="${SANITIZED}-${SHORT_SHA}"
+          fi
+          # Ensure repository name is lowercase for docker
+          IMAGE_NAME_LOWER=$(echo "${{ env.IMAGE_NAME }}" | tr '[:upper:]' '[:lower:]')
+          IMAGE_FULL="${{ env.REGISTRY }}/${IMAGE_NAME_LOWER}:${IMAGE_TAG}"
+          if [ "${IMAGE_TAG}" = "latest" ]; then
+            IMAGE_TAGS="${IMAGE_FULL},${{ env.REGISTRY }}/${IMAGE_NAME_LOWER}:latest"
+          else
+            IMAGE_TAGS="${IMAGE_FULL}"
+          fi
+          echo "IMAGE_TAG=${IMAGE_TAG}" >> $GITHUB_ENV
+          echo "IMAGE_FULL=${IMAGE_FULL}" >> $GITHUB_ENV
+          echo "IMAGE_TAGS=${IMAGE_TAGS}" >> $GITHUB_ENV
+          printf "image_full=%s\nimage_tag=%s\n" "${IMAGE_FULL}" "${IMAGE_TAG}" >> $GITHUB_OUTPUT
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ env.IMAGE_TAGS }}
+          labels: org.opencontainers.image.revision=${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          envs: GITHUB_TOKEN,GITHUB_ACTOR,GITHUB_REPOSITORY,IMAGE_TAG
+          script: |
+            # Navigate to application directory
+            cd ~/workspace/flight-web/fe || { echo "Directory not found, creating..."; mkdir -p ~/workspace/flight-web/fe; cd ~/workspace/flight-web/fe; }
+
+            # Download docker-compose.yml if not exists
+            if [ ! -f docker-compose.yml ]; then
+              sudo curl -o docker-compose.yml https://raw.githubusercontent.com/$GITHUB_REPOSITORY/main/docker-compose.yml
+            fi
+
+            # Download deploy.sh if not exists
+            if [ ! -f deploy.sh ]; then
+              sudo curl -o deploy.sh https://raw.githubusercontent.com/$GITHUB_REPOSITORY/main/deploy.sh
+              sudo chmod +x deploy.sh
+            fi
+
+            # Run deployment script with environment variables
+            sudo -E ./deploy.sh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          IMAGE_FULL: ${{ needs.build-and-push.outputs.image_full }}
+          IMAGE_TAG: ${{ needs.build-and-push.outputs.image_tag }}
