@@ -1,0 +1,195 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.ref || github.run_id }}
+  cancel-in-progress: true
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  build-and-push:
+    outputs:
+      image_full: ${{ steps.set_tag.outputs.image_full }}
+      image_tag: ${{ steps.set_tag.outputs.image_tag }}
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: 🔐 Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🏷️ Set image tag
+        id: set_tag
+        run: |
+          # Get short SHA (first 7 chars)
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+
+          # Set tag
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            TAG="manual-$(date +%Y%m%d-%H%M%S)"
+          elif [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            TAG="latest-$(date +%Y%m%d)"
+          else
+            TAG="${{ github.ref_name }}-$SHORT_SHA"
+            # Sanitize tag: lowercase, replace special chars
+            TAG=$(echo "$TAG" | tr '[:upper:]' '[:lower:]' | sed 's#[/ _]#-#g' | sed 's/[^a-z0-9.-]/-/g')
+          fi
+
+          # Sanitize repo name
+          REPO=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]' | sed 's#[ _]#-#g' | sed 's/[^a-z0-9./-]/-/g')
+          IMAGE="${{ env.REGISTRY }}/$REPO:$TAG"
+
+          # Add 'latest' tag if applicable
+          if [[ "$TAG" == latest-* ]]; then
+            TAGS="$IMAGE,${{ env.REGISTRY }}/$REPO:latest"
+          else
+            TAGS="$IMAGE"
+          fi
+
+          # Export for next steps
+          echo "image_tag=$TAG" >> $GITHUB_OUTPUT
+          echo "image_full=$IMAGE" >> $GITHUB_OUTPUT
+          echo "IMAGE_TAGS=$TAGS" >> $GITHUB_ENV
+
+      - name: 🐳 Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          platforms: linux/amd64
+          push: true
+          tags: ${{ env.IMAGE_TAGS }}
+          labels: |
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.source=${{ github.event.repository.html_url }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    environment: production
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 💾 Pull, save & compress image
+        run: |
+          echo "📥 Pulling image: ${{ needs.build-and-push.outputs.image_full }}"
+          docker pull ${{ needs.build-and-push.outputs.image_full }}
+          echo "📦 Saving and compressing image..."
+          docker save ${{ needs.build-and-push.outputs.image_full }} | gzip > image.tar.gz
+
+      - name: 📤 Copy compressed image to VPS
+        uses: appleboy/scp-action@v1.0.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          source: 'image.tar.gz'
+          target: '${{ vars.DEPLOY_PATH }}'
+
+      - name: 🚀 Deploy to VPS with rollback
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          script: |
+            #!/bin/bash
+            set -e
+
+            cd ${{ vars.DEPLOY_PATH }}
+
+            # Load new image
+            echo "📦 Loading new image..."
+            gunzip -c image.tar.gz | docker load
+
+            # Validate: run container for 5s
+            echo "🧪 Validating image..."
+            CONTAINER_ID=$(docker run -d --rm ${{ needs.build-and-push.outputs.image_full }})
+            sleep 5
+            if ! docker ps -q --no-trunc | grep -q $CONTAINER_ID; then
+              echo "❌ Container died during validation!"
+              docker rm -f $CONTAINER_ID 2>/dev/null || true
+              exit 1
+            fi
+            docker kill $CONTAINER_ID 2>/dev/null || true
+            echo "✅ Image validation passed."
+
+            # Capture current image for rollback
+            OLD_IMAGE=""
+            if docker compose ps -q | grep -q .; then
+              SERVICE_NAME=$(docker compose config --services | head -1)
+              if [ -n "$SERVICE_NAME" ]; then
+                OLD_IMAGE=$(docker compose images "$SERVICE_NAME" | tail -1 | awk '{print $2}')
+                echo "🔁 Saved old image for rollback: $OLD_IMAGE"
+              fi
+            else
+              echo "ℹ️ No running service — rollback not available."
+            fi
+
+            # Deploy new version
+            echo "🚀 Deploying new version..."
+            docker compose down --remove-orphans || true
+
+            set +e
+            docker compose up -d --remove-orphans
+            DEPLOY_EXIT_CODE=$?
+            set -e
+
+            if [ $DEPLOY_EXIT_CODE -ne 0 ]; then
+              echo "❌ Deployment failed with exit code $DEPLOY_EXIT_CODE"
+
+              # Rollback if possible
+              if [ -n "$OLD_IMAGE" ]; then
+                echo "🔄 Rolling back to: $OLD_IMAGE"
+
+                # Temporarily override image in compose file
+                cp docker-compose.yml docker-compose.yml.bak
+                sed -i "s|image:.*|image: $OLD_IMAGE|g" docker-compose.yml
+
+                echo "🔁 Restarting old version..."
+                docker compose up -d --remove-orphans
+
+                mv docker-compose.yml.bak docker-compose.yml
+                echo "✅ Rollback completed successfully."
+              else
+                echo "⚠️ No rollback candidate available."
+              fi
+
+              exit $DEPLOY_EXIT_CODE
+            else
+              echo "✅ Deployment succeeded."
+            fi
+
+            # Cleanup
+            rm -f image.tar.gz
+            echo "🎉 Deployment process completed."

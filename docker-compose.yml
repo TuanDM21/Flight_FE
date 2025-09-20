@@ -1,23 +1,33 @@
 services:
   frontend:
+    image: ${APP_IMAGE:-ghcr.io/tuandm21/flight_fe:main-20250925}
     build:
       context: .
       dockerfile: Dockerfile
       target: production
-    container_name: flight-frontend-prod
+    container_name: ${CONTAINER_NAME:-flight-frontend}
     restart: unless-stopped
     ports:
-      - '3000:80'
+      - '${HOST_PORT:-3000}:80'
+    environment:
+      - NODE_ENV=${NODE_ENV:-production}
     env_file:
       - .env
     networks:
       - flight-network
+    labels:
+      - 'com.docker.compose.project=flight-mnm'
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://localhost/health']
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 40s
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '10m'
+        max-file: '3'
     deploy:
       resources:
         limits:
