@@ -1,5 +1,6 @@
 import React, { useRef } from 'react'
 import { UseFormReturn } from 'react-hook-form'
+import { useQuery } from '@tanstack/react-query'
 import { Eye, Trash, Upload } from 'lucide-react'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
@@ -41,6 +42,7 @@ import { useUploadAttachments } from '../../attachments/hooks/use-upload-attachm
 import { CreateTaskFormOutput } from '../types'
 import { taskPriorityOptions } from '../utils'
 import { TaskAssignmentsField } from './task-assignments-field'
+import { taskTypesQueryOptions } from './use-task-types'
 
 interface CreateTaskFormProps {
   form: UseFormReturn<CreateTaskFormOutput>
@@ -55,6 +57,14 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
 }) => {
   const uploadAttachments = useUploadAttachments()
   const abortControllerRef = useRef<AbortController | null>(null)
+  const { data: taskTypesResponse } = useQuery({
+    ...taskTypesQueryOptions(),
+  })
+
+  const taskTypeOptions = (taskTypesResponse?.data ?? []).map((type) => ({
+    id: type.id,
+    name: type.name,
+  }))
 
   const onUpload = React.useCallback(
     async (
@@ -182,6 +192,37 @@ export const CreateTaskForm: React.FC<CreateTaskFormProps> = ({
                             )}
                             <span>{option.label}</span>
                           </div>
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name={'taskTypeId'}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Loại công việc</FormLabel>
+              <FormControl>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <SelectTrigger className='w-full [&>span]:flex [&>span]:items-center [&>span]:gap-2 [&>span_svg]:shrink-0'>
+                    <SelectValue placeholder='Chọn loại công việc' />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup className='flex flex-col gap-2'>
+                      {taskTypeOptions.map((option) => (
+                        <SelectItem
+                          key={option.id}
+                          value={option.id!.toString()}
+                          className={cn('cursor-pointer')}
+                        >
+                          <span>{option.name}</span>
                         </SelectItem>
                       ))}
                     </SelectGroup>

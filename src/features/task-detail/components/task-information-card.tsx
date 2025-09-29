@@ -59,6 +59,22 @@ export function TaskInformationCard({ task }: TaskInformationCardProps) {
           </>
         )}
 
+        {task.taskType && (
+          <>
+            <Separator />
+            <div>
+              <h3 className='text-muted-foreground mb-2 text-sm font-medium'>
+                Loại công việc
+              </h3>
+              <div className='bg-muted/50 rounded-md p-4'>
+                <p className='text-sm whitespace-pre-wrap'>
+                  {task.taskType.name}
+                </p>
+              </div>
+            </div>
+          </>
+        )}
+
         {task.createdByUser && (
           <>
             <Separator />

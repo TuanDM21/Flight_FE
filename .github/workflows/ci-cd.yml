@@ -2,11 +2,9 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
-    branches:
-      - main
+    branches: [main]
   workflow_dispatch:
 
 concurrency:
@@ -23,7 +21,6 @@ jobs:
       image_tag: ${{ steps.set_tag.outputs.image_tag }}
 
     runs-on: ubuntu-latest
-
     permissions:
       contents: read
       packages: write
@@ -45,35 +42,27 @@ jobs:
       - name: 🏷️ Set image tag
         id: set_tag
         run: |
-          # Get short SHA (first 7 chars)
           SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+          REPO=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]' | sed 's#[ _]#-#g' | sed 's/[^a-z0-9./-]/-/g')
 
-          # Set tag
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             TAG="manual-$(date +%Y%m%d-%H%M%S)"
           elif [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
             TAG="latest-$(date +%Y%m%d)"
           else
             TAG="${{ github.ref_name }}-$SHORT_SHA"
-            # Sanitize tag: lowercase, replace special chars
             TAG=$(echo "$TAG" | tr '[:upper:]' '[:lower:]' | sed 's#[/ _]#-#g' | sed 's/[^a-z0-9.-]/-/g')
           fi
 
-          # Sanitize repo name
-          REPO=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]' | sed 's#[ _]#-#g' | sed 's/[^a-z0-9./-]/-/g')
           IMAGE="${{ env.REGISTRY }}/$REPO:$TAG"
-
-          # Add 'latest' tag if applicable
-          if [[ "$TAG" == latest-* ]]; then
-            TAGS="$IMAGE,${{ env.REGISTRY }}/$REPO:latest"
-          else
-            TAGS="$IMAGE"
-          fi
-
-          # Export for next steps
-          echo "image_tag=$TAG" >> $GITHUB_OUTPUT
           echo "image_full=$IMAGE" >> $GITHUB_OUTPUT
-          echo "IMAGE_TAGS=$TAGS" >> $GITHUB_ENV
+          echo "image_tag=$TAG" >> $GITHUB_OUTPUT
+
+          if [[ "$TAG" == latest-* ]]; then
+            echo "IMAGE_TAGS=$IMAGE,${{ env.REGISTRY }}/$REPO:latest" >> $GITHUB_ENV
+          else
+            echo "IMAGE_TAGS=$IMAGE" >> $GITHUB_ENV
+          fi
 
       - name: 🐳 Build and push Docker image
         uses: docker/build-push-action@v5
@@ -93,6 +82,11 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     if: github.ref == 'refs/heads/main'
+    timeout-minutes: 10
+
+    env:
+      SERVICE_NAME: ${{ vars.SERVICE_NAME || 'frontend' }}
+      DEPLOY_PATH: ${{ vars.DEPLOY_PATH }}
 
     steps:
       - name: 📥 Checkout repository
@@ -101,9 +95,8 @@ jobs:
       - name: 💾 Pull, save & compress image
         run: |
           echo "📥 Pulling image: ${{ needs.build-and-push.outputs.image_full }}"
-          docker pull ${{ needs.build-and-push.outputs.image_full }}
-          echo "📦 Saving and compressing image..."
-          docker save ${{ needs.build-and-push.outputs.image_full }} | gzip > image.tar.gz
+          docker pull "${{ needs.build-and-push.outputs.image_full }}"
+          docker save "${{ needs.build-and-push.outputs.image_full }}" | gzip > image.tar.gz
 
       - name: 📤 Copy compressed image to VPS
         uses: appleboy/scp-action@v1.0.0
@@ -113,9 +106,9 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           port: ${{ secrets.VPS_PORT || 22 }}
           source: 'image.tar.gz'
-          target: '${{ vars.DEPLOY_PATH }}'
+          target: '${{ env.DEPLOY_PATH }}'
 
-      - name: 🚀 Deploy to VPS with rollback
+      - name: 🚀 Deploy to VPS with validation & rollback
         uses: appleboy/ssh-action@v1.2.2
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -126,70 +119,73 @@ jobs:
             #!/bin/bash
             set -e
 
-            cd ${{ vars.DEPLOY_PATH }}
+            DEPLOY_PATH="${{ env.DEPLOY_PATH }}"
+            SERVICE_NAME="${{ env.SERVICE_NAME }}"
+            NEW_IMAGE="${{ needs.build-and-push.outputs.image_full }}"
+
+            if [ ! -d "$DEPLOY_PATH" ]; then
+              echo "❌ DEPLOY_PATH does not exist: $DEPLOY_PATH"
+              exit 1
+            fi
+
+            cd "$DEPLOY_PATH"
 
             # Load new image
             echo "📦 Loading new image..."
             gunzip -c image.tar.gz | docker load
 
-            # Validate: run container for 5s
+            # 🔍 Validation: run container for health check
             echo "🧪 Validating image..."
-            CONTAINER_ID=$(docker run -d --rm ${{ needs.build-and-push.outputs.image_full }})
-            sleep 5
-            if ! docker ps -q --no-trunc | grep -q $CONTAINER_ID; then
-              echo "❌ Container died during validation!"
-              docker rm -f $CONTAINER_ID 2>/dev/null || true
+            CONTAINER_ID=$(docker run -d --rm --name temp-validate "$NEW_IMAGE")
+            sleep 3
+
+            if docker inspect -f '{{.State.Running}}' "$CONTAINER_ID" 2>/dev/null | grep -q 'true'; then
+              echo "✅ Validation passed."
+            else
+              echo "❌ Container failed to start."
+              docker logs "$CONTAINER_ID" 2>/dev/null || true
+              docker rm -f "$CONTAINER_ID" 2>/dev/null || true
               exit 1
             fi
-            docker kill $CONTAINER_ID 2>/dev/null || true
-            echo "✅ Image validation passed."
+            docker kill "$CONTAINER_ID" >/dev/null 2>&1 || true
 
-            # Capture current image for rollback
+            # 🔁 Capture current image for rollback
             OLD_IMAGE=""
             if docker compose ps -q | grep -q .; then
-              SERVICE_NAME=$(docker compose config --services | head -1)
-              if [ -n "$SERVICE_NAME" ]; then
-                OLD_IMAGE=$(docker compose images "$SERVICE_NAME" | tail -1 | awk '{print $2}')
-                echo "🔁 Saved old image for rollback: $OLD_IMAGE"
+              CURRENT_IMAGE_LINE=$(docker compose images "$SERVICE_NAME" 2>/dev/null | tail -n1)
+              OLD_IMAGE=$(echo "$CURRENT_IMAGE_LINE" | awk '{print $2}' | head -n1)
+              if [ -n "$OLD_IMAGE" ] && [ "$OLD_IMAGE" != "<none>" ]; then
+                echo "🔁 Saved rollback image: $OLD_IMAGE"
               fi
             else
               echo "ℹ️ No running service — rollback not available."
             fi
 
-            # Deploy new version
+            # 🚀 Deploy new version
             echo "🚀 Deploying new version..."
             docker compose down --remove-orphans || true
 
             set +e
-            docker compose up -d --remove-orphans
+            APP_IMAGE="$NEW_IMAGE" docker compose up -d --remove-orphans
             DEPLOY_EXIT_CODE=$?
             set -e
 
             if [ $DEPLOY_EXIT_CODE -ne 0 ]; then
-              echo "❌ Deployment failed with exit code $DEPLOY_EXIT_CODE"
-
-              # Rollback if possible
+              echo "❌ Deployment failed (exit code: $DEPLOY_EXIT_CODE)"
               if [ -n "$OLD_IMAGE" ]; then
                 echo "🔄 Rolling back to: $OLD_IMAGE"
-
-                # Temporarily override image in compose file
-                cp docker-compose.yml docker-compose.yml.bak
-                sed -i "s|image:.*|image: $OLD_IMAGE|g" docker-compose.yml
-
-                echo "🔁 Restarting old version..."
-                docker compose up -d --remove-orphans
-
-                mv docker-compose.yml.bak docker-compose.yml
-                echo "✅ Rollback completed successfully."
+                APP_IMAGE="$OLD_IMAGE" docker compose up -d --remove-orphans
+                echo "✅ Rollback completed."
               else
-                echo "⚠️ No rollback candidate available."
+                echo "⚠️ No rollback image available."
               fi
-
               exit $DEPLOY_EXIT_CODE
             else
               echo "✅ Deployment succeeded."
+              # 🧹 Cleanup old images (optional but recommended)
+              docker image prune -f
             fi
 
-            # Cleanup
+            # 🗑️ Final cleanup
             rm -f image.tar.gz
-            echo "🎉 Deployment process completed."
+            echo "🎉 Deployment completed successfully."

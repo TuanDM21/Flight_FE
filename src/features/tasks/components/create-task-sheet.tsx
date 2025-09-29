@@ -60,7 +60,7 @@ export const CreateTaskSheet: React.FC<DialogProps<CreateTaskSheetPayload>> = ({
         },
       })
     },
-    [createTaskMutation, onClose, form.reset]
+    [createTaskMutation, form, onClose]
   )
 
   return (

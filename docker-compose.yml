@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: Dockerfile
       target: production
-    container_name: ${CONTAINER_NAME:-flight-frontend}
+    container_name: flight-frontend-prod
     restart: unless-stopped
     ports:
       - '${HOST_PORT:-3000}:80'
@@ -14,7 +14,7 @@ services:
     env_file:
       - .env
     networks:
-      - flight-network
+      - fe_flight-network
     labels:
       - 'com.docker.compose.project=flight-mnm'
     healthcheck:
@@ -38,5 +38,5 @@ services:
           cpus: '0.25'
 
 networks:
-  flight-network:
+  fe_flight-network:
     driver: bridge
