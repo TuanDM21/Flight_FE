@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import type { ColumnDef } from '@tanstack/react-table'
 import { CheckCircle, Flag } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -11,6 +12,7 @@ import { TaskAssignmentsDisplay } from '@/features/tasks/components/task-assignm
 import { TaskAttachmentsDisplay } from '@/features/tasks/components/task-attachments-display'
 import { TaskHierarchyCell } from '@/features/tasks/components/task-hierarchy-cell'
 import { TaskStatusBadge } from '@/features/tasks/components/task-status-badge'
+import { taskTypesQueryOptions } from '@/features/tasks/components/use-task-types'
 import { useRecipientOptions } from '@/features/tasks/hooks/use-recipient-options'
 import {
   HierarchicalTask,
@@ -32,6 +34,14 @@ interface UseTasksTableColumnsOptions {
 export function useAllTasksTableColumns(options: UseTasksTableColumnsOptions) {
   const { allowCellEditing, filterType } = options
   const { teamOptions, unitOptions, userOptions } = useRecipientOptions()
+  const { data: taskTypesResponse } = useQuery({
+    ...taskTypesQueryOptions(),
+  })
+
+  const taskTypeOptions = (taskTypesResponse?.data ?? []).map((type) => ({
+    label: type.name,
+    value: type.id!.toString(),
+  }))
 
   const columns = useMemo(
     (): ColumnDef<HierarchicalTask>[] => [
@@ -62,9 +72,9 @@ export function useAllTasksTableColumns(options: UseTasksTableColumnsOptions) {
                   : isAllMainTasksSelected
               }
               onCheckedChange={(value) => {
-                mainTaskRows.forEach((row) => {
+                for (const row of mainTaskRows) {
                   row.toggleSelected(!!value)
-                })
+                }
               }}
               aria-label='Chọn tất cả'
             />
@@ -107,8 +117,8 @@ export function useAllTasksTableColumns(options: UseTasksTableColumnsOptions) {
             <TaskHierarchyCell
               taskId={taskId}
               level={level}
-              isLastChild={!!isLastChild}
-              hasSubtask={!!hasSubtask}
+              isLastChild={isLastChild}
+              hasSubtask={hasSubtask}
               filterType={filterType}
             />
           )
@@ -354,6 +364,18 @@ export function useAllTasksTableColumns(options: UseTasksTableColumnsOptions) {
           placeholder: 'Lọc theo dội...',
           variant: 'multiSelect',
           options: teamOptions,
+        },
+        enableColumnFilter: true,
+        isFilterVisibleOnly: true,
+      },
+      {
+        id: 'taskTypeIds',
+        accessorKey: 'taskTypeIds',
+        meta: {
+          label: 'Loại công việc',
+          placeholder: 'Lọc theo loại công việc...',
+          variant: 'multiSelect',
+          options: taskTypeOptions,
         },
         enableColumnFilter: true,
         isFilterVisibleOnly: true,
