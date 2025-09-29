@@ -24,10 +24,13 @@ export const createTaskSchema = z.object({
   instructions: z
     .string()
     .min(1, { error: 'Vui lòng nhập hướng dẫn công việc' }),
+  taskTypeId: z.string('Vui lòng chọn loại công việc'),
   notes: z.string().optional(),
   assignments: assignmentsSchema,
   attachmentIds: z.array(z.number()).default([]),
-  priority: z.enum(TASK_PRIORITIES),
+  priority: z.enum(TASK_PRIORITIES, {
+    error: 'Vui lòng chọn mức độ ưu tiên',
+  }),
   files: z.array(fileSchema).optional(),
 })
 

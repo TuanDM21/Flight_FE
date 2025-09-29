@@ -25,4 +25,5 @@ export const searchMyTaskParamsSchema = z.object({
   teamIds: z.any().optional(),
   userIds: z.any().optional(),
   unitIds: z.any().optional(),
+  taskTypeIds: z.any().optional(),
 })

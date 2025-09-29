@@ -48,7 +48,7 @@ export const CreateSubTaskSheet: React.FC<
           body: rest,
           params: {
             path: {
-              parentId: parentTaskId!,
+              parentId: parentTaskId,
             },
           },
         })

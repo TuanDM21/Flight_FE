@@ -55,7 +55,7 @@ export default function TaskDetailPage() {
             })
           }
         }
-      } catch (error) {
+      } catch {
         if (attachment.filePath) {
           window.open(attachment.filePath, '_blank')
         }
