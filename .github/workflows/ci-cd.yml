@@ -21,6 +21,7 @@ jobs:
       image_tag: ${{ steps.set_tag.outputs.image_tag }}
 
     runs-on: ubuntu-latest
+    environment: production
     permissions:
       contents: read
       packages: write

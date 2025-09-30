@@ -20,7 +20,7 @@ RUN pnpm install --frozen-lockfile && pnpm store prune && rm -rf /root/.npm /roo
 COPY . .
 
 # Set build arguments and environment variables
-ARG VITE_BASE_API
+ARG VITE_BASE_API=https://api.qlchkdh.io.vn
 ENV VITE_BASE_API=$VITE_BASE_API
 
 # Build the application for production
