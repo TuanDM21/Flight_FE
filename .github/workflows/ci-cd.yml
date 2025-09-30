@@ -71,6 +71,8 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: ${{ env.IMAGE_TAGS }}
+          build-args: |
+            VITE_BASE_API=${{ vars.VITE_BASE_API }}
           labels: |
             org.opencontainers.image.revision=${{ github.sha }}
             org.opencontainers.image.source=${{ github.event.repository.html_url }}
@@ -108,7 +110,17 @@ jobs:
           source: 'image.tar.gz'
           target: '${{ env.DEPLOY_PATH }}'
 
-      - name: 🚀 Deploy to VPS with validation & rollback
+      - name: Copy docker-compose.yml to VPS
+        uses: appleboy/scp-action@v1.0.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          source: 'docker-compose.yml'
+          target: '${{ env.DEPLOY_PATH }}'
+
+      - name: Deploy to VPS with validation & rollback
         uses: appleboy/ssh-action@v1.2.2
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -129,6 +141,14 @@ jobs:
             fi
 
             cd "$DEPLOY_PATH"
+
+            # --- 1. Verify & load .env ---
+            if [ ! -f .env ]; then
+              echo "❌ .env not found! Please create it manually at $DEPLOY_PATH/.env"
+              exit 1
+            fi
+            export $(grep -v '^#' .env | xargs)
+            echo "✅ Environment variables loaded from .env"
 
             # Load new image
             echo "📦 Loading new image..."
@@ -161,12 +181,21 @@ jobs:
               echo "ℹ️ No running service — rollback not available."
             fi
 
+            # --- 2. Update APP_IMAGE configuration ---
+            if grep -q '^APP_IMAGE=' .env; then
+              sed -i "s|^APP_IMAGE=.*|APP_IMAGE=$NEW_IMAGE|" .env
+            else
+              echo "APP_IMAGE=$NEW_IMAGE" >> .env
+            fi
+            export APP_IMAGE="$NEW_IMAGE"
+            echo "✅ Updated APP_IMAGE to: $NEW_IMAGE"
+
             # 🚀 Deploy new version
             echo "🚀 Deploying new version..."
             docker compose down --remove-orphans || true
 
             set +e
-            APP_IMAGE="$NEW_IMAGE" docker compose up -d --remove-orphans
+            docker compose up -d --remove-orphans
             DEPLOY_EXIT_CODE=$?
             set -e
 
@@ -174,7 +203,13 @@ jobs:
               echo "❌ Deployment failed (exit code: $DEPLOY_EXIT_CODE)"
               if [ -n "$OLD_IMAGE" ]; then
                 echo "🔄 Rolling back to: $OLD_IMAGE"
-                APP_IMAGE="$OLD_IMAGE" docker compose up -d --remove-orphans
+                if grep -q '^APP_IMAGE=' .env; then
+                  sed -i "s|^APP_IMAGE=.*|APP_IMAGE=$OLD_IMAGE|" .env
+                else
+                  echo "APP_IMAGE=$OLD_IMAGE" >> .env
+                fi
+                export APP_IMAGE="$OLD_IMAGE"
+                docker compose up -d --remove-orphans
                 echo "✅ Rollback completed."
               else
                 echo "⚠️ No rollback image available."

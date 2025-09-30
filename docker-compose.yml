@@ -14,7 +14,7 @@ services:
     env_file:
       - .env
     networks:
-      - fe_flight-network
+      - flight-shared-network
     labels:
       - 'com.docker.compose.project=flight-mnm'
     healthcheck:
@@ -38,5 +38,6 @@ services:
           cpus: '0.25'
 
 networks:
-  fe_flight-network:
-    driver: bridge
+  flight-shared-network:
+    external: true
+    name: flight-shared-network

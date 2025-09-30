@@ -19,6 +19,10 @@ RUN pnpm install --frozen-lockfile && pnpm store prune && rm -rf /root/.npm /roo
 # Copy source code
 COPY . .
 
+# Set build arguments and environment variables
+ARG VITE_BASE_API
+ENV VITE_BASE_API=$VITE_BASE_API
+
 # Build the application for production
 RUN pnpm build
 
