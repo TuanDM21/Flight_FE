@@ -19,6 +19,7 @@ import { Route as errors401RouteImport } from './routes/(errors)/401'
 import { Route as authSignOutRouteImport } from './routes/(auth)/sign-out'
 import { Route as authSignInRouteImport } from './routes/(auth)/sign-in'
 import { Route as AuthenticatedTasksIndexRouteImport } from './routes/_authenticated/tasks/index'
+import { Route as AuthenticatedActivitiesIndexRouteImport } from './routes/_authenticated/activities/index'
 import { Route as AuthenticatedTasksMyRouteRouteImport } from './routes/_authenticated/tasks/my/route'
 import { Route as AuthenticatedTasksAllRouteRouteImport } from './routes/_authenticated/tasks/all/route'
 import { Route as AuthenticatedTasksMyIndexRouteImport } from './routes/_authenticated/tasks/my/index'
@@ -75,6 +76,12 @@ const AuthenticatedTasksIndexRoute = AuthenticatedTasksIndexRouteImport.update({
   path: '/tasks/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedActivitiesIndexRoute =
+  AuthenticatedActivitiesIndexRouteImport.update({
+    id: '/activities/',
+    path: '/activities/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedTasksMyRouteRoute =
   AuthenticatedTasksMyRouteRouteImport.update({
     id: '/tasks/my',
@@ -123,6 +130,7 @@ export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
   '/tasks/all': typeof AuthenticatedTasksAllRouteRouteWithChildren
   '/tasks/my': typeof AuthenticatedTasksMyRouteRouteWithChildren
+  '/activities': typeof AuthenticatedActivitiesIndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
   '/tasks/$task-id/edit': typeof AuthenticatedTasksTaskIdEditRoute
   '/tasks/$task-id': typeof AuthenticatedTasksTaskIdIndexRoute
@@ -138,6 +146,7 @@ export interface FileRoutesByTo {
   '/500': typeof errors500Route
   '/503': typeof errors503Route
   '/': typeof AuthenticatedIndexRoute
+  '/activities': typeof AuthenticatedActivitiesIndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
   '/tasks/$task-id/edit': typeof AuthenticatedTasksTaskIdEditRoute
   '/tasks/$task-id': typeof AuthenticatedTasksTaskIdIndexRoute
@@ -157,6 +166,7 @@ export interface FileRoutesById {
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/tasks/all': typeof AuthenticatedTasksAllRouteRouteWithChildren
   '/_authenticated/tasks/my': typeof AuthenticatedTasksMyRouteRouteWithChildren
+  '/_authenticated/activities/': typeof AuthenticatedActivitiesIndexRoute
   '/_authenticated/tasks/': typeof AuthenticatedTasksIndexRoute
   '/_authenticated/tasks/$task-id/edit': typeof AuthenticatedTasksTaskIdEditRoute
   '/_authenticated/tasks/$task-id/': typeof AuthenticatedTasksTaskIdIndexRoute
@@ -176,6 +186,7 @@ export interface FileRouteTypes {
     | '/'
     | '/tasks/all'
     | '/tasks/my'
+    | '/activities'
     | '/tasks'
     | '/tasks/$task-id/edit'
     | '/tasks/$task-id'
@@ -191,6 +202,7 @@ export interface FileRouteTypes {
     | '/500'
     | '/503'
     | '/'
+    | '/activities'
     | '/tasks'
     | '/tasks/$task-id/edit'
     | '/tasks/$task-id'
@@ -209,6 +221,7 @@ export interface FileRouteTypes {
     | '/_authenticated/'
     | '/_authenticated/tasks/all'
     | '/_authenticated/tasks/my'
+    | '/_authenticated/activities/'
     | '/_authenticated/tasks/'
     | '/_authenticated/tasks/$task-id/edit'
     | '/_authenticated/tasks/$task-id/'
@@ -299,6 +312,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTasksIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/activities/': {
+      id: '/_authenticated/activities/'
+      path: '/activities'
+      fullPath: '/activities'
+      preLoaderRoute: typeof AuthenticatedActivitiesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/tasks/my': {
       id: '/_authenticated/tasks/my'
       path: '/tasks/my'
@@ -376,6 +396,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedTasksAllRouteRoute: typeof AuthenticatedTasksAllRouteRouteWithChildren
   AuthenticatedTasksMyRouteRoute: typeof AuthenticatedTasksMyRouteRouteWithChildren
+  AuthenticatedActivitiesIndexRoute: typeof AuthenticatedActivitiesIndexRoute
   AuthenticatedTasksIndexRoute: typeof AuthenticatedTasksIndexRoute
   AuthenticatedTasksTaskIdEditRoute: typeof AuthenticatedTasksTaskIdEditRoute
   AuthenticatedTasksTaskIdIndexRoute: typeof AuthenticatedTasksTaskIdIndexRoute
@@ -385,6 +406,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedTasksAllRouteRoute: AuthenticatedTasksAllRouteRouteWithChildren,
   AuthenticatedTasksMyRouteRoute: AuthenticatedTasksMyRouteRouteWithChildren,
+  AuthenticatedActivitiesIndexRoute: AuthenticatedActivitiesIndexRoute,
   AuthenticatedTasksIndexRoute: AuthenticatedTasksIndexRoute,
   AuthenticatedTasksTaskIdEditRoute: AuthenticatedTasksTaskIdEditRoute,
   AuthenticatedTasksTaskIdIndexRoute: AuthenticatedTasksTaskIdIndexRoute,

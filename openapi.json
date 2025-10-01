@@ -43,14 +43,6 @@
           }
         ],
         "responses": {
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "*/*": {
-                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
-              }
-            }
-          },
           "404": {
             "description": "User not found",
             "content": {
@@ -64,6 +56,14 @@
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/UserApiResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
           }
@@ -91,14 +91,6 @@
           "required": true
         },
         "responses": {
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "*/*": {
-                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
-              }
-            }
-          },
           "404": {
             "description": "User not found",
             "content": {
@@ -122,6 +114,14 @@
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
+              }
+            }
           }
         }
       },
@@ -139,14 +139,6 @@
           }
         ],
         "responses": {
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "*/*": {
-                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
-              }
-            }
-          },
           "404": {
             "description": "User not found",
             "content": {
@@ -162,6 +154,14 @@
                 "schema": {
                   "$ref": "#/components/schemas/UserDeleteApiResponse"
                 }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
           }
@@ -383,19 +383,19 @@
           "required": true
         },
         "responses": {
-          "404": {
-            "description": "Không tìm thấy công việc",
-            "content": {
-              "*/*": {
-                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
-              }
-            }
-          },
           "200": {
             "description": "Cập nhật thành công",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/TaskApiResponse" }
+              }
+            }
+          },
+          "404": {
+            "description": "Không tìm thấy công việc",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
           }
@@ -443,11 +443,22 @@
           }
         ],
         "responses": {
-          "500": {
-            "description": "Internal server error",
+          "200": {
+            "description": "Task type retrieved successfully",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" },
+                "examples": {
+                  "Success Response": {
+                    "description": "Success Response",
+                    "value": {
+                      "message": "Thành công",
+                      "statusCode": 200,
+                      "success": true,
+                      "data": { "id": 1, "name": "Bảo trì" }
+                    }
+                  }
+                }
               }
             }
           },
@@ -455,15 +466,26 @@
             "description": "Task type not found",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" },
+                "examples": {
+                  "Not Found": {
+                    "description": "Not Found",
+                    "value": {
+                      "message": "Không tìm thấy loại công việc",
+                      "statusCode": 404,
+                      "success": false,
+                      "data": null
+                    }
+                  }
+                }
               }
             }
           },
-          "200": {
-            "description": "Task type retrieved successfully",
+          "500": {
+            "description": "Internal server error",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/TaskTypeApiResponse" }
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
           }
@@ -493,24 +515,8 @@
           "required": true
         },
         "responses": {
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
-              }
-            }
-          },
           "400": {
             "description": "Invalid request data",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
-              }
-            }
-          },
-          "404": {
-            "description": "Task type not found",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
@@ -529,7 +535,23 @@
             "description": "Task type updated successfully",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/TaskTypeApiResponse" }
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
+              }
+            }
+          },
+          "404": {
+            "description": "Task type not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
           }
@@ -551,16 +573,16 @@
           }
         ],
         "responses": {
-          "500": {
-            "description": "Internal server error",
+          "404": {
+            "description": "Task type not found",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
           },
-          "404": {
-            "description": "Task type not found",
+          "409": {
+            "description": "Task type is being used by existing tasks",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
@@ -575,8 +597,8 @@
               }
             }
           },
-          "409": {
-            "description": "Task type is being used by existing tasks",
+          "500": {
+            "description": "Internal server error",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
@@ -740,16 +762,16 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "Successfully retrieved flight",
+          "404": {
+            "description": "Flight not found",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
           },
-          "404": {
-            "description": "Flight not found",
+          "200": {
+            "description": "Successfully retrieved flight",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
@@ -966,6 +988,14 @@
           }
         ],
         "responses": {
+          "404": {
+            "description": "Không tìm thấy assignment",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
+              }
+            }
+          },
           "200": {
             "description": "Lấy assignment thành công",
             "content": {
@@ -973,14 +1003,6 @@
                 "schema": {
                   "$ref": "#/components/schemas/AssignmentApiResponse"
                 }
-              }
-            }
-          },
-          "404": {
-            "description": "Không tìm thấy assignment",
-            "content": {
-              "*/*": {
-                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
           }
@@ -1169,19 +1191,19 @@
           }
         ],
         "responses": {
-          "404": {
-            "description": "Không tìm thấy hoạt động",
+          "200": {
+            "description": "Thành công",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
           },
-          "200": {
-            "description": "Thành công",
+          "404": {
+            "description": "Không tìm thấy hoạt động",
             "content": {
               "*/*": {
-                "schema": { "$ref": "#/components/schemas/ActivityApiResponse" }
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
           }
@@ -1218,16 +1240,16 @@
               }
             }
           },
-          "200": {
-            "description": "Cập nhật thành công",
+          "400": {
+            "description": "Dữ liệu không hợp lệ",
             "content": {
               "*/*": {
-                "schema": { "$ref": "#/components/schemas/ActivityApiResponse" }
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
           },
-          "400": {
-            "description": "Dữ liệu không hợp lệ",
+          "200": {
+            "description": "Cập nhật thành công",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
@@ -1251,16 +1273,16 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "Xóa thành công",
+          "404": {
+            "description": "Không tìm thấy hoạt động",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
           },
-          "404": {
-            "description": "Không tìm thấy hoạt động",
+          "200": {
+            "description": "Xóa thành công",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
@@ -1319,19 +1341,19 @@
         "description": "Retrieve a list of all users",
         "operationId": "getAllUsers",
         "responses": {
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "*/*": {
-                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
-              }
-            }
-          },
           "200": {
             "description": "Successfully retrieved all users",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/UserListApiResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
           }
@@ -1351,14 +1373,6 @@
           "required": true
         },
         "responses": {
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "*/*": {
-                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
-              }
-            }
-          },
           "201": {
             "description": "User created successfully",
             "content": {
@@ -1369,6 +1383,14 @@
           },
           "400": {
             "description": "Invalid input",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
@@ -1568,19 +1590,19 @@
         "description": "Retrieve a list of all teams",
         "operationId": "getAllTeams",
         "responses": {
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "*/*": {
-                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
-              }
-            }
-          },
           "200": {
             "description": "Successfully retrieved all teams",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/TeamListApiResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
           }
@@ -1600,14 +1622,6 @@
           "required": true
         },
         "responses": {
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "*/*": {
-                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
-              }
-            }
-          },
           "201": {
             "description": "Team created successfully",
             "content": {
@@ -1620,6 +1634,14 @@
           },
           "400": {
             "description": "Invalid input",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
@@ -1774,16 +1796,6 @@
           "required": true
         },
         "responses": {
-          "200": {
-            "description": "Thêm file đính kèm thành công",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/TaskAttachmentsApiResponse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Dữ liệu đầu vào không hợp lệ",
             "content": {
@@ -1805,6 +1817,16 @@
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
+              }
+            }
+          },
+          "200": {
+            "description": "Thêm file đính kèm thành công",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskAttachmentsApiResponse"
+                }
               }
             }
           }
@@ -1903,21 +1925,34 @@
         "description": "Lấy tất cả loại công việc trong hệ thống",
         "operationId": "getAllTaskTypes",
         "responses": {
+          "200": {
+            "description": "Task types retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" },
+                "examples": {
+                  "Success Response": {
+                    "description": "Success Response",
+                    "value": {
+                      "message": "Thành công",
+                      "statusCode": 200,
+                      "success": true,
+                      "data": [
+                        { "id": 1, "name": "Bảo trì" },
+                        { "id": 2, "name": "An ninh" },
+                        { "id": 3, "name": "Vệ sinh" }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
           "500": {
             "description": "Internal server error",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
-              }
-            }
-          },
-          "200": {
-            "description": "Task types retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TaskTypesApiResponse"
-                }
               }
             }
           }
@@ -1938,19 +1973,22 @@
           "required": true
         },
         "responses": {
-          "500": {
-            "description": "Internal server error",
+          "409": {
+            "description": "Task type with same name already exists",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
-              }
-            }
-          },
-          "201": {
-            "description": "Task type created successfully",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/TaskTypeApiResponse" }
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" },
+                "examples": {
+                  "Conflict": {
+                    "description": "Conflict",
+                    "value": {
+                      "message": "Loại công việc đã tồn tại",
+                      "statusCode": 409,
+                      "success": false,
+                      "data": null
+                    }
+                  }
+                }
               }
             }
           },
@@ -1958,12 +1996,42 @@
             "description": "Invalid request data",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" },
+                "examples": {
+                  "Bad Request": {
+                    "description": "Bad Request",
+                    "value": {
+                      "message": "Tên loại công việc không được để trống",
+                      "statusCode": 400,
+                      "success": false,
+                      "data": null
+                    }
+                  }
+                }
               }
             }
           },
-          "409": {
-            "description": "Task type with same name already exists",
+          "201": {
+            "description": "Task type created successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" },
+                "examples": {
+                  "Success Response": {
+                    "description": "Success Response",
+                    "value": {
+                      "message": "Đã tạo thành công",
+                      "statusCode": 201,
+                      "success": true,
+                      "data": { "id": 1, "name": "Bảo trì" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
@@ -2156,16 +2224,16 @@
               }
             }
           },
-          "500": {
-            "description": "Internal server error",
+          "400": {
+            "description": "Invalid input or user already exists",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
           },
-          "400": {
-            "description": "Invalid input or user already exists",
+          "500": {
+            "description": "Internal server error",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
@@ -2190,14 +2258,6 @@
           "required": true
         },
         "responses": {
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "*/*": {
-                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
-              }
-            }
-          },
           "200": {
             "description": "Login successful",
             "content": {
@@ -2216,6 +2276,14 @@
           },
           "401": {
             "description": "Invalid credentials",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
@@ -2240,16 +2308,6 @@
           "required": true
         },
         "responses": {
-          "200": {
-            "description": "Tạo pre-signed URL thành công",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/PreSignedUrlApiResponse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Dữ liệu đầu vào không hợp lệ",
             "content": {
@@ -2263,6 +2321,16 @@
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
+              }
+            }
+          },
+          "200": {
+            "description": "Tạo pre-signed URL thành công",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PreSignedUrlApiResponse"
+                }
               }
             }
           }
@@ -2286,6 +2354,14 @@
           "required": true
         },
         "responses": {
+          "500": {
+            "description": "Lỗi server khi xác nhận upload",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
+              }
+            }
+          },
           "200": {
             "description": "Xác nhận upload thành công",
             "content": {
@@ -2293,14 +2369,6 @@
                 "schema": {
                   "$ref": "#/components/schemas/AttachmentListApiResponse"
                 }
-              }
-            }
-          },
-          "500": {
-            "description": "Lỗi server khi xác nhận upload",
-            "content": {
-              "*/*": {
-                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
           },
@@ -2482,13 +2550,11 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "Thành công",
+          "401": {
+            "description": "Không có quyền truy cập hoặc không tìm thấy người dùng",
             "content": {
               "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ActivityListApiResponse"
-                }
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
           },
@@ -2500,11 +2566,11 @@
               }
             }
           },
-          "401": {
-            "description": "Không có quyền truy cập hoặc không tìm thấy người dùng",
+          "200": {
+            "description": "Thành công",
             "content": {
               "*/*": {
-                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
+                "schema": { "$ref": "#/components/schemas/CalendarApiResponse" }
               }
             }
           }
@@ -2528,7 +2594,7 @@
             "description": "Tạo thành công",
             "content": {
               "*/*": {
-                "schema": { "$ref": "#/components/schemas/ActivityApiResponse" }
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
           },
@@ -2630,6 +2696,14 @@
           }
         ],
         "responses": {
+          "404": {
+            "description": "Không tìm thấy hoạt động hoặc người tham gia",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
+              }
+            }
+          },
           "200": {
             "description": "Xóa người tham gia thành công",
             "content": {
@@ -2640,14 +2714,6 @@
           },
           "400": {
             "description": "Tham số không hợp lệ",
-            "content": {
-              "*/*": {
-                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
-              }
-            }
-          },
-          "404": {
-            "description": "Không tìm thấy hoạt động hoặc người tham gia",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
@@ -2774,8 +2840,8 @@
         "description": "Get the current user based on token",
         "operationId": "getCurrentUser",
         "responses": {
-          "500": {
-            "description": "Internal server error",
+          "401": {
+            "description": "Unauthorized",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
@@ -2792,8 +2858,8 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "500": {
+            "description": "Internal server error",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
@@ -2830,14 +2896,6 @@
           }
         ],
         "responses": {
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "*/*": {
-                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
-              }
-            }
-          },
           "400": {
             "description": "Invalid filter parameters",
             "content": {
@@ -2851,6 +2909,14 @@
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/UserListApiResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
           }
@@ -2882,8 +2948,8 @@
         "description": "Lấy danh sách user mà user hiện tại có thể giao việc cho theo phân quyền",
         "operationId": "getAssignableUsers",
         "responses": {
-          "500": {
-            "description": "Internal server error",
+          "403": {
+            "description": "Forbidden - User not authorized",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
@@ -2898,8 +2964,8 @@
               }
             }
           },
-          "403": {
-            "description": "Forbidden - User not authorized",
+          "500": {
+            "description": "Internal server error",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
@@ -3396,6 +3462,14 @@
           }
         ],
         "responses": {
+          "400": {
+            "description": "Invalid teamId parameter",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
+              }
+            }
+          },
           "200": {
             "description": "Successfully retrieved all units",
             "content": {
@@ -3406,14 +3480,6 @@
           },
           "500": {
             "description": "Internal server error",
-            "content": {
-              "*/*": {
-                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid teamId parameter",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
@@ -3430,6 +3496,14 @@
         "description": "Lấy danh sách unit mà user hiện tại có thể giao việc cho theo phân quyền",
         "operationId": "getAssignableUnits",
         "responses": {
+          "403": {
+            "description": "Forbidden - User not authorized",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
+              }
+            }
+          },
           "200": {
             "description": "Successfully retrieved assignable units",
             "content": {
@@ -3442,14 +3516,6 @@
           },
           "500": {
             "description": "Internal server error",
-            "content": {
-              "*/*": {
-                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden - User not authorized",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
@@ -3476,16 +3542,16 @@
               }
             }
           },
-          "500": {
-            "description": "Internal server error",
+          "403": {
+            "description": "Forbidden - User not authorized",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
           },
-          "403": {
-            "description": "Forbidden - User not authorized",
+          "500": {
+            "description": "Internal server error",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
@@ -3510,19 +3576,19 @@
           }
         ],
         "responses": {
-          "404": {
-            "description": "Không tìm thấy task",
-            "content": {
-              "*/*": {
-                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
-              }
-            }
-          },
           "200": {
             "description": "Thành công",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/TaskTreeApiResponse" }
+              }
+            }
+          },
+          "404": {
+            "description": "Không tìm thấy task",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
           }
@@ -4113,16 +4179,16 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "Successfully retrieved flights by criteria",
+          "400": {
+            "description": "Invalid date format or parameters",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
           },
-          "400": {
-            "description": "Invalid date format or parameters",
+          "200": {
+            "description": "Successfully retrieved flights by criteria",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
@@ -4321,9 +4387,7 @@
             "description": "Thành công",
             "content": {
               "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ActivityListApiResponse"
-                }
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
           },
@@ -4367,9 +4431,7 @@
             "description": "Thành công",
             "content": {
               "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ActivityListApiResponse"
-                }
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
           },
@@ -4401,21 +4463,19 @@
           }
         ],
         "responses": {
-          "400": {
-            "description": "Định dạng ngày không hợp lệ",
+          "200": {
+            "description": "Thành công",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
           },
-          "200": {
-            "description": "Thành công",
+          "400": {
+            "description": "Định dạng ngày không hợp lệ",
             "content": {
               "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ActivityListApiResponse"
-                }
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
           }
@@ -4433,9 +4493,7 @@
             "description": "Thành công",
             "content": {
               "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ActivityListApiResponse"
-                }
+                "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
           }
@@ -4673,16 +4731,16 @@
           "required": true
         },
         "responses": {
-          "200": {
-            "description": "Xóa người tham gia thành công",
+          "404": {
+            "description": "Không tìm thấy hoạt động",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
           },
-          "404": {
-            "description": "Không tìm thấy hoạt động",
+          "200": {
+            "description": "Xóa người tham gia thành công",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
@@ -4719,16 +4777,16 @@
           "required": true
         },
         "responses": {
-          "200": {
-            "description": "Xóa hoạt động thành công",
+          "400": {
+            "description": "Danh sách ID không hợp lệ",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
               }
             }
           },
-          "400": {
-            "description": "Danh sách ID không hợp lệ",
+          "200": {
+            "description": "Xóa hoạt động thành công",
             "content": {
               "*/*": {
                 "schema": { "$ref": "#/components/schemas/ApiResponseCustom" }
@@ -4923,7 +4981,43 @@
             "example": true
           }
         },
-        "description": "Response chuẩn cho tất cả API"
+        "description": "Response chuẩn cho tất cả API",
+        "example": {
+          "message": "Thành công",
+          "statusCode": 200,
+          "data": {
+            "id": 101,
+            "name": "Họp định kỳ tuần",
+            "location": "Phòng họp A1",
+            "startTime": "2025-10-01T13:59:01.290Z",
+            "endTime": "2025-10-01T15:00:00.000Z",
+            "notes": "Thảo luận về kế hoạch Q4",
+            "participants": [
+              {
+                "id": 201,
+                "participantType": "USER",
+                "participantId": 1,
+                "participantName": "Nguyễn Văn A"
+              },
+              {
+                "id": 202,
+                "participantType": "USER",
+                "participantId": 2,
+                "participantName": "Trần Thị B"
+              },
+              {
+                "id": 203,
+                "participantType": "USER",
+                "participantId": 3,
+                "participantName": "Lê Văn C"
+              }
+            ],
+            "createdAt": "2025-10-01T14:00:00.000Z",
+            "updatedAt": "2025-10-01T14:00:00.000Z",
+            "pinned": false
+          },
+          "success": true
+        }
       },
       "UserApiResponse": {
         "type": "object",
@@ -5123,29 +5217,6 @@
           }
         },
         "description": "Request to update an existing task type"
-      },
-      "TaskTypeApiResponse": {
-        "type": "object",
-        "properties": {
-          "message": {
-            "type": "string",
-            "description": "Response message",
-            "example": "Đã tạo thành công"
-          },
-          "statusCode": {
-            "type": "integer",
-            "description": "HTTP status code",
-            "format": "int32",
-            "example": 201
-          },
-          "data": { "$ref": "#/components/schemas/TaskTypeDTO" },
-          "success": {
-            "type": "boolean",
-            "description": "Success status",
-            "example": true
-          }
-        },
-        "description": "API response wrapper for task type creation/update operations"
       },
       "Shift": {
         "type": "object",
@@ -5549,58 +5620,6 @@
           }
         },
         "description": "Request DTO for creating or updating activities"
-      },
-      "ActivityApiResponse": {
-        "type": "object",
-        "properties": {
-          "message": {
-            "type": "string",
-            "description": "Thông báo kết quả",
-            "example": "Thành công"
-          },
-          "statusCode": {
-            "type": "integer",
-            "description": "Mã trạng thái HTTP",
-            "format": "int32",
-            "example": 200
-          },
-          "data": { "$ref": "#/components/schemas/ActivityDTO" },
-          "success": {
-            "type": "boolean",
-            "description": "Trạng thái thành công hay thất bại",
-            "example": true
-          }
-        },
-        "description": "Response wrapper for single Activity operations"
-      },
-      "ActivityDTO": {
-        "required": ["endTime", "location", "name", "startTime"],
-        "type": "object",
-        "properties": {
-          "id": { "type": "integer", "format": "int64" },
-          "name": { "maxLength": 255, "minLength": 0, "type": "string" },
-          "location": { "maxLength": 255, "minLength": 0, "type": "string" },
-          "startTime": { "type": "string", "format": "date-time" },
-          "endTime": { "type": "string", "format": "date-time" },
-          "notes": { "maxLength": 1000, "minLength": 0, "type": "string" },
-          "participants": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/ActivityParticipantDTO" }
-          },
-          "createdAt": { "type": "string", "format": "date-time" },
-          "updatedAt": { "type": "string", "format": "date-time" },
-          "pinned": { "type": "boolean" }
-        },
-        "description": "Dữ liệu trả về (object, list hoặc null). Kiểu thực tế phụ thuộc vào API cụ thể."
-      },
-      "ActivityParticipantDTO": {
-        "type": "object",
-        "properties": {
-          "id": { "type": "integer", "format": "int64" },
-          "participantType": { "type": "string" },
-          "participantId": { "type": "integer", "format": "int64" },
-          "participantName": { "type": "string" }
-        }
       },
       "ApplyShiftMultiDTO": {
         "type": "object",
@@ -6216,6 +6235,41 @@
         },
         "description": "API response wrapper for assignment comments"
       },
+      "ActivityParticipantDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Participant record ID",
+            "format": "int64",
+            "example": 201
+          },
+          "participantType": {
+            "type": "string",
+            "description": "Type of participant",
+            "example": "USER",
+            "enum": ["USER", "TEAM", "UNIT"]
+          },
+          "participantId": {
+            "type": "integer",
+            "description": "Participant ID",
+            "format": "int64",
+            "example": 1
+          },
+          "participantName": {
+            "type": "string",
+            "description": "Participant name for display",
+            "example": "Nguyễn Văn A"
+          }
+        },
+        "description": "Activity participant information",
+        "example": {
+          "id": 201,
+          "participantType": "USER",
+          "participantId": 1,
+          "participantName": "Nguyễn Văn A"
+        }
+      },
       "ActivityParticipantsApiResponse": {
         "type": "object",
         "properties": {
@@ -6819,33 +6873,6 @@
         },
         "description": "Pagination information"
       },
-      "TaskTypesApiResponse": {
-        "type": "object",
-        "properties": {
-          "message": {
-            "type": "string",
-            "description": "Response message",
-            "example": "Thành công"
-          },
-          "statusCode": {
-            "type": "integer",
-            "description": "HTTP status code",
-            "format": "int32",
-            "example": 200
-          },
-          "data": {
-            "type": "array",
-            "description": "List of task types",
-            "items": { "$ref": "#/components/schemas/TaskTypeDTO" }
-          },
-          "success": {
-            "type": "boolean",
-            "description": "Success status",
-            "example": true
-          }
-        },
-        "description": "API response wrapper for task types list operations"
-      },
       "Notification": {
         "type": "object",
         "properties": {
@@ -6886,32 +6913,144 @@
         },
         "description": "API response wrapper for download URL generation"
       },
-      "ActivityListApiResponse": {
+      "ActivityDTO": {
+        "required": ["endTime", "location", "name", "startTime"],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Activity ID",
+            "format": "int64",
+            "example": 101
+          },
+          "name": {
+            "maxLength": 255,
+            "minLength": 0,
+            "type": "string",
+            "description": "Activity name",
+            "example": "Họp định kỳ tuần"
+          },
+          "location": {
+            "maxLength": 255,
+            "minLength": 0,
+            "type": "string",
+            "description": "Activity location",
+            "example": "Phòng họp A1"
+          },
+          "startTime": {
+            "type": "string",
+            "description": "Start time",
+            "format": "date-time",
+            "example": "2025-10-01T13:59:01.29Z"
+          },
+          "endTime": {
+            "type": "string",
+            "description": "End time",
+            "format": "date-time",
+            "example": "2025-10-01T15:00:00Z"
+          },
+          "notes": {
+            "maxLength": 1000,
+            "minLength": 0,
+            "type": "string",
+            "description": "Activity notes",
+            "example": "Thảo luận về kế hoạch Q4"
+          },
+          "participants": {
+            "type": "array",
+            "description": "List of participants",
+            "items": { "$ref": "#/components/schemas/ActivityParticipantDTO" }
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Creation timestamp",
+            "format": "date-time",
+            "example": "2025-10-01T14:00:00Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Last update timestamp",
+            "format": "date-time",
+            "example": "2025-10-01T14:00:00Z"
+          },
+          "pinned": {
+            "type": "boolean",
+            "description": "Whether the activity is pinned",
+            "example": false
+          }
+        },
+        "description": "Activity response DTO",
+        "example": {
+          "id": 101,
+          "name": "Họp định kỳ tuần",
+          "location": "Phòng họp A1",
+          "startTime": "2025-10-01T13:59:01.290Z",
+          "endTime": "2025-10-01T15:00:00.000Z",
+          "notes": "Thảo luận về kế hoạch Q4",
+          "participants": [
+            {
+              "id": 201,
+              "participantType": "USER",
+              "participantId": 1,
+              "participantName": "Nguyễn Văn A"
+            },
+            {
+              "id": 202,
+              "participantType": "USER",
+              "participantId": 2,
+              "participantName": "Trần Thị B"
+            },
+            {
+              "id": 203,
+              "participantType": "USER",
+              "participantId": 3,
+              "participantName": "Lê Văn C"
+            }
+          ],
+          "createdAt": "2025-10-01T14:00:00.000Z",
+          "updatedAt": "2025-10-01T14:00:00.000Z",
+          "pinned": false
+        }
+      },
+      "CalendarApiResponse": {
         "type": "object",
         "properties": {
           "message": {
             "type": "string",
-            "description": "Thông báo kết quả",
+            "description": "Response message",
             "example": "Thành công"
           },
           "statusCode": {
             "type": "integer",
-            "description": "Mã trạng thái HTTP",
+            "description": "HTTP status code",
             "format": "int32",
             "example": 200
           },
-          "data": {
-            "type": "array",
-            "description": "Dữ liệu trả về (object, list hoặc null). Kiểu thực tế phụ thuộc vào API cụ thể.",
-            "items": { "$ref": "#/components/schemas/ActivityDTO" }
-          },
+          "data": { "$ref": "#/components/schemas/CalendarDTO" },
           "success": {
             "type": "boolean",
-            "description": "Trạng thái thành công hay thất bại",
+            "description": "Success status",
             "example": true
           }
         },
-        "description": "Response wrapper for list of Activities"
+        "description": "API response wrapper specifically for calendar activities endpoint"
+      },
+      "CalendarDTO": {
+        "type": "object",
+        "properties": {
+          "currentDate": {
+            "type": "string",
+            "description": "Ngày hiện tại của calendar",
+            "format": "date",
+            "example": "2025-09-27"
+          },
+          "activities": {
+            "type": "array",
+            "description": "Danh sách activities trong calendar view",
+            "items": { "$ref": "#/components/schemas/ActivityDTO" }
+          }
+        },
+        "description": "Calendar view với activities theo ngày"
       },
       "UserDeleteApiResponse": {
         "type": "object",

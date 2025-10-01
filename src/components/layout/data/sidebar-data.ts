@@ -1,4 +1,4 @@
-import { IconChecklist } from '@tabler/icons-react'
+import { IconCalendarEvent, IconChecklist } from '@tabler/icons-react'
 import { TicketsPlane } from 'lucide-react'
 import { type SidebarData } from '../types'
 
@@ -42,11 +42,11 @@ export const sidebarData: SidebarData = {
             },
           ],
         },
-        // {
-        //   title: 'Tài liệu',
-        //   url: '/documents',
-        //   icon: IconFileTypeDoc,
-        // },
+        {
+          title: 'Hoạt động',
+          url: '/activities',
+          icon: IconCalendarEvent,
+        },
         // {
         //   title: 'Tệp đính kèm',
         //   url: '/attachments',
