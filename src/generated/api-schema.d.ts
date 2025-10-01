@@ -2160,7 +2160,45 @@ export interface components {
             permissionCode?: string;
             value?: boolean;
         };
-        /** @description Response chuẩn cho tất cả API */
+        /**
+         * @description Response chuẩn cho tất cả API
+         * @example {
+         *       "message": "Thành công",
+         *       "statusCode": 200,
+         *       "data": {
+         *         "id": 101,
+         *         "name": "Họp định kỳ tuần",
+         *         "location": "Phòng họp A1",
+         *         "startTime": "2025-10-01T13:59:01.290Z",
+         *         "endTime": "2025-10-01T15:00:00.000Z",
+         *         "notes": "Thảo luận về kế hoạch Q4",
+         *         "participants": [
+         *           {
+         *             "id": 201,
+         *             "participantType": "USER",
+         *             "participantId": 1,
+         *             "participantName": "Nguyễn Văn A"
+         *           },
+         *           {
+         *             "id": 202,
+         *             "participantType": "USER",
+         *             "participantId": 2,
+         *             "participantName": "Trần Thị B"
+         *           },
+         *           {
+         *             "id": 203,
+         *             "participantType": "USER",
+         *             "participantId": 3,
+         *             "participantName": "Lê Văn C"
+         *           }
+         *         ],
+         *         "createdAt": "2025-10-01T14:00:00.000Z",
+         *         "updatedAt": "2025-10-01T14:00:00.000Z",
+         *         "pinned": false
+         *       },
+         *       "success": true
+         *     }
+         */
         ApiResponseCustom: {
             /**
              * @description Thông báo kết quả
@@ -2360,26 +2398,6 @@ export interface components {
              * @example Bảo trì
              */
             name?: string;
-        };
-        /** @description API response wrapper for task type creation/update operations */
-        TaskTypeApiResponse: {
-            /**
-             * @description Response message
-             * @example Đã tạo thành công
-             */
-            message?: string;
-            /**
-             * Format: int32
-             * @description HTTP status code
-             * @example 201
-             */
-            statusCode?: number;
-            data?: components["schemas"]["TaskTypeDTO"];
-            /**
-             * @description Success status
-             * @example true
-             */
-            success?: boolean;
         };
         Shift: {
             /** Format: int32 */
@@ -2708,52 +2726,6 @@ export interface components {
              * @example false
              */
             pinned?: boolean;
-        };
-        /** @description Response wrapper for single Activity operations */
-        ActivityApiResponse: {
-            /**
-             * @description Thông báo kết quả
-             * @example Thành công
-             */
-            message?: string;
-            /**
-             * Format: int32
-             * @description Mã trạng thái HTTP
-             * @example 200
-             */
-            statusCode?: number;
-            data?: components["schemas"]["ActivityDTO"];
-            /**
-             * @description Trạng thái thành công hay thất bại
-             * @example true
-             */
-            success?: boolean;
-        };
-        /** @description Dữ liệu trả về (object, list hoặc null). Kiểu thực tế phụ thuộc vào API cụ thể. */
-        ActivityDTO: {
-            /** Format: int64 */
-            id?: number;
-            name: string;
-            location: string;
-            /** Format: date-time */
-            startTime: string;
-            /** Format: date-time */
-            endTime: string;
-            notes?: string;
-            participants?: components["schemas"]["ActivityParticipantDTO"][];
-            /** Format: date-time */
-            createdAt?: string;
-            /** Format: date-time */
-            updatedAt?: string;
-            pinned?: boolean;
-        };
-        ActivityParticipantDTO: {
-            /** Format: int64 */
-            id?: number;
-            participantType?: string;
-            /** Format: int64 */
-            participantId?: number;
-            participantName?: string;
         };
         ApplyShiftMultiDTO: {
             /** Format: date */
@@ -3232,6 +3204,40 @@ export interface components {
              * @example true
              */
             success?: boolean;
+        };
+        /**
+         * @description Activity participant information
+         * @example {
+         *       "id": 201,
+         *       "participantType": "USER",
+         *       "participantId": 1,
+         *       "participantName": "Nguyễn Văn A"
+         *     }
+         */
+        ActivityParticipantDTO: {
+            /**
+             * Format: int64
+             * @description Participant record ID
+             * @example 201
+             */
+            id?: number;
+            /**
+             * @description Type of participant
+             * @example USER
+             * @enum {string}
+             */
+            participantType?: "USER" | "TEAM" | "UNIT";
+            /**
+             * Format: int64
+             * @description Participant ID
+             * @example 1
+             */
+            participantId?: number;
+            /**
+             * @description Participant name for display
+             * @example Nguyễn Văn A
+             */
+            participantName?: string;
         };
         /** @description Response wrapper for activity participants */
         ActivityParticipantsApiResponse: {
@@ -3735,27 +3741,6 @@ export interface components {
              */
             hasPrevious?: boolean;
         };
-        /** @description API response wrapper for task types list operations */
-        TaskTypesApiResponse: {
-            /**
-             * @description Response message
-             * @example Thành công
-             */
-            message?: string;
-            /**
-             * Format: int32
-             * @description HTTP status code
-             * @example 200
-             */
-            statusCode?: number;
-            /** @description List of task types */
-            data?: components["schemas"]["TaskTypeDTO"][];
-            /**
-             * @description Success status
-             * @example true
-             */
-            success?: boolean;
-        };
         Notification: {
             /** Format: int32 */
             id?: number;
@@ -3794,26 +3779,124 @@ export interface components {
              */
             success?: boolean;
         };
-        /** @description Response wrapper for list of Activities */
-        ActivityListApiResponse: {
+        /**
+         * @description Activity response DTO
+         * @example {
+         *       "id": 101,
+         *       "name": "Họp định kỳ tuần",
+         *       "location": "Phòng họp A1",
+         *       "startTime": "2025-10-01T13:59:01.290Z",
+         *       "endTime": "2025-10-01T15:00:00.000Z",
+         *       "notes": "Thảo luận về kế hoạch Q4",
+         *       "participants": [
+         *         {
+         *           "id": 201,
+         *           "participantType": "USER",
+         *           "participantId": 1,
+         *           "participantName": "Nguyễn Văn A"
+         *         },
+         *         {
+         *           "id": 202,
+         *           "participantType": "USER",
+         *           "participantId": 2,
+         *           "participantName": "Trần Thị B"
+         *         },
+         *         {
+         *           "id": 203,
+         *           "participantType": "USER",
+         *           "participantId": 3,
+         *           "participantName": "Lê Văn C"
+         *         }
+         *       ],
+         *       "createdAt": "2025-10-01T14:00:00.000Z",
+         *       "updatedAt": "2025-10-01T14:00:00.000Z",
+         *       "pinned": false
+         *     }
+         */
+        ActivityDTO: {
             /**
-             * @description Thông báo kết quả
+             * Format: int64
+             * @description Activity ID
+             * @example 101
+             */
+            id?: number;
+            /**
+             * @description Activity name
+             * @example Họp định kỳ tuần
+             */
+            name: string;
+            /**
+             * @description Activity location
+             * @example Phòng họp A1
+             */
+            location: string;
+            /**
+             * Format: date-time
+             * @description Start time
+             * @example 2025-10-01T13:59:01.29Z
+             */
+            startTime: string;
+            /**
+             * Format: date-time
+             * @description End time
+             * @example 2025-10-01T15:00:00Z
+             */
+            endTime: string;
+            /**
+             * @description Activity notes
+             * @example Thảo luận về kế hoạch Q4
+             */
+            notes?: string;
+            /** @description List of participants */
+            participants?: components["schemas"]["ActivityParticipantDTO"][];
+            /**
+             * Format: date-time
+             * @description Creation timestamp
+             * @example 2025-10-01T14:00:00Z
+             */
+            createdAt?: string;
+            /**
+             * Format: date-time
+             * @description Last update timestamp
+             * @example 2025-10-01T14:00:00Z
+             */
+            updatedAt?: string;
+            /**
+             * @description Whether the activity is pinned
+             * @example false
+             */
+            pinned?: boolean;
+        };
+        /** @description API response wrapper specifically for calendar activities endpoint */
+        CalendarApiResponse: {
+            /**
+             * @description Response message
              * @example Thành công
              */
             message?: string;
             /**
              * Format: int32
-             * @description Mã trạng thái HTTP
+             * @description HTTP status code
              * @example 200
              */
             statusCode?: number;
-            /** @description Dữ liệu trả về (object, list hoặc null). Kiểu thực tế phụ thuộc vào API cụ thể. */
-            data?: components["schemas"]["ActivityDTO"][];
+            data?: components["schemas"]["CalendarDTO"];
             /**
-             * @description Trạng thái thành công hay thất bại
+             * @description Success status
              * @example true
              */
             success?: boolean;
+        };
+        /** @description Calendar view với activities theo ngày */
+        CalendarDTO: {
+            /**
+             * Format: date
+             * @description Ngày hiện tại của calendar
+             * @example 2025-09-27
+             */
+            currentDate?: string;
+            /** @description Danh sách activities trong calendar view */
+            activities?: components["schemas"]["ActivityDTO"][];
         };
         /** @description API response wrapper for user delete operations */
         UserDeleteApiResponse: {
@@ -4249,7 +4332,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["TaskTypeApiResponse"];
+                    "application/json": components["schemas"]["ApiResponseCustom"];
                 };
             };
             /** @description Task type not found */
@@ -4297,7 +4380,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["TaskTypeApiResponse"];
+                    "application/json": components["schemas"]["ApiResponseCustom"];
                 };
             };
             /** @description Invalid request data */
@@ -4926,7 +5009,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ActivityApiResponse"];
+                    "*/*": components["schemas"]["ApiResponseCustom"];
                 };
             };
             /** @description Không tìm thấy hoạt động */
@@ -4962,7 +5045,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ActivityApiResponse"];
+                    "*/*": components["schemas"]["ApiResponseCustom"];
                 };
             };
             /** @description Dữ liệu không hợp lệ */
@@ -5642,7 +5725,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["TaskTypesApiResponse"];
+                    "application/json": components["schemas"]["ApiResponseCustom"];
                 };
             };
             /** @description Internal server error */
@@ -5676,7 +5759,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["TaskTypeApiResponse"];
+                    "application/json": components["schemas"]["ApiResponseCustom"];
                 };
             };
             /** @description Invalid request data */
@@ -6206,7 +6289,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ActivityListApiResponse"];
+                    "*/*": components["schemas"]["CalendarApiResponse"];
                 };
             };
             /** @description Tham số không hợp lệ */
@@ -6248,7 +6331,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ActivityApiResponse"];
+                    "*/*": components["schemas"]["ApiResponseCustom"];
                 };
             };
             /** @description Dữ liệu không hợp lệ */
@@ -7718,7 +7801,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ActivityListApiResponse"];
+                    "*/*": components["schemas"]["ApiResponseCustom"];
                 };
             };
             /** @description Tham số không hợp lệ */
@@ -7758,7 +7841,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ActivityListApiResponse"];
+                    "*/*": components["schemas"]["ApiResponseCustom"];
                 };
             };
             /** @description Định dạng ngày không hợp lệ hoặc khoảng thời gian không hợp lệ */
@@ -7793,7 +7876,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ActivityListApiResponse"];
+                    "*/*": components["schemas"]["ApiResponseCustom"];
                 };
             };
             /** @description Định dạng ngày không hợp lệ */
@@ -7822,7 +7905,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ActivityListApiResponse"];
+                    "*/*": components["schemas"]["ApiResponseCustom"];
                 };
             };
         };
