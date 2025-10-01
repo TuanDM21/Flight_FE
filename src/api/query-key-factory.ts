@@ -52,3 +52,9 @@ export const attachmentKeysFactory = {
     ] as const,
   accessibleFiles: () => ['get', '/api/attachments/accessible-files'] as const,
 }
+
+export const activityKeysFactory = {
+  lists: () => ['get', '/api/activities'] as const,
+  detail: (id: number) =>
+    ['get', '/api/activities/{id}', { params: { path: { id } } }] as const,
+}
