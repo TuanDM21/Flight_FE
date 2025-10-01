@@ -2,6 +2,7 @@
 
 import type React from 'react'
 import { createContext, useState, useMemo, useContext } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { useLocalStorage } from '@/features/activities/components/calendar/hooks'
 import type {
@@ -12,7 +13,7 @@ import type {
   TCalendarView,
   TEventColor,
 } from '@/features/activities/components/calendar/types'
-import { useActivities } from '@/features/activities/hooks/use-activities'
+import { activitiesQueryOptions } from '@/features/activities/hooks/use-activities'
 import { useCreateActivity } from '@/features/activities/hooks/use-create-activity'
 import { useDeleteActivity } from '@/features/activities/hooks/use-delete-activity'
 import { useUpdateActivity } from '@/features/activities/hooks/use-update-activity'
@@ -72,14 +73,19 @@ export function CalendarProvider({
   const updateActivityMutation = useUpdateActivity()
   const deleteActivityMutation = useDeleteActivity()
 
-  const { data: activitiesResponse } = useActivities({ type: 'company' })
+  const { data: activitiesResponse } = useQuery({
+    ...activitiesQueryOptions({
+      type: 'company',
+    }),
+  })
 
+  // Transform activities to events format
   const allEvents = useMemo(() => {
     return (activitiesResponse?.data?.activities ?? []).map((activity) => ({
       ...activity,
       startTime: activity.startTime,
       endTime: activity.endTime,
-      color: 'blue' as TEventColor,
+      color: 'blue' as TEventColor, // Default color, you can add logic to determine color
     })) as IEvent[]
   }, [activitiesResponse?.data])
 
