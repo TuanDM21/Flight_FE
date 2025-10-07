@@ -760,6 +760,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/auth/change-password-first-login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Change password on first login
+         * @description Change password for users logging in for the first time
+         */
+        post: operations["changePasswordFirstLogin"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/attachments/generate-upload-urls": {
         parameters: {
             query?: never;
@@ -2135,6 +2155,7 @@ export interface components {
             email?: string;
             password?: string;
             expoPushToken?: string;
+            isFirstLogin?: boolean;
             role?: components["schemas"]["Role"];
             team?: components["schemas"]["Team"];
             unit?: components["schemas"]["Unit"];
@@ -3015,6 +3036,26 @@ export interface components {
             tokenType?: string;
             /** Format: int64 */
             expiresIn?: number;
+            requiresPasswordChange?: boolean;
+            message?: string;
+        };
+        /** @description Request for changing password on first login */
+        FirstLoginPasswordChangeRequest: {
+            /**
+             * @description Current password
+             * @example currentPassword123
+             */
+            currentPassword: string;
+            /**
+             * @description New password
+             * @example newPassword123
+             */
+            newPassword: string;
+            /**
+             * @description Confirm new password
+             * @example newPassword123
+             */
+            confirmPassword: string;
         };
         /**
          * @description Thông tin file upload
@@ -6053,6 +6094,57 @@ export interface operations {
             };
             /** @description User not found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseCustom"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseCustom"];
+                };
+            };
+        };
+    };
+    changePasswordFirstLogin: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FirstLoginPasswordChangeRequest"];
+            };
+        };
+        responses: {
+            /** @description Password changed successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseCustom"];
+                };
+            };
+            /** @description Invalid request or password validation failed */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiResponseCustom"];
+                };
+            };
+            /** @description Unauthorized - Invalid current password */
+            401: {
                 headers: {
                     [name: string]: unknown;
                 };
