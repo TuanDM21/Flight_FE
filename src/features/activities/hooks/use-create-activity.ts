@@ -2,55 +2,67 @@ import { useQueryClient } from '@tanstack/react-query'
 import $queryClient from '@/api'
 import { BaseApiResponse } from '@/types/response'
 import { activityKeysFactory } from '@/api/query-key-factory'
-import { Activity } from '../types'
+import { ActivitiesQueryParams, Activity } from '../types'
 
 interface OptimisticCreateActivityContext {
-  previousActivities?: BaseApiResponse<Activity[]>
+  previousActivities?: BaseApiResponse<{
+    currentDate: string
+    activities: Activity[]
+    activityType: string
+  }>
 }
 
-export const useCreateActivity = () => {
+export const useCreateActivity = (queryParams: ActivitiesQueryParams) => {
   const queryClient = useQueryClient()
 
   return $queryClient.useMutation('post', '/api/activities', {
     onMutate: async (variables) => {
       // Cancel any outgoing refetches to prevent them overwriting our optimistic update
       await queryClient.cancelQueries({
-        queryKey: activityKeysFactory.lists(),
+        queryKey: activityKeysFactory.lists(queryParams),
       })
 
       // Snapshot the current value
       const previousActivities = queryClient.getQueryData<
-        BaseApiResponse<Activity[]>
-      >(activityKeysFactory.lists())
+        BaseApiResponse<{
+          currentDate: string
+          activities: Activity[]
+          activityType: string
+        }>
+      >(activityKeysFactory.lists(queryParams))
 
-      const { name, location, startTime, endTime, notes, participants } =
+      const { title, location, startDate, endDate, description, participants } =
         variables?.body || {}
 
       // Optimistically update the list by adding the new activity
-      queryClient.setQueryData<BaseApiResponse<Activity[]>>(
-        activityKeysFactory.lists(),
-        (old) => {
-          if (!old?.data) return old
+      queryClient.setQueryData<
+        BaseApiResponse<{
+          currentDate: string
+          activities: Activity[]
+          activityType: string
+        }>
+      >(activityKeysFactory.lists(queryParams), (old) => {
+        if (!old?.data) return old
 
-          const newActivityData: Activity = {
-            id: Date.now(),
-            name: name || '',
-            location: location || '',
-            startTime: startTime || new Date().toISOString(),
-            endTime: endTime || new Date().toISOString(),
-            notes: notes || '',
-            participants: participants || [],
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            pinned: false,
-          }
-
-          return {
-            ...old,
-            data: [newActivityData, ...(old.data || [])],
-          }
+        const newActivityData: Activity = {
+          id: Date.now(),
+          title: title || '',
+          location: location || '',
+          startDate: startDate,
+          endDate: endDate,
+          description: description || '',
+          participants: participants || [],
+          pinned: false,
         }
-      )
+
+        return {
+          ...old,
+          data: {
+            ...old.data,
+            activities: [newActivityData, ...(old.data.activities || [])],
+          },
+        }
+      })
 
       return { previousActivities }
     },
@@ -59,7 +71,7 @@ export const useCreateActivity = () => {
       const optimisticContext = context as OptimisticCreateActivityContext
       if (optimisticContext?.previousActivities) {
         queryClient.setQueryData(
-          activityKeysFactory.lists(),
+          activityKeysFactory.lists(queryParams),
           optimisticContext.previousActivities
         )
       }
@@ -67,7 +79,7 @@ export const useCreateActivity = () => {
 
     onSettled: async () => {
       await queryClient.invalidateQueries({
-        queryKey: activityKeysFactory.lists(),
+        queryKey: activityKeysFactory.lists(queryParams),
       })
     },
   })

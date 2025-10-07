@@ -1,14 +1,17 @@
 import { useQueryClient } from '@tanstack/react-query'
 import $queryClient from '@/api'
-import { BaseApiResponse } from '@/types/response'
+import { paths } from '@/generated/api-schema'
 import { activityKeysFactory } from '@/api/query-key-factory'
-import { Activity } from '../types'
+import { ActivitiesQueryParams } from '../types'
+
+type CalendarApiResponse =
+  paths['/api/activities']['get']['responses']['200']['content']['*/*']
 
 interface OptimisticUpdateActivityContext {
-  previousActivities?: BaseApiResponse<Activity[]>
+  previousActivities?: CalendarApiResponse
 }
 
-export const useUpdateActivity = () => {
+export const useUpdateActivity = (queryParams: ActivitiesQueryParams) => {
   const queryClient = useQueryClient()
 
   return $queryClient.useMutation('put', '/api/activities/{id}', {
@@ -17,34 +20,46 @@ export const useUpdateActivity = () => {
 
       // Cancel any outgoing refetches to prevent them overwriting our optimistic update
       await queryClient.cancelQueries({
-        queryKey: activityKeysFactory.lists(),
+        queryKey: activityKeysFactory.lists(queryParams),
       })
 
       // Snapshot the current value
-      const previousActivities = queryClient.getQueryData<
-        BaseApiResponse<Activity[]>
-      >(activityKeysFactory.lists())
+      const previousActivities = queryClient.getQueryData<CalendarApiResponse>(
+        activityKeysFactory.lists(queryParams)
+      )
 
-      const { name, location, startTime, endTime, notes, participants } =
-        variables?.body || {}
+      const {
+        title,
+        location,
+        startDate,
+        endDate,
+        description,
+        participants,
+        pinned,
+      } = variables?.body || {}
 
       // Optimistically update the existing activity in the list
-      queryClient.setQueryData<BaseApiResponse<Activity[]>>(
-        activityKeysFactory.lists(),
+      queryClient.setQueryData<CalendarApiResponse>(
+        activityKeysFactory.lists(queryParams),
         (old) => {
-          if (!old?.data || !activityId) return old
+          if (
+            !old?.data?.activities ||
+            !Array.isArray(old.data.activities) ||
+            !activityId
+          )
+            return old
 
-          const updatedData = old.data.map((activity) => {
+          const updatedActivities = old.data.activities.map((activity) => {
             if (activity.id === activityId) {
               return {
                 ...activity,
-                name: name ?? activity.name,
+                title: title ?? activity.title,
                 location: location ?? activity.location,
-                startTime: startTime ?? activity.startTime,
-                endTime: endTime ?? activity.endTime,
-                notes: notes ?? activity.notes,
+                startDate: startDate ?? activity.startDate,
+                endDate: endDate ?? activity.endDate,
+                description: description ?? activity.description,
                 participants: participants ?? activity.participants,
-                updatedAt: new Date().toISOString(),
+                pinned: pinned ?? activity.pinned,
               }
             }
             return activity
@@ -52,7 +67,10 @@ export const useUpdateActivity = () => {
 
           return {
             ...old,
-            data: updatedData,
+            data: {
+              ...old.data,
+              activities: updatedActivities,
+            },
           }
         }
       )
@@ -64,7 +82,7 @@ export const useUpdateActivity = () => {
       const optimisticContext = context as OptimisticUpdateActivityContext
       if (optimisticContext?.previousActivities) {
         queryClient.setQueryData(
-          activityKeysFactory.lists(),
+          activityKeysFactory.lists(queryParams),
           optimisticContext.previousActivities
         )
       }
@@ -72,7 +90,7 @@ export const useUpdateActivity = () => {
 
     onSettled: async () => {
       await queryClient.invalidateQueries({
-        queryKey: activityKeysFactory.lists(),
+        queryKey: ['get', '/api/activities'],
       })
     },
   })
