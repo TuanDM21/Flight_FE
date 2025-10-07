@@ -21,7 +21,7 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
   const { selectedDate, setSelectedDate, use24HourFormat } = useCalendar()
   const scrollAreaRef = useRef<HTMLDivElement>(null)
 
-  const hours = Array.from({ length: 24 }, (_, i) => i)
+  const hours = Array.from({ length: 12 }, (_, i) => i * 2)
 
   useEffect(() => {
     const handleDragOver = (e: DragEvent) => {
@@ -102,7 +102,11 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
             {/* Hours column */}
             <div className='relative w-18'>
               {hours.map((hour, index) => (
-                <div key={hour} className='relative' style={{ height: '96px' }}>
+                <div
+                  key={hour}
+                  className='relative'
+                  style={{ height: '192px' }}
+                >
                   <div className='absolute -top-3 right-2 flex h-6 items-center'>
                     {index !== 0 && (
                       <span className='text-t-quaternary text-xs'>
@@ -124,7 +128,7 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
                   <div
                     key={hour}
                     className='relative'
-                    style={{ height: '96px' }}
+                    style={{ height: '192px' }}
                   >
                     {index !== 0 && (
                       <div className='pointer-events-none absolute inset-x-0 top-0 border-b'></div>
@@ -134,27 +138,11 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
                       date={selectedDate}
                       hour={hour}
                       minute={0}
-                      className='absolute inset-x-0 top-0 h-[48px]'
+                      className='absolute inset-0'
                     >
                       <AddEditEventDialog
                         startDate={selectedDate}
                         startTime={{ hour, minute: 0 }}
-                      >
-                        <div className='hover:bg-secondary absolute inset-0 cursor-pointer transition-colors' />
-                      </AddEditEventDialog>
-                    </DroppableArea>
-
-                    <div className='border-b-tertiary pointer-events-none absolute inset-x-0 top-1/2 border-b border-dashed'></div>
-
-                    <DroppableArea
-                      date={selectedDate}
-                      hour={hour}
-                      minute={30}
-                      className='absolute inset-x-0 bottom-0 h-[48px]'
-                    >
-                      <AddEditEventDialog
-                        startDate={selectedDate}
-                        startTime={{ hour, minute: 30 }}
                       >
                         <div className='hover:bg-secondary absolute inset-0 cursor-pointer transition-colors' />
                       </AddEditEventDialog>
@@ -179,7 +167,9 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
           className='mx-auto w-fit'
           mode='single'
           selected={selectedDate}
-          onSelect={(date) => date && setSelectedDate(date)}
+          onSelect={(date) => {
+            if (date) setSelectedDate(date)
+          }}
         />
 
         <div className='flex-1 space-y-3'>

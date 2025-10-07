@@ -26,7 +26,7 @@ export function CalendarWeekView({ singleDayEvents, multiDayEvents }: IProps) {
 
   const weekStart = startOfWeek(selectedDate, { weekStartsOn: 1 })
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i))
-  const hours = Array.from({ length: 24 }, (_, i) => i)
+  const hours = Array.from({ length: 12 }, (_, i) => i * 2)
 
   return (
     <motion.div
@@ -93,7 +93,7 @@ export function CalendarWeekView({ singleDayEvents, multiDayEvents }: IProps) {
           </motion.div>
         </div>
 
-        <ScrollArea className='h-[736px]' type='always'>
+        <ScrollArea className='h-[800px]' type='always'>
           <div className='flex'>
             {/* Hours column */}
             <motion.div className='relative w-18' variants={staggerContainer}>
@@ -101,7 +101,7 @@ export function CalendarWeekView({ singleDayEvents, multiDayEvents }: IProps) {
                 <motion.div
                   key={hour}
                   className='relative'
-                  style={{ height: '96px' }}
+                  style={{ height: '192px' }}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.02, ...transition }}
@@ -146,7 +146,7 @@ export function CalendarWeekView({ singleDayEvents, multiDayEvents }: IProps) {
                         <motion.div
                           key={hour}
                           className='relative'
-                          style={{ height: '96px' }}
+                          style={{ height: '192px' }}
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           transition={{ delay: index * 0.01, ...transition }}
@@ -159,27 +159,11 @@ export function CalendarWeekView({ singleDayEvents, multiDayEvents }: IProps) {
                             date={day}
                             hour={hour}
                             minute={0}
-                            className='absolute inset-x-0 top-0 h-[48px]'
+                            className='absolute inset-0'
                           >
                             <AddEditEventDialog
                               startDate={day}
                               startTime={{ hour, minute: 0 }}
-                            >
-                              <div className='hover:bg-secondary absolute inset-0 cursor-pointer transition-colors' />
-                            </AddEditEventDialog>
-                          </DroppableArea>
-
-                          <div className='border-b-tertiary pointer-events-none absolute inset-x-0 top-1/2 border-b border-dashed'></div>
-
-                          <DroppableArea
-                            date={day}
-                            hour={hour}
-                            minute={30}
-                            className='absolute inset-x-0 bottom-0 h-[48px]'
-                          >
-                            <AddEditEventDialog
-                              startDate={day}
-                              startTime={{ hour, minute: 30 }}
                             >
                               <div className='hover:bg-secondary absolute inset-0 cursor-pointer transition-colors' />
                             </AddEditEventDialog>
