@@ -16,6 +16,13 @@ export const Route = createFileRoute('/_authenticated')({
         },
       })
     }
+
+    // Check if user needs to change password
+    if (context.auth.requiresPasswordChange) {
+      throw redirect({
+        to: '/change-password',
+      })
+    }
   },
   component: RouteComponent,
 })
