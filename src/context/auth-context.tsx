@@ -1,15 +1,17 @@
 import * as React from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import $queryClient from '@/api'
-import { AUTH_TOKEN_KEY } from '@/config/auth'
+import { AUTH_TOKEN_KEY, REQUIRES_PASSWORD_CHANGE_KEY } from '@/config/auth'
 import { AuthorizedUser } from '@/types/auth'
 import { useLocalStorage } from 'react-use'
 
 export interface AuthContext {
   isAuthenticated: boolean
   user: AuthorizedUser | null
+  requiresPasswordChange: boolean
   logout: () => void
   setToken: React.Dispatch<React.SetStateAction<string | null | undefined>>
+  setRequiresPasswordChange: (value: boolean) => void
   hasRole: (role: string) => boolean
 }
 
@@ -24,6 +26,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   )
 
   const [user, setUser] = React.useState<AuthorizedUser | null>(null)
+  const [
+    requiresPasswordChange,
+    setRequiresPasswordChangeState,
+    _removeRequiresPasswordChange,
+  ] = useLocalStorage<boolean>(REQUIRES_PASSWORD_CHANGE_KEY, false)
+
+  const setRequiresPasswordChange = React.useCallback(
+    (value: boolean) => {
+      setRequiresPasswordChangeState(value)
+    },
+    [setRequiresPasswordChangeState]
+  )
   const isAuthenticated = token != null
 
   const getMeQuery = $queryClient.useQuery(
@@ -41,10 +55,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     removeToken()
 
     setUser(null)
+    setRequiresPasswordChange(false)
 
     void queryClient.invalidateQueries({ queryKey: ['get', '/api/users/me'] })
     queryClient.clear()
-  }, [queryClient, removeToken])
+  }, [queryClient, removeToken, setRequiresPasswordChange])
 
   const logout = React.useCallback(() => {
     reset()
@@ -67,11 +82,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     () => ({
       isAuthenticated,
       user,
+      requiresPasswordChange: requiresPasswordChange ?? false,
       setToken,
       logout,
+      setRequiresPasswordChange,
       hasRole,
     }),
-    [isAuthenticated, user, setToken, logout, hasRole]
+    [
+      isAuthenticated,
+      user,
+      requiresPasswordChange,
+      setToken,
+      logout,
+      setRequiresPasswordChange,
+      hasRole,
+    ]
   )
 
   return (

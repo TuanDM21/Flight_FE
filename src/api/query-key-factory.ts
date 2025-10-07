@@ -1,3 +1,5 @@
+import { ActivitiesQueryParams } from '@/features/activities/types'
+
 export const taskKeysFactory = {
   lists: () => ['get', '/api/tasks'] as const,
   listAssignees: (filterType = 'created') =>
@@ -51,4 +53,11 @@ export const attachmentKeysFactory = {
       { params: { path: { attachmentId } } },
     ] as const,
   accessibleFiles: () => ['get', '/api/attachments/accessible-files'] as const,
+}
+
+export const activityKeysFactory = {
+  lists: (queryParams: ActivitiesQueryParams) =>
+    ['get', '/api/activities', { params: { query: queryParams } }] as const,
+  detail: (id: number) =>
+    ['get', '/api/activities/{id}', { params: { path: { id } } }] as const,
 }

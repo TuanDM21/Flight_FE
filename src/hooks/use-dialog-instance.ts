@@ -13,9 +13,15 @@ export function useDialogInstance(
   const [isOpen, setIsOpen] = useState(false)
 
   const instance = useRef<AppDialogInstance>({
-    open: () => setIsOpen(true),
-    close: () => setIsOpen(false),
-    toggle: () => setIsOpen((prev) => !prev),
+    open: () => {
+      setIsOpen(true)
+    },
+    close: () => {
+      setIsOpen(false)
+    },
+    toggle: () => {
+      setIsOpen((prev) => !prev)
+    },
     isOpen,
   })
 

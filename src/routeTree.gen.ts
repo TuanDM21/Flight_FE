@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ChangePasswordRouteImport } from './routes/change-password'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as errors503RouteImport } from './routes/(errors)/503'
@@ -19,6 +20,7 @@ import { Route as errors401RouteImport } from './routes/(errors)/401'
 import { Route as authSignOutRouteImport } from './routes/(auth)/sign-out'
 import { Route as authSignInRouteImport } from './routes/(auth)/sign-in'
 import { Route as AuthenticatedTasksIndexRouteImport } from './routes/_authenticated/tasks/index'
+import { Route as AuthenticatedActivitiesIndexRouteImport } from './routes/_authenticated/activities/index'
 import { Route as AuthenticatedTasksMyRouteRouteImport } from './routes/_authenticated/tasks/my/route'
 import { Route as AuthenticatedTasksAllRouteRouteImport } from './routes/_authenticated/tasks/all/route'
 import { Route as AuthenticatedTasksMyIndexRouteImport } from './routes/_authenticated/tasks/my/index'
@@ -26,6 +28,11 @@ import { Route as AuthenticatedTasksAllIndexRouteImport } from './routes/_authen
 import { Route as AuthenticatedTasksTaskIdIndexRouteImport } from './routes/_authenticated/tasks/$task-id/index'
 import { Route as AuthenticatedTasksTaskIdEditRouteImport } from './routes/_authenticated/tasks/$task-id/edit'
 
+const ChangePasswordRoute = ChangePasswordRouteImport.update({
+  id: '/change-password',
+  path: '/change-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
@@ -75,6 +82,12 @@ const AuthenticatedTasksIndexRoute = AuthenticatedTasksIndexRouteImport.update({
   path: '/tasks/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedActivitiesIndexRoute =
+  AuthenticatedActivitiesIndexRouteImport.update({
+    id: '/activities/',
+    path: '/activities/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedTasksMyRouteRoute =
   AuthenticatedTasksMyRouteRouteImport.update({
     id: '/tasks/my',
@@ -113,6 +126,7 @@ const AuthenticatedTasksTaskIdEditRoute =
   } as any)
 
 export interface FileRoutesByFullPath {
+  '/change-password': typeof ChangePasswordRoute
   '/sign-in': typeof authSignInRoute
   '/sign-out': typeof authSignOutRoute
   '/401': typeof errors401Route
@@ -123,6 +137,7 @@ export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
   '/tasks/all': typeof AuthenticatedTasksAllRouteRouteWithChildren
   '/tasks/my': typeof AuthenticatedTasksMyRouteRouteWithChildren
+  '/activities': typeof AuthenticatedActivitiesIndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
   '/tasks/$task-id/edit': typeof AuthenticatedTasksTaskIdEditRoute
   '/tasks/$task-id': typeof AuthenticatedTasksTaskIdIndexRoute
@@ -130,6 +145,7 @@ export interface FileRoutesByFullPath {
   '/tasks/my/': typeof AuthenticatedTasksMyIndexRoute
 }
 export interface FileRoutesByTo {
+  '/change-password': typeof ChangePasswordRoute
   '/sign-in': typeof authSignInRoute
   '/sign-out': typeof authSignOutRoute
   '/401': typeof errors401Route
@@ -138,6 +154,7 @@ export interface FileRoutesByTo {
   '/500': typeof errors500Route
   '/503': typeof errors503Route
   '/': typeof AuthenticatedIndexRoute
+  '/activities': typeof AuthenticatedActivitiesIndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
   '/tasks/$task-id/edit': typeof AuthenticatedTasksTaskIdEditRoute
   '/tasks/$task-id': typeof AuthenticatedTasksTaskIdIndexRoute
@@ -147,6 +164,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/change-password': typeof ChangePasswordRoute
   '/(auth)/sign-in': typeof authSignInRoute
   '/(auth)/sign-out': typeof authSignOutRoute
   '/(errors)/401': typeof errors401Route
@@ -157,6 +175,7 @@ export interface FileRoutesById {
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/tasks/all': typeof AuthenticatedTasksAllRouteRouteWithChildren
   '/_authenticated/tasks/my': typeof AuthenticatedTasksMyRouteRouteWithChildren
+  '/_authenticated/activities/': typeof AuthenticatedActivitiesIndexRoute
   '/_authenticated/tasks/': typeof AuthenticatedTasksIndexRoute
   '/_authenticated/tasks/$task-id/edit': typeof AuthenticatedTasksTaskIdEditRoute
   '/_authenticated/tasks/$task-id/': typeof AuthenticatedTasksTaskIdIndexRoute
@@ -166,6 +185,7 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/change-password'
     | '/sign-in'
     | '/sign-out'
     | '/401'
@@ -176,6 +196,7 @@ export interface FileRouteTypes {
     | '/'
     | '/tasks/all'
     | '/tasks/my'
+    | '/activities'
     | '/tasks'
     | '/tasks/$task-id/edit'
     | '/tasks/$task-id'
@@ -183,6 +204,7 @@ export interface FileRouteTypes {
     | '/tasks/my/'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/change-password'
     | '/sign-in'
     | '/sign-out'
     | '/401'
@@ -191,6 +213,7 @@ export interface FileRouteTypes {
     | '/500'
     | '/503'
     | '/'
+    | '/activities'
     | '/tasks'
     | '/tasks/$task-id/edit'
     | '/tasks/$task-id'
@@ -199,6 +222,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/_authenticated'
+    | '/change-password'
     | '/(auth)/sign-in'
     | '/(auth)/sign-out'
     | '/(errors)/401'
@@ -209,6 +233,7 @@ export interface FileRouteTypes {
     | '/_authenticated/'
     | '/_authenticated/tasks/all'
     | '/_authenticated/tasks/my'
+    | '/_authenticated/activities/'
     | '/_authenticated/tasks/'
     | '/_authenticated/tasks/$task-id/edit'
     | '/_authenticated/tasks/$task-id/'
@@ -218,6 +243,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  ChangePasswordRoute: typeof ChangePasswordRoute
   authSignInRoute: typeof authSignInRoute
   authSignOutRoute: typeof authSignOutRoute
   errors401Route: typeof errors401Route
@@ -229,6 +255,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/change-password': {
+      id: '/change-password'
+      path: '/change-password'
+      fullPath: '/change-password'
+      preLoaderRoute: typeof ChangePasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated': {
       id: '/_authenticated'
       path: ''
@@ -297,6 +330,13 @@ declare module '@tanstack/react-router' {
       path: '/tasks'
       fullPath: '/tasks'
       preLoaderRoute: typeof AuthenticatedTasksIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/activities/': {
+      id: '/_authenticated/activities/'
+      path: '/activities'
+      fullPath: '/activities'
+      preLoaderRoute: typeof AuthenticatedActivitiesIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/tasks/my': {
@@ -376,6 +416,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedTasksAllRouteRoute: typeof AuthenticatedTasksAllRouteRouteWithChildren
   AuthenticatedTasksMyRouteRoute: typeof AuthenticatedTasksMyRouteRouteWithChildren
+  AuthenticatedActivitiesIndexRoute: typeof AuthenticatedActivitiesIndexRoute
   AuthenticatedTasksIndexRoute: typeof AuthenticatedTasksIndexRoute
   AuthenticatedTasksTaskIdEditRoute: typeof AuthenticatedTasksTaskIdEditRoute
   AuthenticatedTasksTaskIdIndexRoute: typeof AuthenticatedTasksTaskIdIndexRoute
@@ -385,6 +426,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedTasksAllRouteRoute: AuthenticatedTasksAllRouteRouteWithChildren,
   AuthenticatedTasksMyRouteRoute: AuthenticatedTasksMyRouteRouteWithChildren,
+  AuthenticatedActivitiesIndexRoute: AuthenticatedActivitiesIndexRoute,
   AuthenticatedTasksIndexRoute: AuthenticatedTasksIndexRoute,
   AuthenticatedTasksTaskIdEditRoute: AuthenticatedTasksTaskIdEditRoute,
   AuthenticatedTasksTaskIdIndexRoute: AuthenticatedTasksTaskIdIndexRoute,
@@ -395,6 +437,7 @@ const AuthenticatedRouteRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  ChangePasswordRoute: ChangePasswordRoute,
   authSignInRoute: authSignInRoute,
   authSignOutRoute: authSignOutRoute,
   errors401Route: errors401Route,

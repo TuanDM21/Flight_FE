@@ -35,7 +35,8 @@ export function SignInForm({ className, ...props }: SignInFormProps) {
       password: '',
     },
   })
-  async function onSubmit(data: LoginCredentials) {
+
+  function onSubmit(data: LoginCredentials) {
     const { remember, ...loginData } = data
     const loginPromise = loginMutation.mutateAsync({
       body: loginData,
@@ -44,9 +45,17 @@ export function SignInForm({ className, ...props }: SignInFormProps) {
       loading: 'Đang đăng nhập...',
       success: ({ data: loginResponse }) => {
         const newToken = loginResponse?.accessToken
+        const requiresPasswordChange = loginResponse?.requiresPasswordChange
+
         if (newToken) {
           auth.setToken(newToken)
-          navigate({ to: '/tasks' })
+
+          if (requiresPasswordChange) {
+            auth.setRequiresPasswordChange(true)
+            void navigate({ to: '/change-password' })
+          } else {
+            void navigate({ to: '/tasks' })
+          }
         }
         return 'Đăng nhập thành công!'
       },
