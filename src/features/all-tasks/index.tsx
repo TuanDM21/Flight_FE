@@ -25,14 +25,14 @@ export function AllTasksPage() {
     const rootTasks: Task[] = []
 
     // Create a map for quick lookup and separate root tasks
-    tasks.forEach((task) => {
+    for (const task of tasks) {
       if (task.id) {
         taskMap.set(task.id, task)
         if (!task.parentId) {
           rootTasks.push(task)
         }
       }
-    })
+    }
 
     // Function to build hierarchy recursively
     const buildHierarchy = (
@@ -50,23 +50,23 @@ export function AllTasksPage() {
       // Find children of this task
       const children = tasks.filter((t) => t.parentId === task.id)
 
-      children.forEach((child, index) => {
+      for (const [index, child] of children.entries()) {
         const childHierarchy = buildHierarchy(child, level + 1)
         // Mark the last child
         if (index === children.length - 1 && childHierarchy.length > 0) {
           childHierarchy[0].isLastChild = true
         }
         result.push(...childHierarchy)
-      })
+      }
 
       return result
     }
 
     // Build the complete hierarchy starting from root tasks
     const hierarchicalTasks: HierarchicalTask[] = []
-    rootTasks.forEach((rootTask) => {
+    for (const rootTask of rootTasks) {
       hierarchicalTasks.push(...buildHierarchy(rootTask))
-    })
+    }
 
     return hierarchicalTasks
   }

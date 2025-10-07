@@ -23,6 +23,8 @@ interface DateTimePickerProps {
   endHour?: number
   interval?: number
   modal?: boolean
+  minDate?: Date
+  maxDate?: Date
 }
 
 // Helper function to generate time slots
@@ -59,6 +61,8 @@ export function DateTimePicker({
   endHour = 24,
   interval = 30,
   modal = true,
+  minDate,
+  maxDate,
 }: DateTimePickerProps) {
   const today = new Date()
 
@@ -76,10 +80,42 @@ export function DateTimePicker({
   )
   const [isOpen, setIsOpen] = useState(false)
 
-  // Generate time slots
+  // Generate time slots with constraints
   const availableTimeSlots = useMemo(() => {
-    return generateTimeSlotsArray(startHour, endHour, interval)
-  }, [startHour, endHour, interval])
+    const allSlots = generateTimeSlotsArray(startHour, endHour, interval)
+
+    // If no constraints or no selected date, return all slots
+    if (!minDate && !maxDate) {
+      return allSlots
+    }
+
+    const selectedDateWithoutTime = new Date(selectedDate)
+    selectedDateWithoutTime.setHours(0, 0, 0, 0)
+
+    return allSlots.filter((timeSlot) => {
+      const [hours, minutes] = timeSlot.split(':').map(Number)
+      const slotDateTime = new Date(selectedDateWithoutTime)
+      slotDateTime.setHours(hours, minutes, 0, 0)
+
+      // Check min date constraint
+      if (minDate) {
+        const minDateTime = new Date(minDate)
+        if (slotDateTime < minDateTime) {
+          return false
+        }
+      }
+
+      // Check max date constraint
+      if (maxDate) {
+        const maxDateTime = new Date(maxDate)
+        if (slotDateTime > maxDateTime) {
+          return false
+        }
+      }
+
+      return true
+    })
+  }, [startHour, endHour, interval, minDate, maxDate, selectedDate])
 
   // Update internal state when value prop changes
   useEffect(() => {
@@ -155,7 +191,13 @@ export function DateTimePicker({
               selected={selectedDate}
               onSelect={handleDateSelect}
               className='p-2 sm:pe-5'
-              disabled={[{ before: today }, disabled]}
+              disabled={(date) => {
+                if (disabled) return true
+                if (minDate && date < minDate) return true
+                if (maxDate && date > maxDate) return true
+                if (date < today) return true
+                return false
+              }}
             />
 
             {/* Time Slots Section */}
@@ -179,7 +221,9 @@ export function DateTimePicker({
                           size='sm'
                           className='w-full'
                           disabled={disabled}
-                          onClick={() => handleTimeSelect(timeSlot)}
+                          onClick={() => {
+                            handleTimeSelect(timeSlot)
+                          }}
                         >
                           {timeSlot}
                         </Button>

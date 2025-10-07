@@ -73,7 +73,7 @@ export function MyTasksPage() {
             setLoadedSubtasks((current) => {
               // Lấy tất cả tasks hiện có (bao gồm cả loaded subtasks)
               const currentMainTasks = safeTasksResponse.data?.tasks ?? []
-              const allLoadedSubtasks = Array.from(current.values()).flat()
+              const allLoadedSubtasks = [...current.values()].flat()
               const allTasks = [
                 ...currentMainTasks,
                 ...allLoadedSubtasks,
@@ -113,10 +113,13 @@ export function MyTasksPage() {
   const handleTypeChange = useCallback(
     (type: string) => {
       navigate({
-        search: (prev: any) => ({
-          ...prev,
-          type: type,
-        }),
+        search: (prev: any) => {
+          const { keyword, ...rest } = prev
+          return {
+            ...rest,
+            type: type,
+          }
+        },
       })
     },
     [navigate]

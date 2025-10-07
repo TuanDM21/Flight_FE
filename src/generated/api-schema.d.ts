@@ -2160,6 +2160,26 @@ export interface components {
             permissionCode?: string;
             value?: boolean;
         };
+        /** @description API response wrapper for single user operations */
+        UserApiResponse: {
+            /**
+             * @description Response message
+             * @example Thành công
+             */
+            message?: string;
+            /**
+             * Format: int32
+             * @description HTTP status code
+             * @example 200
+             */
+            statusCode?: number;
+            data?: components["schemas"]["User"];
+            /**
+             * @description Success status
+             * @example true
+             */
+            success?: boolean;
+        };
         /**
          * @description Response chuẩn cho tất cả API
          * @example {
@@ -2215,26 +2235,6 @@ export interface components {
             data?: Record<string, never>;
             /**
              * @description Trạng thái thành công hay thất bại
-             * @example true
-             */
-            success?: boolean;
-        };
-        /** @description API response wrapper for single user operations */
-        UserApiResponse: {
-            /**
-             * @description Response message
-             * @example Thành công
-             */
-            message?: string;
-            /**
-             * Format: int32
-             * @description HTTP status code
-             * @example 200
-             */
-            statusCode?: number;
-            data?: components["schemas"]["User"];
-            /**
-             * @description Success status
              * @example true
              */
             success?: boolean;
@@ -2695,10 +2695,10 @@ export interface components {
         /** @description Request DTO for creating or updating activities */
         ActivityRequest: {
             /**
-             * @description Activity name
+             * @description Activity title
              * @example Họp định kỳ tuần
              */
-            name: string;
+            title: string;
             /**
              * @description Activity location
              * @example Phòng họp A1
@@ -2706,19 +2706,19 @@ export interface components {
             location: string;
             /**
              * Format: date-time
-             * @description Start time of the activity
+             * @description Start date of the activity
              */
-            startTime: string;
+            startDate: string;
             /**
              * Format: date-time
-             * @description End time of the activity
+             * @description End date of the activity
              */
-            endTime: string;
+            endDate: string;
             /**
-             * @description Additional notes
+             * @description Additional description
              * @example Thảo luận về kế hoạch Q4
              */
-            notes?: string;
+            description?: string;
             /** @description List of participants (required - activity must have at least one participant) */
             participants: components["schemas"]["ActivityParticipantRequest"][];
             /**
@@ -3783,11 +3783,11 @@ export interface components {
          * @description Activity response DTO
          * @example {
          *       "id": 101,
-         *       "name": "Họp định kỳ tuần",
+         *       "title": "Họp định kỳ tuần",
          *       "location": "Phòng họp A1",
-         *       "startTime": "2025-10-01T13:59:01.290Z",
-         *       "endTime": "2025-10-01T15:00:00.000Z",
-         *       "notes": "Thảo luận về kế hoạch Q4",
+         *       "startDate": "2025-10-01T13:59:01.290Z",
+         *       "endDate": "2025-10-01T15:00:00.000Z",
+         *       "description": "Thảo luận về kế hoạch Q4",
          *       "participants": [
          *         {
          *           "id": 201,
@@ -3821,10 +3821,10 @@ export interface components {
              */
             id?: number;
             /**
-             * @description Activity name
+             * @description Activity title
              * @example Họp định kỳ tuần
              */
-            name: string;
+            title: string;
             /**
              * @description Activity location
              * @example Phòng họp A1
@@ -3832,21 +3832,21 @@ export interface components {
             location: string;
             /**
              * Format: date-time
-             * @description Start time
+             * @description Start date
              * @example 2025-10-01T13:59:01.29Z
              */
-            startTime: string;
+            startDate: string;
             /**
              * Format: date-time
-             * @description End time
+             * @description End date
              * @example 2025-10-01T15:00:00Z
              */
-            endTime: string;
+            endDate: string;
             /**
-             * @description Activity notes
+             * @description Activity description
              * @example Thảo luận về kế hoạch Q4
              */
-            notes?: string;
+            description?: string;
             /** @description List of participants */
             participants?: components["schemas"]["ActivityParticipantDTO"][];
             /**
@@ -3897,6 +3897,12 @@ export interface components {
             currentDate?: string;
             /** @description Danh sách activities trong calendar view */
             activities?: components["schemas"]["ActivityDTO"][];
+            /**
+             * @description Loại activities được trả về
+             * @example company
+             * @enum {string}
+             */
+            activityType?: "company" | "my";
         };
         /** @description API response wrapper for user delete operations */
         UserDeleteApiResponse: {
@@ -6247,7 +6253,7 @@ export interface operations {
         parameters: {
             query?: {
                 /**
-                 * @description Từ khóa tìm kiếm (tìm trong tên, ghi chú, địa điểm)
+                 * @description Từ khóa tìm kiếm (tìm trong tiêu đề, mô tả, địa điểm)
                  * @example Họp định kỳ
                  */
                 keyword?: string;
