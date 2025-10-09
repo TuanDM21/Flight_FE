@@ -118,7 +118,7 @@ export const AgendaEvents: FC = () => {
                   }
                 )}
               >
-                <EventDetailsDialog event={event}>
+                <EventDetailsDialog eventId={event.id}>
                   <div className='flex w-full items-center justify-between gap-4'>
                     <div className='flex items-center gap-2'>
                       {badgeVariant === 'dot' ? (

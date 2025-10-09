@@ -1,4 +1,4 @@
-import { type ReactNode, useEffect, useMemo } from 'react'
+import { type ReactNode, useMemo } from 'react'
 import { addMinutes, format, set } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -70,30 +70,56 @@ export function AddEditEventDialog({
     }
   }, [startDate, startTime, event, isEditing])
 
+  // Transform participants from API format to form format
+  const transformedParticipants = useMemo(() => {
+    if (!event?.participants || event.participants.length === 0) {
+      return []
+    }
+
+    // Group participants by participantType
+    const grouped = event.participants.reduce<Record<string, number[]>>(
+      (acc, participant) => {
+        const type = participant.participantType
+        if (type && participant.participantId) {
+          if (!acc[type]) {
+            acc[type] = []
+          }
+          acc[type].push(participant.participantId)
+        }
+        return acc
+      },
+      {}
+    )
+
+    // Convert grouped data to form format
+    return Object.entries(grouped).map(([participantType, participantIds]) => ({
+      participantType: participantType as 'UNIT' | 'TEAM' | 'USER',
+      participantIds,
+    }))
+  }, [event?.participants])
+
   const form = useForm<TEventFormData>({
     resolver: zodResolver(eventSchema),
-    defaultValues: {
-      title: event?.title ?? '',
-      description: event?.description ?? '',
-      location: event?.location ?? '',
-      startDate: initialDates.startDate,
-      endDate: initialDates.endDate,
-      pinned: event?.pinned ?? false,
-      participants: event?.participants ?? [],
-    },
+    defaultValues: isEditing
+      ? {
+          title: event?.title ?? '',
+          description: event?.description ?? '',
+          location: event?.location ?? '',
+          startDate: initialDates.startDate,
+          endDate: initialDates.endDate,
+          pinned: event?.pinned ?? false,
+          participants: transformedParticipants,
+        }
+      : {
+          title: '',
+          description: '',
+          location: '',
+          startDate: new Date(),
+          endDate: addMinutes(new Date(), 30),
+          pinned: false,
+          participants: [],
+        },
   })
-
-  useEffect(() => {
-    form.reset({
-      title: event?.title ?? '',
-      description: event?.description ?? '',
-      location: event?.location ?? '',
-      startDate: initialDates.startDate,
-      endDate: initialDates.endDate,
-      pinned: event?.pinned ?? false,
-      participants: event?.participants ?? [],
-    })
-  }, [event, initialDates, form])
 
   const onSubmit = (values: TEventFormData) => {
     const formattedEvent = {

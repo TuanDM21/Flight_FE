@@ -103,7 +103,7 @@ export function MonthEventBadge({
 
   return (
     <DraggableEvent event={event}>
-      <EventDetailsDialog event={event}>
+      <EventDetailsDialog eventId={event.id}>
         <div role='button' tabIndex={0} className={eventBadgeClasses}>
           <div className='flex items-center gap-1.5 truncate'>
             {!['middle', 'last'].includes(position) &&

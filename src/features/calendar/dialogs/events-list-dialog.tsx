@@ -12,7 +12,6 @@ import { useCalendar } from '@/features/calendar/contexts/calendar-context'
 import { EventDetailsDialog } from '@/features/calendar/dialogs/event-details-dialog'
 import { formatTime } from '@/features/calendar/helpers'
 import type { IEvent } from '@/features/calendar/interfaces'
-import { dayCellVariants } from '@/features/calendar/views/month-view/day-cell'
 import { EventBullet } from '@/features/calendar/views/month-view/event-bullet'
 
 interface EventListDialogProps {
@@ -30,7 +29,7 @@ export function EventListDialog({
 }: EventListDialogProps) {
   const cellEvents = events
   const hiddenEventsCount = Math.max(cellEvents.length - maxVisibleEvents, 0)
-  const { badgeVariant, use24HourFormat } = useCalendar()
+  const { use24HourFormat } = useCalendar()
 
   const defaultTrigger = (
     <span className='cursor-pointer'>
@@ -49,7 +48,7 @@ export function EventListDialog({
         <ModalHeader>
           <ModalTitle className='my-2'>
             <div className='flex items-center gap-2'>
-              <EventBullet color={cellEvents[0]?.color} className='' />
+              <EventBullet color='blue' className='' />
               <p className='text-sm font-medium'>
                 Events on {format(date, 'EEEE, MMMM d, yyyy')}
               </p>
@@ -59,17 +58,13 @@ export function EventListDialog({
         <div className='max-h-[60vh] space-y-2 overflow-y-auto'>
           {cellEvents.length > 0 ? (
             cellEvents.map((event) => (
-              <EventDetailsDialog event={event} key={event.id}>
+              <EventDetailsDialog eventId={event.id} key={event.id}>
                 <div
                   className={cn(
-                    'hover:bg-muted flex cursor-pointer items-center gap-2 rounded-md border p-2',
-                    {
-                      [dayCellVariants({ color: event.color })]:
-                        badgeVariant === 'colored',
-                    }
+                    'hover:bg-muted flex cursor-pointer items-center gap-2 rounded-md border p-2'
                   )}
                 >
-                  <EventBullet color={event.color} />
+                  <EventBullet color='blue' />
                   <div className='flex w-full items-center justify-between'>
                     <p className='text-sm font-medium'>{event.title}</p>
                     <p className='text-xs'>

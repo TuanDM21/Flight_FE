@@ -3,12 +3,14 @@ import $queryClient from '@/api'
 import { paths } from '@/generated/api-schema'
 import { activityKeysFactory } from '@/api/query-key-factory'
 import { ActivitiesQueryParams } from '../types'
+import { ActivityDetailResponse } from './use-activity-detail'
 
 type CalendarApiResponse =
   paths['/api/activities']['get']['responses']['200']['content']['*/*']
 
 interface OptimisticUpdateActivityContext {
   previousActivities?: CalendarApiResponse
+  previousActivityDetail?: ActivityDetailResponse
 }
 
 export const useUpdateActivity = (queryParams: ActivitiesQueryParams) => {
@@ -23,10 +25,22 @@ export const useUpdateActivity = (queryParams: ActivitiesQueryParams) => {
         queryKey: activityKeysFactory.lists(queryParams),
       })
 
-      // Snapshot the current value
+      if (activityId) {
+        await queryClient.cancelQueries({
+          queryKey: activityKeysFactory.detail(activityId),
+        })
+      }
+
+      // Snapshot the current values
       const previousActivities = queryClient.getQueryData<CalendarApiResponse>(
         activityKeysFactory.lists(queryParams)
       )
+
+      const previousActivityDetail = activityId
+        ? queryClient.getQueryData<ActivityDetailResponse>(
+            activityKeysFactory.detail(activityId)
+          )
+        : undefined
 
       const {
         title,
@@ -75,23 +89,65 @@ export const useUpdateActivity = (queryParams: ActivitiesQueryParams) => {
         }
       )
 
-      return { previousActivities }
+      // Optimistically update the activity detail
+      if (activityId) {
+        queryClient.setQueryData<ActivityDetailResponse>(
+          activityKeysFactory.detail(activityId),
+          (old) => {
+            if (!old) return old
+
+            return {
+              ...old,
+              title: title ?? old.title,
+              location: location ?? old.location,
+              startDate: startDate ?? old.startDate,
+              endDate: endDate ?? old.endDate,
+              description: description ?? old.description,
+              participants: participants ?? old.participants,
+              pinned: pinned ?? old.pinned,
+            }
+          }
+        )
+      }
+
+      return { previousActivities, previousActivityDetail }
     },
 
-    onError: (_, __, context) => {
+    onError: (_, variables, context) => {
       const optimisticContext = context as OptimisticUpdateActivityContext
+      const activityId = variables?.params?.path?.id
+
+      // Rollback list on error
       if (optimisticContext?.previousActivities) {
         queryClient.setQueryData(
           activityKeysFactory.lists(queryParams),
           optimisticContext.previousActivities
         )
       }
+
+      // Rollback detail on error
+      if (activityId && optimisticContext?.previousActivityDetail) {
+        queryClient.setQueryData(
+          activityKeysFactory.detail(activityId),
+          optimisticContext.previousActivityDetail
+        )
+      }
     },
 
-    onSettled: async () => {
+    onSettled: async (_, __, variables) => {
+      const activityId = variables?.params?.path?.id
+
+      // Invalidate activities list
       await queryClient.invalidateQueries({
         queryKey: ['get', '/api/activities'],
       })
+
+      // Invalidate activity detail
+      if (activityId) {
+        await queryClient.invalidateQueries({
+          queryKey: activityKeysFactory.detail(activityId),
+        })
+      }
     },
   })
 }

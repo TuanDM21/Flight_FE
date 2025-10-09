@@ -46,7 +46,7 @@ export function FilterCalendar({
     },
     {
       value: 'company' as const,
-      label: 'Công ty',
+      label: 'Đơn vị',
       color: ' border-green-500  data-[state=checked]:border-green-500',
     },
   ]

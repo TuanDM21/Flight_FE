@@ -74,7 +74,7 @@ export function EventBlock({ event, className }: IProps) {
   return (
     <ResizableEvent event={event}>
       <DraggableEvent event={event}>
-        <EventDetailsDialog event={event}>
+        <EventDetailsDialog eventId={event.id}>
           <div
             role='button'
             tabIndex={0}
