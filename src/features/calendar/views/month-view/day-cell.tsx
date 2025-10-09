@@ -145,7 +145,7 @@ export function DayCell({ cell, events, eventPositions }: IProps) {
                     className='border opacity-0 transition-opacity duration-200 group-hover:opacity-100'
                   >
                     <Plus className='h-4 w-4' />
-                    <span className='max-sm:hidden'>Add Event</span>
+                    <span className='max-sm:hidden'>Thêm hoạt động</span>
                   </Button>
                 </AddEditEventDialog>
               </div>
